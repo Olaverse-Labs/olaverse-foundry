@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "olaverse-foundry"
+version = "0.1.0"
+description = "A toolkit for building model families — seed, grow, fuse, freeze, extend."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.9"
+
+authors = [
+  { name = "Olaverse Labs", email = "hello@olaverse.co.uk" }
+]
+
+keywords = [
+  "llm", "distillation", "model-merging", "lora", "skill-packs",
+  "african-nlp", "olaverse", "foundry"
+]
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: Apache Software License",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Core install — numpy + pydantic + yaml only, no GPU required
+dependencies = [
+  "numpy>=1.24.0",
+  "pydantic>=2.0.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Real model loading + local inference
+torch = [
+  "torch>=2.0.0",
+  "transformers>=4.40.0",
+  "huggingface_hub>=0.20.0",
+  "safetensors>=0.4.0",
+  "accelerate>=0.27.0",
+]
+
+# LoRA skill packs
+lego = [
+  "peft>=0.10.0",
+]
+
+# Depth up-scaling via mergekit passthrough backend
+merge = [
+  "mergekit",
+]
+
+# Datasets for training
+data = [
+  "datasets>=2.18.0",
+]
+
+# Everything
+all = [
+  "olaverse-foundry[torch,lego,merge,data]",
+]
+
+# Dev / test
+dev = [
+  "pytest>=7.0",
+  "pytest-cov",
+]
+
+[project.scripts]
+foundry = "foundry.cli:main"
+
+[project.urls]
+Homepage   = "https://olaverse.co.uk"
+Repository = "https://github.com/Olaverse-Labs/olaverse-foundry"
+Issues     = "https://github.com/Olaverse-Labs/olaverse-foundry/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["foundry*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

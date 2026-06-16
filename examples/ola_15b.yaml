@@ -1,0 +1,44 @@
+# ola_15b.yaml — Ola-15B warm-start recipe
+#
+# Starts from an existing 8B model, depth-upscales to ~15B,
+# then heals by distilling from three specialist teachers.
+# The base is frozen after healing; skill packs are trained cheaply on top.
+#
+# Estimated total cost (warm-start path): ~$25,000 – $30,000
+
+seed:
+  model: meta-llama/Llama-3.1-8B   # warm start — skip the $100k novel-arch seed
+  init: pretrained
+
+grow:
+  method: depth_upscale             # SOLAR-style duplicate-and-trim
+  to_params: 15B                    # target ~15B parameters
+
+teachers:
+  - role: reasoning
+    model: org/reasoning-teacher
+    weight: 1.0
+  - role: code
+    model: org/code-teacher
+    weight: 0.8
+  - role: writing
+    model: org/writing-teacher
+    weight: 0.6
+
+fusion:
+  strategy: min_ce                  # per-token MinCE (FuseLLM best variant)
+  align: min_ed                     # MinED alignment for cross-tokenizer teachers
+  cache: topk_64                    # cache 64 logits/token — pay teachers once
+
+heal:
+  tokens: 100B
+  trainer: distill
+  alpha: 0.3                        # 30% gold CE + 70% KL distillation
+
+output:
+  freeze_base: true
+  skillpacks:
+    - ola_math
+    - ola_code
+    - ola_write
+  save_path: ./ola-15b-base
