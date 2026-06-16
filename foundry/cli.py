@@ -1,16 +1,19 @@
 """
-foundry CLI — plan / run / doctor / strategies
+foundry CLI — plan / run / doctor / strategies / embed
 
 Usage:
-    foundry plan   recipe.yaml
-    foundry run    recipe.yaml
-    foundry doctor
-    foundry strategies
+    foundry plan       <recipe.yaml>   — show staged plan and cost estimates
+    foundry run        <recipe.yaml>   — execute the recipe
+    foundry doctor                     — check installed backends and environment
+    foundry strategies                 — list available fusion strategies
+    foundry embed      <recipe.yaml>   — run an embedding distillation recipe (M5)
 """
 from __future__ import annotations
 
 import sys
 
+
+# ── Subcommand handlers ────────────────────────────────────────────────────
 
 def _plan(recipe_path: str) -> None:
     from foundry.recipes import Recipe
@@ -28,50 +31,175 @@ def _run(recipe_path: str) -> None:
 def _doctor() -> None:
     from foundry.backends import detect_backend
     info = detect_backend()
-    print("\n── foundry doctor ──────────────────────────────────────")
-    checks = {
-        "torch":      "PyTorch (required for real training)",
-        "cuda":       "CUDA GPU",
-        "mps":        "Apple MPS GPU",
-        "peft":       "peft (LoRA skill packs)",
-        "accelerate": "accelerate (distributed training)",
-        "mergekit":   "mergekit (growth backend)",
-    }
-    for key, label in checks.items():
-        status = "✓" if info[key] else "✗"
-        print(f"  {status}  {label}")
+
+    W = 54   # column width
     print()
+    print("─" * W)
+    print("  olaverse-foundry — environment check")
+    print("─" * W)
+
+    # Python
+    print(f"  {'Python':20s}  {info['python_version']}")
+
+    # Torch
+    if info["torch"]:
+        tv = info["torch_version"] or "?"
+        if info["cuda"]:
+            vram = info["gpu_vram_gb"]
+            vram_str = (
+                ", ".join(f"{v} GB" for v in vram)
+                if vram else "?"
+            )
+            device_str = (
+                f"CUDA {info['cuda_version']}, "
+                f"{info['gpu_count']}× GPU [{vram_str}]"
+            )
+        elif info["mps"]:
+            device_str = "MPS / Apple Silicon"
+        else:
+            device_str = "CPU only"
+        print(f"  {'torch':20s}  ✓  {tv}  ({device_str})")
+    else:
+        print(f"  {'torch':20s}  ✗  NOT INSTALLED")
+
+    # Optional packages
+    optional = [
+        ("accelerate",  "distributed training (CachedDistillTrainer)"),
+        ("safetensors", "fast/safe weight format (PEFT adapter save)"),
+        ("peft",        "LoRA skill packs (lego backend)"),
+        ("mergekit",    "SOLAR depth upscale (merge backend)"),
+        ("rapidfuzz",   "fast MinED alignment (align backend, optional)"),
+        ("wandb",       "experiment tracking (set log_backend='wandb')"),
+    ]
+    for key, label in optional:
+        mark = "✓" if info[key] else "✗"
+        print(f"  {key:20s}  {mark}  {label}")
+
+    print("─" * W)
+
+    # Install hints for missing required/recommended packages
+    missing = []
     if not info["torch"]:
-        print("  Install torch backend:  pip install olaverse-foundry[torch]")
+        missing.append(("torch + training",  "pip install olaverse-foundry[torch]"))
+    if not info["accelerate"]:
+        missing.append(("accelerate",        "pip install olaverse-foundry[torch]"))
+    if not info["safetensors"]:
+        missing.append(("safetensors",       "pip install olaverse-foundry[torch]"))
     if not info["peft"]:
-        print("  Install lego backend:   pip install olaverse-foundry[lego]")
+        missing.append(("peft (LoRA packs)", "pip install olaverse-foundry[lego]"))
     if not info["mergekit"]:
-        print("  Install merge backend:  pip install olaverse-foundry[merge]")
+        missing.append(("mergekit (growth)", "pip install olaverse-foundry[merge]"))
+    if not info["rapidfuzz"]:
+        missing.append(("rapidfuzz (align)", "pip install olaverse-foundry[align]"))
+    if not info["wandb"]:
+        missing.append(("wandb (logging)",   "pip install olaverse-foundry[logging]"))
+
+    if missing:
+        print()
+        print("  Optional installs:")
+        for label, cmd in missing:
+            print(f"    {label:22s}  {cmd}")
+
+    print()
+    if info["torch"] and (info["cuda"] or info["mps"]):
+        print("  Status: GPU available — real training enabled.")
+    elif info["torch"]:
+        print("  Status: CPU-only — toy backend for testing; no real training.")
+    else:
+        print("  Status: numpy-only — toy backend only.")
     print()
 
 
 def _strategies() -> None:
     from foundry.fusion.strategies import STRATEGY_REGISTRY
-    print("\n── Fusion strategies ───────────────────────────────────")
+    print()
+    print("  Fusion strategies (foundry.fusion.strategies)")
+    print("  ─" * 27)
     descriptions = {
-        "min_ce": "MinCE — per token, pick teacher with highest p(gold). (FuseLLM best)",
-        "mean":   "Mean  — weighted average over all teacher distributions.",
+        "min_ce":  "MinCE   — per token, pick teacher with highest p(gold). [FuseLLM best]",
+        "mean_ce": "MeanCE  — weighted average over all teacher distributions.",
     }
     for name in STRATEGY_REGISTRY:
-        desc = descriptions.get(name, "custom strategy")
+        desc = descriptions.get(name, "custom — user-registered strategy")
         print(f"  {name:12s}  {desc}")
     print()
+    print("  Register a custom strategy:")
+    print("    from foundry.fusion import register_strategy")
+    print("    @register_strategy('my_strategy')")
+    print("    def my_fn(dists, gold_ids, weights): ...")
+    print()
+
+
+def _embed(recipe_path: str) -> None:
+    """
+    Minimal embedding distillation runner — reads a YAML recipe with
+    seed/teacher fields and runs EmbeddingDistillTrainer.
+    (M5 convenience wrapper; advanced users call the trainer directly.)
+    """
+    try:
+        import yaml
+    except ImportError:
+        print("PyYAML required: pip install olaverse-foundry")
+        sys.exit(1)
+
+    import pathlib
+    raw = yaml.safe_load(pathlib.Path(recipe_path).read_text())
+
+    seed_id    = raw.get("seed", {}).get("model", "")
+    teacher_id = (raw.get("teachers") or [{}])[0].get("model", "")
+    loss       = raw.get("fusion", {}).get("embed_loss", "cosine")
+    pool       = raw.get("fusion", {}).get("embed_pool", "mean")
+    epochs     = raw.get("heal",   {}).get("epochs",     3)
+
+    if not seed_id or not teacher_id:
+        print("embed recipe needs: seed.model and teachers[0].model")
+        sys.exit(1)
+
+    from foundry.training import EmbeddingDistillTrainer, EmbeddingDistillConfig
+
+    print(f"[foundry embed] student : {seed_id}")
+    print(f"[foundry embed] teacher : {teacher_id}")
+    print(f"[foundry embed] loss    : {loss}  pool={pool}  epochs={epochs}")
+    print()
+
+    try:
+        from transformers import AutoModel
+        student = AutoModel.from_pretrained(seed_id)
+        teacher = AutoModel.from_pretrained(teacher_id)
+    except ImportError:
+        print("transformers required: pip install olaverse-foundry[torch]")
+        sys.exit(1)
+
+    cfg     = EmbeddingDistillConfig(loss=loss, pool=pool, epochs=epochs)
+    trainer = EmbeddingDistillTrainer(student, teacher, config=cfg)
+
+    print("[foundry embed] Ready. Pass your dataset to trainer.train(dataset).")
+    print("  (CLI runner requires a dataset source — implement a loader plugin)")
+
+
+# ── Main ───────────────────────────────────────────────────────────────────
+
+_COMMANDS = {
+    "plan":       ("plan   <recipe.yaml>", "show staged plan and cost estimates"),
+    "run":        ("run    <recipe.yaml>", "execute the recipe"),
+    "doctor":     ("doctor",              "check installed backends"),
+    "strategies": ("strategies",          "list available fusion strategies"),
+    "embed":      ("embed  <recipe.yaml>", "run an embedding distillation recipe"),
+}
 
 
 def main() -> None:
     args = sys.argv[1:]
-    if not args:
-        print("Usage: foundry <command> [args]\n")
-        print("Commands:")
-        print("  plan   <recipe.yaml>  — show staged plan and cost estimates (no compute)")
-        print("  run    <recipe.yaml>  — execute the recipe")
-        print("  doctor                — check installed backends")
-        print("  strategies            — list available fusion strategies")
+
+    if not args or args[0] in ("-h", "--help"):
+        print()
+        print("  olaverse-foundry CLI")
+        print()
+        print("  Usage: foundry <command> [args]")
+        print()
+        for usage, desc in _COMMANDS.values():
+            print(f"    foundry {usage:30s}  {desc}")
+        print()
         sys.exit(0)
 
     cmd, *rest = args
@@ -94,8 +222,15 @@ def main() -> None:
     elif cmd == "strategies":
         _strategies()
 
+    elif cmd == "embed":
+        if not rest:
+            print("Usage: foundry embed <recipe.yaml>")
+            sys.exit(1)
+        _embed(rest[0])
+
     else:
         print(f"Unknown command: {cmd!r}")
+        print("Run `foundry --help` for usage.")
         sys.exit(1)
 
 

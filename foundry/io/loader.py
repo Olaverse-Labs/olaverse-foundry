@@ -73,25 +73,29 @@ class ModelRef:
             ) from exc
 
 
-def load_model(ref: ModelRef, student_class=None) -> Any:
+def load_model(ref: ModelRef, student_class=None, model_class=None) -> Any:
     """
-    Load a causal LM model.
+    Load a model from a ModelRef.
 
     Args:
         ref:           Parsed ModelRef.
-        student_class: If strategy is from_scratch and ref is a custom arch,
-                       pass the Student implementation class here.
+        student_class: Unused (kept for API compatibility).
+        model_class:   Transformers auto-class to use. Defaults to
+                       ``AutoModelForCausalLM``. Pass ``AutoModel`` for
+                       encoder-only architectures (BERT, DeBERTa, RoBERTa).
 
     Returns:
-        A loaded model (transformers AutoModelForCausalLM or custom Student).
+        A loaded model.
     """
     try:
-        from transformers import AutoModelForCausalLM
+        from transformers import AutoModelForCausalLM, AutoModel  # noqa: F401
     except ImportError:
         raise ImportError(
             "transformers is required for model loading. "
             "Install with: pip install olaverse-foundry[torch]"
         )
+
+    cls = model_class if model_class is not None else AutoModelForCausalLM
 
     kwargs: dict = {
         "torch_dtype": ref.dtype,
@@ -102,7 +106,7 @@ def load_model(ref: ModelRef, student_class=None) -> Any:
         kwargs["revision"] = ref.revision
 
     src = str(ref.local_path) if ref.local_path else ref.repo_id
-    return AutoModelForCausalLM.from_pretrained(src, **kwargs)
+    return cls.from_pretrained(src, **kwargs)
 
 
 def load_tokenizer(ref: ModelRef) -> Any:

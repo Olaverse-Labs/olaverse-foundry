@@ -134,6 +134,11 @@ class SkillRegistry:
 
         Returns a new state dict with all requested deltas applied.
         The base is never mutated.
+
+        Key matching: searches each state-dict key right-to-left for the first
+        component that appears in ``target_modules``. This handles both bare
+        module keys (``"q_proj"``) and fully-qualified keys
+        (``"model.layers.0.self_attn.q_proj.weight"``).
         """
         import copy
         state = copy.deepcopy(self._base)
@@ -142,9 +147,13 @@ class SkillRegistry:
                 raise KeyError(f"SkillPack '{name}' not registered.")
             pack = self._packs[name]
             for key in list(state.keys()):
-                module_name = key.rsplit(".", 1)[-1] if "." in key else key
-                if module_name in pack.target_modules:
-                    state[key] = pack.apply(state[key], module_name)
+                matched = None
+                for part in reversed(key.split(".")):
+                    if part in pack.target_modules:
+                        matched = part
+                        break
+                if matched is not None:
+                    state[key] = pack.apply(state[key], matched)
         return state
 
     def list_packs(self) -> list[str]:

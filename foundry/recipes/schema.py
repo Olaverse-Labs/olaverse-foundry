@@ -1,5 +1,9 @@
 """
 Pydantic-validated recipe schema — fail fast on bad configs before any GPU spend.
+
+Two recipe types:
+  FoundryRecipe — full causal-LM factory (seed → grow → fuse → skill packs)
+  EmbedRecipe   — compact embedding distillation (single teacher, MSE/cosine loss)
 """
 from __future__ import annotations
 
@@ -85,7 +89,7 @@ class OutputConfig(BaseModel):
 
 class FoundryRecipe(BaseModel):
     """
-    Full recipe schema — the single config object for a factory run.
+    Full recipe schema — the single config object for a causal-LM factory run.
 
     Example YAML::
 
@@ -115,3 +119,82 @@ class FoundryRecipe(BaseModel):
     fusion:   FusionConfig           = Field(default_factory=FusionConfig)
     heal:     Optional[HealConfig]   = None
     output:   OutputConfig           = Field(default_factory=OutputConfig)
+
+    @model_validator(mode="after")
+    def _warn_empty_teachers(self) -> "FoundryRecipe":
+        if self.heal and not self.teachers:
+            raise ValueError(
+                "heal stage requires at least one teacher. "
+                "Add a [[teachers]] entry or remove the heal block."
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _warn_grow_without_seed_model(self) -> "FoundryRecipe":
+        if self.grow and self.seed.init == "from_scratch":
+            raise ValueError(
+                "grow (depth_upscale) requires a pretrained seed — "
+                "you cannot upscale a randomly-initialised model. "
+                "Set seed.init to 'pretrained' and provide seed.model."
+            )
+        return self
+
+
+# ── Embedding recipe ───────────────────────────────────────────────────────
+
+class EmbedFusionConfig(BaseModel):
+    """Fusion config for embedding distillation."""
+    embed_loss: Literal["mse", "cosine"] = "cosine"
+    embed_pool: Literal["mean", "cls"]   = "mean"
+    normalize:  bool                     = True
+    temperature: float                   = Field(1.0, gt=0.0)
+
+
+class EmbedRecipe(BaseModel):
+    """
+    Compact embedding-model distillation recipe.
+
+    Use this instead of FoundryRecipe when you want to train a bi-encoder /
+    sentence-embedding student (e.g. 200M DeBERTa) by matching a larger
+    teacher's pooled representations.
+
+    No skill packs, no logit caching, no token-level fusion.
+
+    Example YAML::
+
+        seed:
+          model: microsoft/deberta-v3-base
+          init: pretrained
+        teachers:
+          - {role: embedding_teacher,
+             model: BAAI/bge-large-en-v1.5,
+             weight: 1.0}
+        fusion:
+          embed_loss: cosine
+          embed_pool: mean
+        heal:
+          tokens: 1B
+          alpha: 0.0
+    """
+
+    seed:     SeedConfig
+    teachers: list[TeacherSpec] = Field(
+        ..., min_length=1,
+        description="Exactly one embedding teacher is the common case.",
+    )
+    fusion:   EmbedFusionConfig = Field(default_factory=EmbedFusionConfig)
+    heal:     Optional[HealConfig] = None
+    output:   OutputConfig      = Field(default_factory=OutputConfig)
+
+    @model_validator(mode="after")
+    def _single_teacher_recommended(self) -> "EmbedRecipe":
+        if len(self.teachers) > 1:
+            import warnings
+            warnings.warn(
+                f"EmbedRecipe has {len(self.teachers)} teachers. "
+                "Embedding distillation normally uses 1 teacher; "
+                "multiple teachers will have their embeddings averaged.",
+                UserWarning,
+                stacklevel=2,
+            )
+        return self

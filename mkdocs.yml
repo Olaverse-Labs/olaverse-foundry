@@ -1,0 +1,110 @@
+site_name: olaverse-foundry
+site_description: Build model families from a single pretrained seed — distillation, growth, fusion, and LoRA skill packs.
+site_url: https://olaverse-labs.github.io/olaverse-foundry/
+repo_url: https://github.com/Olaverse-Labs/olaverse-foundry
+repo_name: Olaverse-Labs/olaverse-foundry
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/logo.png
+  favicon: assets/logo.png
+
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - navigation.footer
+    - navigation.indexes
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+    - announce.dismiss
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      warning: octicons/alert-16
+      tip: octicons/light-bulb-16
+      note: octicons/info-16
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Olaverse-Labs
+      name: Olaverse Labs on GitHub
+    - icon: simple/huggingface
+      link: https://huggingface.co/olaverse
+      name: Olaverse on Hugging Face
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/olaverse-foundry/
+      name: olaverse-foundry on PyPI
+
+  generator: false
+
+markdown_extensions:
+  - tables
+  - attr_list
+  - md_in_html
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search:
+      lang: en
+
+nav:
+  - 🏠 Main Site: https://www.olaverse.co.uk/
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Training:
+    - training/index.md
+    - TorchDistillTrainer: training/torch.md
+    - CachedDistillTrainer: training/cached.md
+    - EmbeddingDistillTrainer: training/embed.md
+    - Config Reference: training/config.md
+  - DataPipeline: data.md
+  - Recipes (YAML): recipes.md
+  - Skill Packs: skillpacks.md
+  - Growth & Scaling: growth.md
+  - CLI: cli.md
+  - Changelog: changelog.md

@@ -1,8 +1,9 @@
 """
 Token alignment strategies — map a teacher's distribution into student vocab space.
 
-M0: IdentityAlignment (shared tokenizer fast path) and stub placeholders for
-    EMAlignment and MinEDAlignment. Real implementations land in M2.
+IdentityAlignment — shared tokenizer fast path (O(B×S×K) scatter).
+EMAlignment       — exact surface-form match; precomputed teacher→student map.
+MinEDAlignment    — EM + Levenshtein residual for cross-tokenizer alignment (M2).
 """
 from __future__ import annotations
 
@@ -43,27 +44,12 @@ class IdentityAlignment:
 class EMAlignment:
     """
     Exact-Match vocab alignment via shared surface forms.
-    Builds a teacher→student index map from token string overlap.
-
-    M2 implementation note: precompute the vocab map once, cache it,
-    use IdentityAlignment for the majority that match, EM only for residual.
+    Precomputes a teacher→student index array once; map() is pure scatter.
     """
 
     def __init__(self, teacher_vocab: dict[str, int], student_vocab: dict[str, int]) -> None:
-        self._map = self._build_map(teacher_vocab, student_vocab)
-
-    @staticmethod
-    def _build_map(
-        teacher_vocab: dict[str, int],
-        student_vocab: dict[str, int],
-    ) -> np.ndarray:
-        """Return index array: teacher_to_student[teacher_id] = student_id or -1."""
-        t2s = np.full(max(teacher_vocab.values()) + 1, -1, dtype=np.int32)
-        student_by_str = {v: k for k, v in student_vocab.items()}
-        for token_str, t_id in teacher_vocab.items():
-            s_id = student_vocab.get(token_str, -1)
-            t2s[t_id] = s_id
-        return t2s
+        from foundry.fusion.vocab_map import build_em_map
+        self._map = build_em_map(teacher_vocab, student_vocab)
 
     def map(
         self,
@@ -71,9 +57,20 @@ class EMAlignment:
         teacher_probs:   np.ndarray,
         student_vocab_size: int,
     ) -> np.ndarray:
+        """
+        Scatter teacher top-k into student vocab space.
+
+        Args:
+            teacher_indices: (batch, seq_len, top_k) int array.
+            teacher_probs:   (batch, seq_len, top_k) float array.
+            student_vocab_size: V_student.
+
+        Returns:
+            Dense (batch, seq_len, student_vocab_size) float32 array.
+        """
         B, S, K = teacher_indices.shape
         out = np.zeros((B, S, student_vocab_size), dtype=np.float32)
-        student_indices = self._map[teacher_indices]   # map via lookup
+        student_indices = self._map[teacher_indices]
         mask = student_indices >= 0
         if mask.any():
             bi = np.broadcast_to(np.arange(B)[:, None, None], (B, S, K))
@@ -84,23 +81,52 @@ class EMAlignment:
 
 class MinEDAlignment:
     """
-    Minimum-Edit-Distance alignment for tokens with no exact surface match.
-    Covers the residual after EM — the FuseLLM improvement over plain EM.
+    Two-phase cross-tokenizer alignment (M2 full implementation).
 
-    M0 status: interface defined; falls back to EMAlignment.
-    M2 will add the MinED computation using rapidfuzz or a BPE byte walk.
+    Phase 1 — EMAlignment: exact surface match + normalised-EM retry.
+               Covers ~90% of vocab pairs at zero edit cost.
+    Phase 2 — MinED residual: Levenshtein distance on normalised surface
+               forms for the remaining unmatched teacher tokens.
+
+    The full teacher→student map is built once in __init__ (offline cost).
+    Subsequent .map() calls are O(B×S×K) numpy scatter — same as EMAlignment.
+
+    Args:
+        teacher_vocab: {surface_form: teacher_token_id}
+        student_vocab: {surface_form: student_token_id}
+        max_ed:        Maximum edit distance to accept; tokens further
+                       than this remain unmatched (default 3).
+
+    Example::
+
+        teacher_vocab = {"▁hello": 0, "▁world": 1, "▁café": 2}
+        student_vocab = {"hello": 10, "world": 11, "cafe": 12}
+        align = MinEDAlignment(teacher_vocab, student_vocab)
+        print(align.coverage())
+        # {"total": 3, "em_matched": 0, "mined_matched": 3, ...}
     """
 
     def __init__(
         self,
         teacher_vocab:  dict[str, int],
         student_vocab:  dict[str, int],
-        em_first: bool = True,
+        max_ed: int = 3,
     ) -> None:
-        self._em = EMAlignment(teacher_vocab, student_vocab)
-        self._teacher_vocab = teacher_vocab
-        self._student_vocab = student_vocab
-        self._em_first = em_first
+        from foundry.fusion.vocab_map import build_em_map, build_mined_map
+        self._em_map    = build_em_map(teacher_vocab, student_vocab)
+        self._full_map  = build_mined_map(
+            teacher_vocab, student_vocab, em_map=self._em_map, max_ed=max_ed
+        )
+        self._max_ed    = max_ed
+
+    def coverage(self) -> dict:
+        """
+        Return alignment coverage statistics.
+
+        Keys: total, em_matched, mined_matched, unmatched, em_pct, total_pct.
+        """
+        from foundry.fusion.vocab_map import coverage_stats
+        return coverage_stats(self._em_map, self._full_map)
 
     def map(
         self,
@@ -108,5 +134,24 @@ class MinEDAlignment:
         teacher_probs:   np.ndarray,
         student_vocab_size: int,
     ) -> np.ndarray:
-        # M0: delegate to EM; M2 adds MinED residual layer
-        return self._em.map(teacher_indices, teacher_probs, student_vocab_size)
+        """
+        Scatter teacher top-k into student vocab space using the full
+        EM+MinED map.  Unmatched tokens (map == -1) are silently dropped.
+
+        Args:
+            teacher_indices: (batch, seq_len, top_k) int array.
+            teacher_probs:   (batch, seq_len, top_k) float array.
+            student_vocab_size: V_student.
+
+        Returns:
+            Dense (batch, seq_len, student_vocab_size) float32 array.
+        """
+        B, S, K = teacher_indices.shape
+        out = np.zeros((B, S, student_vocab_size), dtype=np.float32)
+        student_indices = self._full_map[teacher_indices]
+        mask = student_indices >= 0
+        if mask.any():
+            bi = np.broadcast_to(np.arange(B)[:, None, None], (B, S, K))
+            si = np.broadcast_to(np.arange(S)[None, :, None], (B, S, K))
+            np.add.at(out, (bi[mask], si[mask], student_indices[mask]), teacher_probs[mask])
+        return out

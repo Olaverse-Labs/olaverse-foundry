@@ -166,10 +166,62 @@ class Recipe:
         history = DistillTrainer(_ToyStudent(), teachers, cfg).train(dataset)
         return {"mode": "toy", "final_loss": history["losses"][-1]}
 
-    def _run_torch(self) -> Any:
-        """M3 torch distillation run — not yet implemented."""
-        raise NotImplementedError(
-            "Torch-backed training lands in M3. "
-            "Use recipe.run() with the toy backend for now, "
-            "or implement foundry/training/torch_distill.py."
+    def _run_torch(self) -> dict:
+        """
+        M1 torch run — loads the seed model, builds the teacher pool,
+        runs TorchDistillTrainer for the heal phase token budget.
+
+        Requires: pip install olaverse-foundry[torch]
+        M2+: grow/upscale, MinED alignment, accelerate, on-disk LogitCache.
+        """
+        import numpy as np
+        from foundry.io import load_seed
+        from foundry.teachers import TeacherRegistry
+        from foundry.training import TorchDistillTrainer, TorchTrainConfig
+
+        s = self._spec
+
+        # ── Load seed ─────────────────────────────────────────────
+        print("[foundry] Loading seed model …")
+        seed = load_seed(s.seed)
+        print(f"[foundry] Seed loaded: {seed.model_id!r} ({seed.strategy})")
+
+        # ── Build + load teachers ──────────────────────────────────
+        names   = [t.model for t in s.teachers]
+        weights = [t.weight for t in s.teachers]
+        teachers = TeacherRegistry.from_names(names, weights=weights)
+        print(f"[foundry] Loading {len(names)} teacher(s) …")
+        teachers.load_all(device="auto")
+
+        # ── Heal phase dataset: random batches matching token budget ─
+        heal_tokens = s.heal.tokens if s.heal else int(1e6)
+        alpha       = s.heal.alpha  if s.heal else 0.3
+        batch_size  = 4
+        seq_len     = 512
+        n_batches   = max(1, int(heal_tokens / (batch_size * seq_len)))
+        vocab_size  = seed.config.vocab_size if hasattr(seed.config, "vocab_size") else 32000
+        dataset = [
+            np.random.randint(0, vocab_size, (batch_size, seq_len))
+            for _ in range(n_batches)
+        ]
+
+        # ── Train ─────────────────────────────────────────────────
+        cfg = TorchTrainConfig(
+            epochs=1,
+            alpha=alpha,
+            fusion_strategy=s.fusion.strategy,
         )
+        trainer = TorchDistillTrainer(seed.model, teachers, config=cfg)
+
+        def _log(step: int, loss: float) -> None:
+            print(f"[foundry]   step {step:>6}  loss={loss:.4f}")
+
+        history = trainer.train(dataset, on_step=_log)
+        print(f"[foundry] Done. Final loss: {history['losses'][-1]:.4f}")
+
+        return {
+            "mode":       "torch",
+            "device":     history["device"],
+            "final_loss": history["losses"][-1],
+            "seed":       seed.model_id,
+        }

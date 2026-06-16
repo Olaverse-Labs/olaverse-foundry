@@ -50,45 +50,110 @@ class HFTeacher:
     Teacher backed by a real Hugging Face model.
     Lazy-loaded; model stays on CPU/GPU and is not moved between calls.
 
-    M0 status: interface defined, load() is a stub that raises ImportError
-    unless the torch backend is installed.
+    Args:
+        name:       HF model ID, local path, or ``"org/model@rev"`` string.
+        weight:     Relative contribution when fusing multiple teachers.
+        ref:        Pre-parsed ``ModelRef`` (optional; parsed from name if omitted).
+        model_type: ``"causal_lm"`` (default) for GPT/Llama-style teachers;
+                    ``"encoder"`` for BERT/DeBERTa/RoBERTa-style teachers used
+                    in embedding distillation.
     """
 
-    def __init__(self, name: str, weight: float = 1.0, ref=None) -> None:
-        self.name   = name
-        self.weight = weight
-        self._ref   = ref
-        self._model = None
-        self._tok   = None
+    def __init__(
+        self,
+        name:       str,
+        weight:     float = 1.0,
+        ref=None,
+        model_type: str   = "causal_lm",
+    ) -> None:
+        self.name       = name
+        self.weight     = weight
+        self._ref       = ref
+        self.model_type = model_type
+        self._model     = None
+        self._tok       = None
 
     @property
     def tokenizer(self):
         return self._tok
 
-    def load(self) -> None:
-        """Load model and tokenizer from the HF hub. Requires [torch] extra."""
-        from foundry.io import ModelRef, load_model, load_tokenizer
+    def load(self, device: str = "auto") -> "HFTeacher":
+        """
+        Load model and tokenizer. Moves model to the appropriate device.
+        Safe to call multiple times — no-op after the first load.
+
+        Args:
+            device: "auto", "cuda", "cpu", "mps", or a specific device string.
+
+        Returns:
+            self (for chaining: ``teacher.load().distribution(...)``)
+        """
+        if self._model is not None:
+            return self
+        from foundry.io import ModelRef, load_tokenizer
+        from foundry.io.loader import load_model
+
         ref = self._ref or ModelRef.parse(self.name)
-        self._model = load_model(ref)
+
+        if self.model_type == "encoder":
+            from transformers import AutoModel
+            model_cls = AutoModel
+        else:
+            from transformers import AutoModelForCausalLM
+            model_cls = AutoModelForCausalLM
+
+        self._model = load_model(ref, model_class=model_cls)
         self._tok   = load_tokenizer(ref)
+        self._model.eval()
+        self._device = self._resolve_device(device)
+        self._model.to(self._device)
+        return self
+
+    @staticmethod
+    def _resolve_device(device: str):
+        import torch
+        if device != "auto":
+            return torch.device(device)
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            return torch.device("mps")
+        return torch.device("cpu")
 
     def distribution(
         self,
         input_ids: np.ndarray,
-        top_k: int = 64,
+        top_k:     int = 64,
     ) -> tuple[np.ndarray, np.ndarray]:
-        """Run forward pass and return top-k (indices, probs)."""
+        """
+        Run a forward pass and return top-k logits as (indices, probs).
+
+        Args:
+            input_ids: (batch, seq_len) int32 numpy array.
+            top_k:     Number of top logits to return per position.
+
+        Returns:
+            indices: (batch, seq_len, top_k) int32
+            probs:   (batch, seq_len, top_k) float32, sum ≈ 1 over last dim
+        """
         if self._model is None:
             raise RuntimeError(
-                f"HFTeacher '{self.name}' not loaded. Call .load() first."
+                f"HFTeacher '{self.name}' not loaded. Call .load() first, or "
+                "use HFTeacher.load() as a context manager."
             )
         import torch
+        device = getattr(self, "_device", torch.device("cpu"))
         with torch.no_grad():
-            t = torch.from_numpy(input_ids)
-            logits = self._model(t).logits.float()
+            ids_t  = torch.tensor(input_ids, dtype=torch.long, device=device)
+            out    = self._model(input_ids=ids_t)
+            logits = out.logits.float()                          # (B, S, V)
             probs  = torch.softmax(logits, dim=-1)
-            top    = torch.topk(probs, k=min(top_k, probs.shape[-1]), dim=-1)
-        return top.indices.numpy().astype(np.int32), top.values.numpy()
+            k      = min(top_k, probs.shape[-1])
+            top    = torch.topk(probs, k=k, dim=-1)
+        return (
+            top.indices.cpu().numpy().astype(np.int32),
+            top.values.cpu().numpy().astype(np.float32),
+        )
 
 
 class TeacherRegistry:
@@ -114,9 +179,23 @@ class TeacherRegistry:
         names:   list[str],
         weights: list[float] | None = None,
     ) -> "TeacherRegistry":
-        """Build registry from HF model names. Requires [torch] extra."""
+        """
+        Build registry from HF model names. Models are NOT loaded here —
+        call ``.load_all()`` or load each teacher individually.
+        """
         w = weights or [1.0] * len(names)
         return cls([HFTeacher(name, weight=wt) for name, wt in zip(names, w)])
+
+    def load_all(self, device: str = "auto") -> "TeacherRegistry":
+        """
+        Load all teachers. Logs progress to stdout.
+        Skips ToyTeachers (they have no .load()).
+        """
+        for teacher in self._teachers:
+            if hasattr(teacher, "load") and callable(teacher.load):
+                print(f"  Loading teacher: {teacher.name} …")
+                teacher.load(device=device)
+        return self
 
     @classmethod
     def from_toy(

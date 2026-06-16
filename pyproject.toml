@@ -63,9 +63,19 @@ data = [
   "datasets>=2.18.0",
 ]
 
+# Fast cross-tokenizer alignment (C-extension Levenshtein, ~100× speedup)
+align = [
+  "rapidfuzz>=3.0.0",
+]
+
+# Experiment tracking
+logging = [
+  "wandb>=0.16.0",
+]
+
 # Everything
 all = [
-  "olaverse-foundry[torch,lego,merge,data]",
+  "olaverse-foundry[torch,lego,merge,data,align,logging]",
 ]
 
 # Dev / test

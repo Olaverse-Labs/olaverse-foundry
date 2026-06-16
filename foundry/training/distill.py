@@ -21,14 +21,19 @@ from foundry.teachers.cache import LogitCache
 class TrainConfig:
     """Hyperparameters for a distillation run."""
 
-    learning_rate:      float = 1e-4
-    epochs:             int   = 3
-    batch_size:         int   = 4
-    alpha:              float = 0.3       # CE weight; 1-alpha → KL
-    fusion_strategy:    str   = "min_ce"
-    top_k:              int   = 64
-    log_every:          int   = 10        # steps
-    seed:               int   = 42
+    learning_rate:   float = 1e-4
+    epochs:          int   = 3
+    batch_size:      int   = 4
+    alpha:           float = 0.3       # CE weight; 1-alpha → KL
+    fusion_strategy: str   = "min_ce"
+    top_k:           int   = 64
+    log_every:       int   = 10        # optimizer steps
+    seed:            int   = 42
+    lr_scheduler:    str   = "constant"  # "constant" | "cosine" | "linear"
+    warmup_steps:    int   = 0
+    eval_every:      int   = 0           # 0 = no eval; else every N optimizer steps
+    save_every:      int   = 0           # 0 = no auto-checkpoint; else every N steps
+    save_dir:        str   = ""          # directory for auto-saved checkpoints
 
 
 class DistillTrainer:
