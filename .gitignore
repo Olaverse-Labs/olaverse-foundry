@@ -15,3 +15,9 @@ htmlcov/
 *.safetensors
 *.pt
 *.bin
+
+# MkDocs build output
+site/
+
+# macOS
+.DS_Store
