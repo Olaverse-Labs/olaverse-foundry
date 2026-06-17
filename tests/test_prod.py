@@ -706,5 +706,56 @@ class TestDataPipelineExport(unittest.TestCase):
         self.assertIsNotNone(DataPipeline)
 
 
+# ── KL loss is per-token, not sequence-inflated ───────────────────────────
+
+class TestKLLossScale(unittest.TestCase):
+    """Regression: F.kl_div with reduction='batchmean' on a (B,S,V) tensor only
+    divides by B, leaving KL summed over the sequence — hundreds× too large and
+    swamping the CE term so `alpha` stops balancing them. The loss must stay on a
+    per-token nats scale (single digits), matching the eval CE."""
+
+    def test_combined_loss_is_per_token_scale(self):
+        from foundry.training import TorchDistillTrainer, TorchTrainConfig
+        from foundry.teachers.registry import TeacherRegistry
+
+        torch.manual_seed(0)
+        np.random.seed(0)
+        vocab, S = 100, 64
+        teachers = TeacherRegistry.from_toy(n=1, vocab_size=vocab)
+        cfg      = TorchTrainConfig(device="cpu", epochs=1, alpha=0.3, log_every=1)
+        trainer  = TorchDistillTrainer(TinyLM(vocab), teachers, config=cfg)
+
+        data   = [np.random.randint(0, vocab, (2, S)).astype(np.int32) for _ in range(3)]
+        result = trainer.train(data)
+
+        # Per-token CE ≈ log(vocab) ≈ 4.6; per-token KL is small. The buggy
+        # sequence-summed KL would push this into the hundreds for S=64.
+        for l in result["losses"]:
+            self.assertTrue(np.isfinite(l))
+            self.assertLess(l, 20.0, f"loss {l:.1f} looks seq-inflated, not per-token")
+
+    def test_eval_and_train_loss_same_order(self):
+        """With teachers present, the train loss should be within the same order
+        of magnitude as the CE-only eval loss (both per-token nats)."""
+        from foundry.training import TorchDistillTrainer, TorchTrainConfig
+        from foundry.teachers.registry import TeacherRegistry
+
+        torch.manual_seed(1)
+        np.random.seed(1)
+        vocab, S = 100, 64
+        teachers = TeacherRegistry.from_toy(n=1, vocab_size=vocab)
+        cfg      = TorchTrainConfig(device="cpu", epochs=1, alpha=0.3, eval_every=1)
+        trainer  = TorchDistillTrainer(TinyLM(vocab), teachers, config=cfg)
+
+        train = [np.random.randint(0, vocab, (2, S)).astype(np.int32) for _ in range(3)]
+        ev    = [np.random.randint(0, vocab, (2, S)).astype(np.int32) for _ in range(2)]
+        result = trainer.train(train, eval_dataset=ev)
+
+        eval_loss  = list(result["eval_losses"].values())[-1]
+        train_loss = result["losses"][-1]
+        self.assertLess(train_loss, eval_loss * 10.0,
+                        f"train {train_loss:.1f} vs eval {eval_loss:.1f}: KL likely inflated")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -267,9 +267,15 @@ class TorchDistillTrainer:
                     fused_t  = torch.tensor(fused_np, dtype=torch.float32, device=self.device)
                     fused_t  = (fused_t + 1e-9) / (fused_t + 1e-9).sum(dim=-1, keepdim=True)
 
-                    log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)
-                    kl_loss = F.kl_div(log_stu, fused_t[:, :-1],
-                                       reduction="batchmean", log_target=False)
+                    log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)   # (B, S-1, V)
+                    # Per-token KL in nats, masking pad positions, so it sits on the
+                    # same scale as the per-token CE and alpha truly balances the two.
+                    kl_per_tok = F.kl_div(
+                        log_stu, fused_t[:, :-1],
+                        reduction="none", log_target=False,
+                    ).sum(dim=-1)                                             # (B, S-1)
+                    kl_mask = (gold_t[:, :-1] != 0).float()
+                    kl_loss = (kl_per_tok * kl_mask).sum() / kl_mask.sum().clamp(min=1.0)
 
                 raw_loss = self.cfg.alpha * ce_loss + (1.0 - self.cfg.alpha) * kl_loss
                 (raw_loss / n_acc).backward()
