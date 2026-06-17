@@ -1,4 +1,5 @@
 from foundry.recipes.schema import (
+    DataConfig,
     SeedConfig,
     GrowConfig,
     TeacherSpec,
@@ -12,6 +13,7 @@ from foundry.recipes.schema import (
 from foundry.recipes.recipe import Recipe
 
 __all__ = [
+    "DataConfig",
     "SeedConfig", "GrowConfig", "TeacherSpec", "FusionConfig",
     "HealConfig", "OutputConfig", "FoundryRecipe",
     "EmbedRecipe", "EmbedFusionConfig",

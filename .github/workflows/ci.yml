@@ -60,7 +60,8 @@ jobs:
               EmbeddingDistillTrainer, EmbeddingDistillConfig,
               TeacherRegistry, HFTeacher, ToyTeacher, LogitCache,
               SkillPack, SkillRegistry,
-              GrowthPlan, plan_growth,
+              GrowthPlan, plan_growth, build_upscaled_state_dict,
+              Recipe, FoundryRecipe, EmbedRecipe, DataConfig,
               detect_backend,
           )
           print('All imports OK')

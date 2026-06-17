@@ -20,6 +20,7 @@ from foundry.fusion import FusionKernel, IdentityAlignment, EMAlignment, MinEDAl
 from foundry.fusion import STRATEGY_REGISTRY, min_ce, mean_ce
 from foundry.growth import (
     GrowthPlan, upscale_layer_map, layers_for_param_target, plan_growth,
+    build_upscaled_state_dict,
     growth_plan_to_mergekit_yaml, save_mergekit_config, run_merge,
 )
 from foundry.skillpacks import (
@@ -34,7 +35,7 @@ from foundry.training import (
     EmbeddingDistillTrainer, EmbeddingDistillConfig, ToyEmbeddingTeacher,
 )
 from foundry.io import SeedResult, load_seed
-from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig
+from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
 from foundry.backends import detect_backend
 from foundry.data import DataPipeline
 
@@ -48,6 +49,7 @@ __all__ = [
     "STRATEGY_REGISTRY", "min_ce", "mean_ce",
     # Growth
     "GrowthPlan", "upscale_layer_map", "layers_for_param_target", "plan_growth",
+    "build_upscaled_state_dict",
     "growth_plan_to_mergekit_yaml", "save_mergekit_config", "run_merge",
     # Skill packs
     "SkillPack", "SkillRegistry",
@@ -62,7 +64,7 @@ __all__ = [
     # IO / Seed
     "SeedResult", "load_seed",
     # Recipes
-    "Recipe", "FoundryRecipe", "EmbedRecipe", "EmbedFusionConfig",
+    "Recipe", "FoundryRecipe", "EmbedRecipe", "EmbedFusionConfig", "DataConfig",
     # Backends
     "detect_backend",
     # Data

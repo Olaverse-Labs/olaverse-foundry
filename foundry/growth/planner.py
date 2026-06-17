@@ -124,11 +124,15 @@ def build_upscaled_state_dict(
         else:
             other_keys[key] = val
 
-    new_state: dict[str, Any] = dict(other_keys)
+    new_state: dict[str, Any] = {}
+    for k, v in other_keys.items():
+        new_state[k] = v.clone() if hasattr(v, "clone") else copy.copy(v)
+
     for new_idx, src_idx in enumerate(layer_map):
         for sub, val in layer_keys.get(src_idx, {}).items():
             new_key = f"{layer_prefix}.{new_idx}.{sub}"
-            new_state[new_key] = copy.copy(val)
+            # Use .clone() for torch tensors to avoid aliased storage across layers
+            new_state[new_key] = val.clone() if hasattr(val, "clone") else copy.copy(val)
 
     return new_state
 

@@ -18,9 +18,29 @@ import numpy as np
 
 
 def _model_hash(state_dict: dict[str, Any]) -> str:
-    """Stable fingerprint of a model's non-bias weight shapes."""
-    sig = {k: list(v.shape) for k, v in state_dict.items() if "bias" not in k}
-    raw = json.dumps(sig, sort_keys=True).encode()
+    """
+    Stable fingerprint combining weight shapes AND sampled value statistics.
+
+    Includes the mean and std of the first 10 non-bias weight matrices so that
+    two models with the same architecture but different weights produce different
+    hashes (the shapes-only approach fails here).
+    """
+    non_bias = {k: v for k, v in state_dict.items() if "bias" not in k}
+    shape_sig = {k: list(v.shape) for k, v in non_bias.items()}
+
+    # Value stats for the first 10 weight tensors (deterministic key order)
+    stat_sig: dict[str, list] = {}
+    for i, (k, v) in enumerate(non_bias.items()):
+        if i >= 10:
+            break
+        try:
+            arr = v.float().cpu().numpy() if hasattr(v, "float") else np.array(v, dtype=np.float32)
+            flat = arr.ravel()
+            stat_sig[k] = [round(float(flat.mean()), 6), round(float(flat.std()), 6)]
+        except Exception:
+            stat_sig[k] = []
+
+    raw = json.dumps({"shapes": shape_sig, "stats": stat_sig}, sort_keys=True).encode()
     return hashlib.sha256(raw).hexdigest()[:16]
 
 

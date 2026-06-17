@@ -56,6 +56,10 @@ class EmbeddingDistillConfig:
     pool:           "mean" (recommended) | "cls".
     normalize:      L2-normalise embeddings before computing loss.
     temperature:    Divide embeddings by this before loss (> 1 sharpens).
+    project_dim:    If > 0, add a trainable linear projection (student_dim → project_dim)
+                    before computing the loss. Required when student_dim ≠ teacher_dim.
+                    Set to 0 to disable (default; raises if dims mismatch instead).
+    alpha:          Not used during embedding training (kept for recipe compatibility).
     learning_rate:  AdamW learning rate.
     epochs:         Training epochs.
     weight_decay:   AdamW weight decay.
@@ -93,6 +97,8 @@ class EmbeddingDistillConfig:
     pool:                    str   = "mean"
     normalize:               bool  = True
     temperature:             float = 1.0
+    project_dim:             int   = 0
+    alpha:                   float = 0.0
     learning_rate:           float = 2e-5
     epochs:                  int   = 3
     weight_decay:            float = 0.01
@@ -125,6 +131,12 @@ class EmbeddingDistillTrainer:
       • ``.encode(input_ids, attention_mask) → np.ndarray`` callable.
       • HF encoder model — pooled the same way as the student.
       • ``ToyEmbeddingTeacher`` for tests (no download required).
+      • A list of the above — embeddings are averaged across teachers.
+
+    Dimension mismatch:
+      If student_dim ≠ teacher_dim, set ``config.project_dim = teacher_dim`` to
+      add a trainable linear projector (student_dim → teacher_dim). Without this,
+      a clear ``ValueError`` is raised at the first forward pass.
 
     For large teachers, pre-compute embeddings once via ``build_embed_cache()``
     or pass ``pre_cache=True`` to ``train()``.
@@ -132,32 +144,46 @@ class EmbeddingDistillTrainer:
     Accepts any iterable dataset: ``list[dict]``, ``DataPipeline``, HF Dataset.
 
     Args:
-        student: nn.Module returning ``.last_hidden_state`` of shape (B, S, D).
-        teacher: Callable or nn.Module. See description above.
-        config:  ``EmbeddingDistillConfig``.
+        student:    nn.Module returning ``.last_hidden_state`` of shape (B, S, D).
+        teacher:    Single teacher or list of teachers. See description above.
+        tokenizer:  Optional tokenizer (used when dataset contains raw strings).
+        config:     ``EmbeddingDistillConfig``.
     """
 
     def __init__(
         self,
         student,
         teacher,
+        tokenizer=None,
         config:  EmbeddingDistillConfig | None = None,
     ) -> None:
         try:
             import torch
+            import torch.nn as nn
         except ImportError:
             raise ImportError(
                 "torch is required for EmbeddingDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
             )
-        self.student  = student
-        self.teacher  = teacher
-        self.cfg      = config or EmbeddingDistillConfig()
-        self.device   = self._resolve_device()
-        self._dtype   = self._resolve_dtype()
+        self.student   = student
+        # Normalise to list
+        self.teachers  = teacher if isinstance(teacher, list) else [teacher]
+        self.tokenizer = tokenizer
+        self.cfg       = config or EmbeddingDistillConfig()
+        self.device    = self._resolve_device()
+        self._dtype    = self._resolve_dtype()
         self.student.to(self.device)
-        if hasattr(self.teacher, "to"):
-            self.teacher.to(self.device)
+        for t in self.teachers:
+            if hasattr(t, "to"):
+                t.to(self.device)
+
+        # Lazy projector — created on first forward if needed
+        self._projector: Any = None
+        if self.cfg.project_dim > 0:
+            student_dim       = self.student.config.hidden_size
+            self._projector   = nn.Linear(student_dim, self.cfg.project_dim, bias=False)
+            self._projector.to(self.device)
+
         self._optimizer   = self._build_optimizer()
         self._embed_cache: dict[int, np.ndarray] = {}
 
@@ -190,8 +216,11 @@ class EmbeddingDistillTrainer:
 
     def _build_optimizer(self):
         import torch
+        params = list(self.student.parameters())
+        if self._projector is not None:
+            params += list(self._projector.parameters())
         return torch.optim.AdamW(
-            self.student.parameters(),
+            params,
             lr=self.cfg.learning_rate,
             weight_decay=self.cfg.weight_decay,
         )
@@ -210,26 +239,31 @@ class EmbeddingDistillTrainer:
     # ── Checkpoint ──────────────────────────────────────────────────────────
 
     def save_checkpoint(self, path: str | Path) -> Path:
-        """Save student weights + optimizer state to ``<path>/checkpoint.pt``."""
+        """Save student weights + projector + optimizer state to ``<path>/checkpoint.pt``."""
         import torch
         p = Path(path)
         p.mkdir(parents=True, exist_ok=True)
         ckpt = p / "checkpoint.pt"
-        torch.save({
+        payload: dict = {
             "model_state":     self.student.state_dict(),
             "optimizer_state": self._optimizer.state_dict(),
             "config":          vars(self.cfg),
-        }, ckpt)
+        }
+        if self._projector is not None:
+            payload["projector_state"] = self._projector.state_dict()
+        torch.save(payload, ckpt)
         return ckpt
 
     def resume_from_checkpoint(self, path: str | Path) -> None:
-        """Load student weights + optimizer state from a checkpoint."""
+        """Load student weights + projector + optimizer state from a checkpoint."""
         import torch
         p = Path(path)
         ckpt = p if p.suffix == ".pt" else p / "checkpoint.pt"
         data = torch.load(ckpt, map_location=self.device, weights_only=False)
         self.student.load_state_dict(data["model_state"])
         self._optimizer.load_state_dict(data["optimizer_state"])
+        if self._projector is not None and "projector_state" in data:
+            self._projector.load_state_dict(data["projector_state"])
 
     # ── Teacher embedding cache ──────────────────────────────────────────────
 
@@ -264,6 +298,33 @@ class EmbeddingDistillTrainer:
         import torch.nn.functional as F
         out = self.student(input_ids=input_ids, attention_mask=attention_mask)
         emb = _pool(out.last_hidden_state, attention_mask, self.cfg.pool)
+        if self._projector is not None:
+            emb = self._projector(emb)
+        emb = emb / self.cfg.temperature
+        if self.cfg.normalize:
+            emb = F.normalize(emb, dim=-1)
+        return emb
+
+    def _single_teacher_embed(self, teacher, input_ids, attention_mask):
+        import torch
+        import torch.nn.functional as F
+        if hasattr(teacher, "encode"):
+            np_emb = teacher.encode(
+                input_ids.cpu().numpy(),
+                attention_mask.cpu().numpy() if attention_mask is not None else None,
+            )
+            emb = torch.tensor(np_emb, dtype=torch.float32, device=self.device)
+        elif callable(teacher):
+            out = teacher(input_ids=input_ids, attention_mask=attention_mask)
+            if hasattr(out, "last_hidden_state"):
+                emb = _pool(out.last_hidden_state, attention_mask, self.cfg.pool)
+            else:
+                emb = out
+        else:
+            raise TypeError(
+                f"teacher must have .encode() or be a callable nn.Module, "
+                f"got {type(teacher)}"
+            )
         emb = emb / self.cfg.temperature
         if self.cfg.normalize:
             emb = F.normalize(emb, dim=-1)
@@ -271,32 +332,24 @@ class EmbeddingDistillTrainer:
 
     def _teacher_embed(self, input_ids, attention_mask):
         import torch
-        import torch.nn.functional as F
         with torch.no_grad():
-            if hasattr(self.teacher, "encode"):
-                np_emb = self.teacher.encode(
-                    input_ids.cpu().numpy(),
-                    attention_mask.cpu().numpy() if attention_mask is not None else None,
-                )
-                emb = torch.tensor(np_emb, dtype=torch.float32, device=self.device)
-            elif callable(self.teacher):
-                out = self.teacher(input_ids=input_ids, attention_mask=attention_mask)
-                if hasattr(out, "last_hidden_state"):
-                    emb = _pool(out.last_hidden_state, attention_mask, self.cfg.pool)
-                else:
-                    emb = out
-            else:
-                raise TypeError(
-                    f"teacher must have .encode() or be a callable nn.Module, "
-                    f"got {type(self.teacher)}"
-                )
-        emb = emb / self.cfg.temperature
-        if self.cfg.normalize:
-            emb = F.normalize(emb, dim=-1)
-        return emb
+            embs = [
+                self._single_teacher_embed(t, input_ids, attention_mask)
+                for t in self.teachers
+            ]
+            return torch.stack(embs, dim=0).mean(dim=0)
 
     def _compute_loss(self, student_emb, teacher_emb):
         import torch.nn.functional as F
+        s_dim = student_emb.shape[-1]
+        t_dim = teacher_emb.shape[-1]
+        if s_dim != t_dim:
+            raise ValueError(
+                f"Embedding dimension mismatch: student produces {s_dim}-dim vectors "
+                f"but teacher produces {t_dim}-dim vectors. "
+                f"Set config.project_dim={t_dim} to add a trainable projector, or "
+                "use student and teacher models with the same hidden size."
+            )
         if self.cfg.loss == "cosine":
             return (1.0 - F.cosine_similarity(student_emb, teacher_emb, dim=-1)).mean()
         return F.mse_loss(student_emb, teacher_emb)

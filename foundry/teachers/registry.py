@@ -128,6 +128,9 @@ class HFTeacher:
         """
         Run a forward pass and return top-k logits as (indices, probs).
 
+        Only valid for causal_lm teachers. Raises TypeError for encoders — use
+        get_embeddings() instead.
+
         Args:
             input_ids: (batch, seq_len) int32 numpy array.
             top_k:     Number of top logits to return per position.
@@ -136,10 +139,15 @@ class HFTeacher:
             indices: (batch, seq_len, top_k) int32
             probs:   (batch, seq_len, top_k) float32, sum ≈ 1 over last dim
         """
+        if self.model_type == "encoder":
+            raise TypeError(
+                f"HFTeacher '{self.name}' is an encoder (model_type='encoder'). "
+                "Encoders do not produce token logits. "
+                "Use .get_embeddings(input_ids, attention_mask) to get pooled vectors."
+            )
         if self._model is None:
             raise RuntimeError(
-                f"HFTeacher '{self.name}' not loaded. Call .load() first, or "
-                "use HFTeacher.load() as a context manager."
+                f"HFTeacher '{self.name}' not loaded. Call .load() first."
             )
         import torch
         device = getattr(self, "_device", torch.device("cpu"))
@@ -154,6 +162,52 @@ class HFTeacher:
             top.indices.cpu().numpy().astype(np.int32),
             top.values.cpu().numpy().astype(np.float32),
         )
+
+    def get_embeddings(
+        self,
+        input_ids:      np.ndarray,
+        attention_mask: Optional[np.ndarray] = None,
+        pool:           str = "mean",
+    ) -> np.ndarray:
+        """
+        Get pooled sentence embeddings from an encoder teacher.
+
+        Only valid for encoder teachers (model_type='encoder'). Raises TypeError
+        for causal_lm teachers — use distribution() instead.
+
+        Args:
+            input_ids:      (batch, seq_len) int64 numpy array.
+            attention_mask: (batch, seq_len) int64; ones if omitted.
+            pool:           "mean" (default) or "cls".
+
+        Returns:
+            embeddings: (batch, hidden_size) float32 numpy array.
+        """
+        if self.model_type != "encoder":
+            raise TypeError(
+                f"HFTeacher '{self.name}' is a causal_lm teacher. "
+                "Use .distribution() to get token-level logits."
+            )
+        if self._model is None:
+            raise RuntimeError(
+                f"HFTeacher '{self.name}' not loaded. Call .load() first."
+            )
+        import torch
+        device = getattr(self, "_device", torch.device("cpu"))
+        with torch.no_grad():
+            ids_t  = torch.tensor(input_ids, dtype=torch.long, device=device)
+            if attention_mask is not None:
+                mask_t = torch.tensor(attention_mask, dtype=torch.long, device=device)
+            else:
+                mask_t = torch.ones_like(ids_t)
+            out            = self._model(input_ids=ids_t, attention_mask=mask_t)
+            hidden         = out.last_hidden_state.float()   # (B, S, H)
+            if pool == "cls":
+                emb = hidden[:, 0, :]
+            else:  # mean pool over non-padding tokens
+                mask_f = mask_t.unsqueeze(-1).float()        # (B, S, 1)
+                emb    = (hidden * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(min=1e-9)
+        return emb.cpu().numpy().astype(np.float32)
 
 
 class TeacherRegistry:

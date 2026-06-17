@@ -11,6 +11,18 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
+class DataConfig(BaseModel):
+    """Training data source for recipe.run()."""
+
+    source:         str   = Field(..., description="HF dataset name or local path")
+    split:          str   = "train"
+    text_column:    str   = "text"
+    batch_size:     int   = Field(8, gt=0)
+    max_length:     int   = Field(512, gt=0)
+    streaming:      bool  = True
+    shuffle_buffer: int   = Field(0, ge=0)
+
+
 class SeedConfig(BaseModel):
     """Where the model starts from."""
 
@@ -114,6 +126,7 @@ class FoundryRecipe(BaseModel):
     """
 
     seed:     SeedConfig
+    data:     Optional[DataConfig]   = None
     grow:     Optional[GrowConfig]   = None
     teachers: list[TeacherSpec]      = Field(default_factory=list)
     fusion:   FusionConfig           = Field(default_factory=FusionConfig)
@@ -178,6 +191,7 @@ class EmbedRecipe(BaseModel):
     """
 
     seed:     SeedConfig
+    data:     Optional[DataConfig] = None
     teachers: list[TeacherSpec] = Field(
         ..., min_length=1,
         description="Exactly one embedding teacher is the common case.",
