@@ -38,7 +38,8 @@ def _doctor() -> None:
     print("  olaverse-foundry — environment check")
     print("─" * W)
 
-    # Python
+    # Version + Python
+    print(f"  {'foundry':20s}  {info.get('foundry_version', '?')}")
     print(f"  {'Python':20s}  {info['python_version']}")
 
     # Torch

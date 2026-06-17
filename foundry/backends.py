@@ -15,7 +15,10 @@ def detect_backend() -> dict:
         safetensors, rapidfuzz, python_version, cuda_version,
         gpu_count, gpu_vram_gb, summary.
     """
+    from foundry import __version__ as _foundry_version
+
     result: dict = {
+        "foundry_version": _foundry_version,
         "torch":          False,
         "cuda":           False,
         "mps":            False,
