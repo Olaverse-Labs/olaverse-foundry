@@ -38,6 +38,7 @@ from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
 from foundry.backends import detect_backend
 from foundry.data import DataPipeline
+from foundry.inference import load_for_inference, generate
 
 __version__ = "0.1.0"
 
@@ -69,4 +70,6 @@ __all__ = [
     "detect_backend",
     # Data
     "DataPipeline",
+    # Inference
+    "load_for_inference", "generate",
 ]

@@ -140,12 +140,19 @@ def run_merge(
     output_dir:  str | Path,
     config_path: str | Path | None = None,
     dtype:       str = "bfloat16",
+    backend:     str = "native",
 ) -> Path:
     """
-    Execute the mergekit merge to produce the upscaled model on disk.
+    Materialise the SOLAR-upscaled model on disk.
 
-    Writes the mergekit YAML (unless ``config_path`` is supplied), then calls
-    mergekit's Python API to materialise the grown model weights.
+    Two backends:
+
+    * ``backend="native"`` (default) — uses transformers + foundry's own
+      :func:`build_upscaled_state_dict`. No mergekit required. Loads the seed,
+      rebuilds it at the grown depth, copies the duplicated layers, and saves a
+      standard HF directory. Also writes the mergekit YAML for reference.
+    * ``backend="mergekit"`` — delegates to mergekit's passthrough merge
+      (streams weights from disk; lower RAM for very large seeds).
 
     The output is a standard HF model directory loadable with
     ``AutoModelForCausalLM.from_pretrained(output_dir)``.
@@ -154,14 +161,12 @@ def run_merge(
         plan:        GrowthPlan from ``plan_growth()``.
         seed_path:   Seed model path or HF model ID.
         output_dir:  Directory to write the grown model.
-        config_path: Optional path to a pre-written YAML.
+        config_path: Optional path to a pre-written mergekit YAML (mergekit backend).
         dtype:       Output weight dtype.
+        backend:     "native" (default) or "mergekit".
 
     Returns:
         Path to the output directory.
-
-    Raises:
-        ImportError: If mergekit is not installed.
 
     Example::
 
@@ -171,32 +176,99 @@ def run_merge(
 
         cfg  = ArchConfig(n_layers=32, d_model=4096, vocab_size=32000)
         plan = plan_growth(cfg, to_params=15e9)
-        run_merge(plan, "meta-llama/Llama-3.1-8B", "./grown_15b")
+        run_merge(plan, "meta-llama/Llama-3.1-8B", "./grown_15b")   # no mergekit needed
     """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Always write the mergekit YAML alongside the output for reproducibility.
+    save_mergekit_config(plan, seed_path, output_dir / "mergekit_config.yaml", dtype=dtype)
+
+    if backend == "native":
+        return _run_merge_native(plan, seed_path, output_dir, dtype=dtype)
+    if backend == "mergekit":
+        return _run_merge_mergekit(plan, seed_path, output_dir, config_path, dtype=dtype)
+    raise ValueError(f"Unknown backend {backend!r}. Use 'native' or 'mergekit'.")
+
+
+def _torch_dtype(dtype: str):
+    import torch
+    return {
+        "bfloat16": torch.bfloat16,
+        "float16":  torch.float16,
+        "float32":  torch.float32,
+    }.get(dtype, torch.bfloat16)
+
+
+def _run_merge_native(
+    plan:       GrowthPlan,
+    seed_path:  str,
+    output_dir: Path,
+    dtype:      str = "bfloat16",
+) -> Path:
+    """SOLAR passthrough merge using transformers + build_upscaled_state_dict."""
+    try:
+        import torch  # noqa: F401
+        from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
+    except ImportError:
+        raise ImportError(
+            "transformers + torch are required for the native merge backend. "
+            "Install with: pip install olaverse-foundry[torch]"
+        )
+
+    from foundry.growth.planner import build_upscaled_state_dict
+
+    td = _torch_dtype(dtype)
+    seed_model = AutoModelForCausalLM.from_pretrained(seed_path, torch_dtype=td)
+    new_state  = build_upscaled_state_dict(seed_model.state_dict(), plan.layer_map)
+
+    grown_cfg = AutoConfig.from_pretrained(seed_path)
+    grown_cfg.num_hidden_layers = plan.target_layers
+
+    grown = AutoModelForCausalLM.from_config(grown_cfg).to(td)
+    missing, unexpected = grown.load_state_dict(new_state, strict=False)
+    if unexpected:
+        raise RuntimeError(
+            f"Native merge produced {len(unexpected)} unexpected keys "
+            f"(first: {unexpected[:3]}). Layer prefix may differ for this "
+            "architecture — fall back to backend='mergekit'."
+        )
+
+    grown.save_pretrained(str(output_dir))
+    try:
+        AutoTokenizer.from_pretrained(seed_path).save_pretrained(str(output_dir))
+    except Exception:
+        pass  # not all seeds ship a tokenizer; the model dir is still valid
+    return output_dir
+
+
+def _run_merge_mergekit(
+    plan:        GrowthPlan,
+    seed_path:   str,
+    output_dir:  Path,
+    config_path: str | Path | None = None,
+    dtype:       str = "bfloat16",
+) -> Path:
+    """Delegate to mergekit's passthrough merge (streams weights from disk)."""
     try:
         import mergekit  # noqa: F401
     except ImportError:
         raise ImportError(
-            "mergekit is required for run_merge(). "
-            "Install with: pip install olaverse-foundry[merge]"
+            "mergekit is required for backend='mergekit'. "
+            "Install with: pip install olaverse-foundry[merge] "
+            "(or use the default backend='native', which needs no mergekit)."
         )
-
     try:
         import yaml
     except ImportError:
         raise ImportError("PyYAML is required. Install with: pip install olaverse-foundry")
-
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
 
     if config_path is None:
         config_path = output_dir / "mergekit_config.yaml"
         save_mergekit_config(plan, seed_path, config_path, dtype=dtype)
 
     raw_cfg = yaml.safe_load(Path(config_path).read_text())
-
-    # Strip foundry-only metadata keys before passing to mergekit
-    for k in list(raw_cfg.keys()):
+    for k in list(raw_cfg.keys()):       # strip foundry-only metadata
         if k.startswith("_foundry"):
             del raw_cfg[k]
 

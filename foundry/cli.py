@@ -132,49 +132,38 @@ def _strategies() -> None:
 
 def _embed(recipe_path: str) -> None:
     """
-    Minimal embedding distillation runner — reads a YAML recipe with
-    seed/teacher fields and runs EmbeddingDistillTrainer.
-    (M5 convenience wrapper; advanced users call the trainer directly.)
+    Run an embedding-distillation recipe end-to-end.
+
+    Loads the student/teacher encoders, builds the training data from the
+    recipe's ``data:`` block (HF dataset, streaming, raw text — handled by
+    DataPipeline), and runs EmbeddingDistillTrainer to completion.
     """
-    try:
-        import yaml
-    except ImportError:
-        print("PyYAML required: pip install olaverse-foundry")
+    from foundry.recipes import Recipe
+    from foundry.recipes.schema import EmbedRecipe
+
+    recipe = Recipe.load(recipe_path)
+    if not isinstance(recipe._spec, EmbedRecipe):
+        print(
+            "This recipe is not an embedding recipe.\n"
+            "Add 'embed_loss' / 'embed_pool' under fusion:, or use `foundry run`."
+        )
         sys.exit(1)
 
-    import pathlib
-    raw = yaml.safe_load(pathlib.Path(recipe_path).read_text())
-
-    seed_id    = raw.get("seed", {}).get("model", "")
-    teacher_id = (raw.get("teachers") or [{}])[0].get("model", "")
-    loss       = raw.get("fusion", {}).get("embed_loss", "cosine")
-    pool       = raw.get("fusion", {}).get("embed_pool", "mean")
-    epochs     = raw.get("heal",   {}).get("epochs",     3)
-
-    if not seed_id or not teacher_id:
-        print("embed recipe needs: seed.model and teachers[0].model")
+    if recipe._spec.data is None:
+        print(
+            "embed recipe needs a data: block so the CLI can load training data.\n"
+            "Example:\n"
+            "  data:\n"
+            "    source: sentence-transformers/all-nli\n"
+            "    split: train\n"
+            "    text_column: anchor\n"
+            "    batch_size: 32\n"
+            "    max_length: 128"
+        )
         sys.exit(1)
 
-    from foundry.training import EmbeddingDistillTrainer, EmbeddingDistillConfig
-
-    print(f"[foundry embed] student : {seed_id}")
-    print(f"[foundry embed] teacher : {teacher_id}")
-    print(f"[foundry embed] loss    : {loss}  pool={pool}  epochs={epochs}")
-    print()
-
-    try:
-        from transformers import AutoModel
-        student = AutoModel.from_pretrained(seed_id)
-        teacher = AutoModel.from_pretrained(teacher_id)
-    except ImportError:
-        print("transformers required: pip install olaverse-foundry[torch]")
-        sys.exit(1)
-
-    cfg     = EmbeddingDistillConfig(loss=loss, pool=pool, epochs=epochs)
-    trainer = EmbeddingDistillTrainer(student, teacher, config=cfg)
-
-    print("[foundry embed] Ready. Pass your dataset to trainer.train(dataset).")
-    print("  (CLI runner requires a dataset source — implement a loader plugin)")
+    result = recipe.run()   # builds DataPipeline from data: block, then trains
+    print(f"[foundry embed] complete: {result}")
 
 
 # ── Main ───────────────────────────────────────────────────────────────────

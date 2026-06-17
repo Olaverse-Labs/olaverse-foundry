@@ -139,7 +139,7 @@ class Recipe:
         lines.append(f"\n[Backend] {backend['summary']}")
         if not backend["torch"]:
             lines.append(
-                "    ⚠  torch not found — run() will fall back to toy backend. "
+                "    ⚠  torch not found — run() will refuse to train (no toy fallback). "
                 "Install with: pip install olaverse-foundry[torch]"
             )
 
@@ -167,8 +167,20 @@ class Recipe:
             eval_dataset: Same format as dataset, used for validation loss.
         """
         info = detect_backend()
-        if backend == "toy" or (backend == "auto" and not info["torch"]):
+        if backend == "toy":
             return self._run_toy()
+        if backend not in ("auto", "torch"):
+            raise ValueError(
+                f"Unknown backend {backend!r}. Use 'auto', 'torch', or 'toy'."
+            )
+        if not info["torch"]:
+            raise RuntimeError(
+                "Real training requires PyTorch, which is not installed.\n"
+                "  Install it with:  pip install olaverse-foundry[torch]\n"
+                "olaverse-foundry will not silently fall back to a meaningless "
+                "numpy stub. To exercise the numpy pipeline for testing only, "
+                "call run(backend='toy') explicitly."
+            )
 
         if isinstance(self._spec, EmbedRecipe):
             return self._run_embed(dataset=dataset, eval_dataset=eval_dataset)
@@ -178,25 +190,38 @@ class Recipe:
     # Internal helpers
     # ──────────────────────────────────────────────────────────────────────────
 
-    def _build_dataset(self, dataset: Optional[Any], s: Any) -> Any:
-        """Resolve dataset: explicit arg > recipe data: block > error."""
+    def _build_dataset(self, dataset: Optional[Any], s: Any, tokenizer: Any = None) -> Any:
+        """Resolve dataset: explicit arg > recipe data: block > None."""
         if dataset is not None:
             return dataset
 
         if s.data is not None:
             from foundry.data import DataPipeline
+
+            source = s.data.source
+            # Load HF datasets lazily so raw-text recipes work out of the box.
+            if isinstance(source, str):
+                try:
+                    from datasets import load_dataset
+                except ImportError:
+                    raise ImportError(
+                        "Loading a dataset by name needs the 'datasets' library. "
+                        "Install with: pip install olaverse-foundry[data]"
+                    )
+                source = load_dataset(
+                    source, split=s.data.split, streaming=s.data.streaming
+                )
+
             mode = "embed" if isinstance(s, EmbedRecipe) else "lm"
-            dp = DataPipeline(
-                source=s.data.source,
-                split=s.data.split,
+            return DataPipeline(
+                source=source,
+                tokenizer=tokenizer,
                 text_column=s.data.text_column,
                 batch_size=s.data.batch_size,
                 max_length=s.data.max_length,
-                streaming=s.data.streaming,
-                shuffle_buffer=s.data.shuffle_buffer or None,
+                shuffle_buffer=s.data.shuffle_buffer or 0,
                 mode=mode,
             )
-            return dp
 
         return None
 
@@ -253,14 +278,35 @@ class Recipe:
 
         # ── 2. Grow (depth upscale) ────────────────────────────────
         if s.grow:
+            from transformers import AutoModelForCausalLM
             from foundry.growth import plan_growth, build_upscaled_state_dict
-            print(f"[foundry] Growing to {s.grow.to_params/1e9:.1f}B via {s.grow.method} …")
-            growth_plan = plan_growth(model, target_params=s.grow.to_params)
-            new_state = build_upscaled_state_dict(
-                model.state_dict(), growth_plan.layer_map
+            from foundry.contracts import ArchConfig
+
+            hf = model.config
+            arch = ArchConfig(
+                n_layers=hf.num_hidden_layers,
+                d_model=hf.hidden_size,
+                vocab_size=hf.vocab_size,
+                d_ff=getattr(hf, "intermediate_size", 0) or 0,
             )
+            print(
+                f"[foundry] Growing {arch.n_layers}-layer seed toward "
+                f"{s.grow.to_params/1e9:.1f}B via {s.grow.method} …"
+            )
+            growth_plan = plan_growth(arch, to_params=s.grow.to_params)
+
+            # SOLAR depth upscale: build the duplicated-layer state dict, then
+            # rebuild the model at the new depth and load the grown weights.
+            new_state = build_upscaled_state_dict(model.state_dict(), growth_plan.layer_map)
+            grown_cfg = type(hf).from_dict(hf.to_dict())
+            grown_cfg.num_hidden_layers = growth_plan.target_layers
+            model = AutoModelForCausalLM.from_config(grown_cfg)
             model.load_state_dict(new_state, strict=False)
-            print(f"[foundry] Grow complete. New layer count: {growth_plan.n_layers_new}")
+            print(
+                f"[foundry] Grow complete: {arch.n_layers} → "
+                f"{growth_plan.target_layers} layers ({growth_plan.scale_factor:.2f}×). "
+                "Heal with distillation before use (expected SOLAR dip)."
+            )
 
         # ── 3. Build teacher pool ──────────────────────────────────
         names   = [t.model for t in s.teachers]
@@ -277,27 +323,25 @@ class Recipe:
             )
 
         # ── 4. Resolve training data ───────────────────────────────
-        train_data = self._build_dataset(dataset, s)
+        train_data = self._build_dataset(dataset, s, tokenizer=tokenizer)
         if train_data is None:
-            # Fallback: synthesise batches matching token budget (still useful for testing)
-            import numpy as np
-            heal_tokens = s.heal.tokens if s.heal else int(1e6)
-            batch_size  = 4
-            seq_len     = 512
-            n_batches   = max(1, int(heal_tokens / (batch_size * seq_len)))
-            vocab_size  = getattr(seed.config, "vocab_size", 32000)
-            train_data  = [
-                np.random.randint(0, vocab_size, (batch_size, seq_len))
-                for _ in range(n_batches)
-            ]
-            warnings.warn(
-                "No dataset provided and recipe has no data: block — "
-                "training on synthetic random tokens. "
-                "Pass dataset= or add a data: block to your recipe YAML.",
-                UserWarning, stacklevel=3,
+            raise RuntimeError(
+                "No training data. Healing on synthetic random tokens is disabled "
+                "because it produces a meaningless model.\n"
+                "  • Pass dataset= to run(), or\n"
+                "  • Add a data: block to your recipe YAML, e.g.\n"
+                "        data:\n"
+                "          source: HuggingFaceFW/fineweb-edu\n"
+                "          split: train\n"
+                "          streaming: true\n"
+                "          batch_size: 8\n"
+                "          max_length: 2048"
             )
 
-        eval_data = self._build_dataset(eval_dataset, s) if eval_dataset is None else eval_dataset
+        eval_data = (
+            self._build_dataset(eval_dataset, s, tokenizer=tokenizer)
+            if eval_dataset is None else eval_dataset
+        )
 
         # ── 5. Freeze base weights if requested ───────────────────
         if s.output.freeze_base and s.output.skillpacks:
@@ -318,7 +362,7 @@ class Recipe:
             if step % 100 == 0:
                 print(f"[foundry]   step {step:>6}  loss={loss:.4f}")
 
-        history = trainer.train(train_data, on_step=_log, eval_data=eval_data)
+        history = trainer.train(train_data, on_step=_log, eval_dataset=eval_data)
         print(f"[foundry] Training complete. Final loss: {history['losses'][-1]:.4f}")
 
         # ── 7. Skill packs ─────────────────────────────────────────
@@ -385,7 +429,7 @@ class Recipe:
             )
 
         # ── Resolve training data ──────────────────────────────────
-        train_data = self._build_dataset(dataset, s)
+        train_data = self._build_dataset(dataset, s, tokenizer=tokenizer)
         if train_data is None:
             raise ValueError(
                 "EmbedRecipe.run() requires training data. "
@@ -397,7 +441,10 @@ class Recipe:
                 "    text_column: query"
             )
 
-        eval_data = self._build_dataset(eval_dataset, s) if eval_dataset is None else eval_dataset
+        eval_data = (
+            self._build_dataset(eval_dataset, s, tokenizer=tokenizer)
+            if eval_dataset is None else eval_dataset
+        )
 
         # ── Build config ───────────────────────────────────────────
         teacher_dim = teacher_models[0].config.hidden_size
@@ -415,11 +462,11 @@ class Recipe:
         # ── Train ──────────────────────────────────────────────────
         trainer = EmbeddingDistillTrainer(
             student=student,
-            teachers=teacher_models,
+            teacher=teacher_models,
             tokenizer=tokenizer,
             config=cfg,
         )
-        history = trainer.train(train_data, eval_data=eval_data)
+        history = trainer.train(train_data, eval_dataset=eval_data)
         print(f"[foundry] Embedding distillation complete. Final loss: {history['losses'][-1]:.4f}")
 
         # ── Save ───────────────────────────────────────────────────
