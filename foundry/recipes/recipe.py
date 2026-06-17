@@ -75,18 +75,17 @@ class Recipe:
         lines.append("\n[1] Seed")
         if s.seed.init == "pretrained":
             lines.append(f"    Warm-start from: {s.seed.model}")
-            lines.append("    Estimated seed cost: ~$0 (loading existing model)")
         else:
             lines.append(f"    Custom arch: {s.seed.arch}")
             if s.seed.pretrain:
                 tokens = s.seed.pretrain.get("tokens", 0)
                 lines.append(f"    Pre-train tokens: {tokens:.2e}")
-                lines.append("    Estimated seed cost: $75,000 – $120,000 (novel arch, cluster)")
 
         # ── Data ──────────────────────────────────────────────────
         if s.data:
             lines.append(f"\n[1b] Data")
-            lines.append(f"    Source:  {s.data.source}  split={s.data.split}")
+            name_str = f"  name={s.data.name}" if s.data.name else ""
+            lines.append(f"    Source:  {s.data.source}{name_str}  split={s.data.split}")
             lines.append(
                 f"    batch_size={s.data.batch_size}  "
                 f"max_length={s.data.max_length}  "
@@ -98,7 +97,6 @@ class Recipe:
             lines.append(f"\n[2] Grow  ({s.grow.method})")
             lines.append(f"    Target size: {s.grow.to_params / 1e9:.1f}B parameters")
             lines.append("    Method: SOLAR-style depth upscale (duplicate-and-trim layers)")
-            lines.append("    Cost: ~$0 (no training, just weight copy)")
             lines.append("    ⚠  Model will underperform seed until healed — expected SOLAR dip.")
 
         # ── Teachers ──────────────────────────────────────────────
@@ -109,7 +107,7 @@ class Recipe:
             if isinstance(s, FoundryRecipe):
                 lines.append(f"    Alignment: {s.fusion.align}  |  Cache: {s.fusion.cache}")
             lines.append(
-                "    ⚠  Teacher inference can rival training cost — cache aggressively."
+                "    ⚠  Teacher inference dominates compute here — cache logits aggressively."
             )
 
         # ── Heal ──────────────────────────────────────────────────
@@ -122,15 +120,12 @@ class Recipe:
                     f"    Loss: {s.heal.alpha:.1f}·CE(student,gold) + "
                     f"{1-s.heal.alpha:.1f}·KL(student ‖ fused_teacher)"
                 )
-            rough_usd = int(tokens / 1e9 * 2.5)
-            lines.append(f"    Estimated cost: ~${rough_usd:,}  (32× H100, on-demand)")
 
         # ── Output ────────────────────────────────────────────────
         lines.append(f"\n[5] Output")
         lines.append(f"    Freeze base: {s.output.freeze_base}")
         if isinstance(s, FoundryRecipe) and s.output.skillpacks:
             lines.append(f"    Skill packs to train: {', '.join(s.output.skillpacks)}")
-            lines.append("    Estimated cost per pack: ~$100 – $500  (1× GPU, hours)")
         if s.output.save_path:
             lines.append(f"    Save to: {s.output.save_path}")
 
@@ -209,7 +204,8 @@ class Recipe:
                         "Install with: pip install olaverse-foundry[data]"
                     )
                 source = load_dataset(
-                    source, split=s.data.split, streaming=s.data.streaming
+                    source, name=s.data.name,
+                    split=s.data.split, streaming=s.data.streaming,
                 )
 
             mode = "embed" if isinstance(s, EmbedRecipe) else "lm"

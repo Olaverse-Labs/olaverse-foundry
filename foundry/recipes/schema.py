@@ -15,6 +15,9 @@ class DataConfig(BaseModel):
     """Training data source for recipe.run()."""
 
     source:         str   = Field(..., description="HF dataset name or local path")
+    name:           Optional[str] = Field(
+        None, description="HF dataset config name, e.g. 'wikitext-2-raw-v1'"
+    )
     split:          str   = "train"
     text_column:    str   = "text"
     batch_size:     int   = Field(8, gt=0)
