@@ -46,6 +46,9 @@ from foundry.inference import load_for_inference, generate
 from foundry.quant import (
     prepare_qat, QATConfig, export_quantized, int8_state_dict, quantize_tensor,
 )
+from foundry.eval import (
+    evaluate_encoder, compare_encoders, print_comparison, macro_f1,
+)
 
 __version__ = "0.1.0"
 
@@ -85,4 +88,6 @@ __all__ = [
     "load_for_inference", "generate",
     # Quantization-aware training
     "prepare_qat", "QATConfig", "export_quantized", "int8_state_dict", "quantize_tensor",
+    # Evaluation harness
+    "evaluate_encoder", "compare_encoders", "print_comparison", "macro_f1",
 ]

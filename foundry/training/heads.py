@@ -263,6 +263,25 @@ class _HeadTrainer:
         self.model.train()
         return total_loss / max(1, n_batches), correct / max(1, total)
 
+    def predict(self, dataset):
+        """Run the model over ``dataset`` and return ``(preds, labels)`` as flat
+        numpy arrays (token tasks drop -100 positions). Used by the eval harness
+        to compute accuracy / macro-F1."""
+        import torch
+        self.model.eval()
+        all_p, all_l = [], []
+        with torch.no_grad(), self._autocast():
+            for batch in dataset:
+                ids_t, mask_t, lab_t = self._to_batch(batch)
+                logits = self.model(input_ids=ids_t, attention_mask=mask_t).logits.float()
+                all_p.append(logits.argmax(dim=-1).cpu().numpy().reshape(-1))
+                all_l.append(lab_t.cpu().numpy().reshape(-1))
+        self.model.train()
+        preds  = np.concatenate(all_p)
+        labels = np.concatenate(all_l)
+        keep   = labels != -100
+        return preds[keep], labels[keep]
+
     # loop
     def train(self, dataset, eval_dataset=None,
               on_step: Optional[Callable[[int, float], None]] = None,
