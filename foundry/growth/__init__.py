@@ -2,6 +2,7 @@ from foundry.growth.planner import (
     upscale_layer_map,
     layers_for_param_target,
     build_upscaled_state_dict,
+    detect_layer_prefix,
     plan_growth,
     GrowthPlan,
 )
@@ -15,6 +16,7 @@ __all__ = [
     "upscale_layer_map",
     "layers_for_param_target",
     "build_upscaled_state_dict",
+    "detect_layer_prefix",
     "plan_growth",
     "GrowthPlan",
     "growth_plan_to_mergekit_yaml",

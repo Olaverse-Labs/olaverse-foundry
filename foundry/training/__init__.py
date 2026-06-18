@@ -8,6 +8,10 @@ from foundry.training.mlm import MLMTrainer, MLMConfig, WithMLMHead
 from foundry.training.encoder_distill import (
     EncoderDistillTrainer, EncoderDistillConfig,
 )
+from foundry.training.heads import (
+    SequenceClassificationTrainer, TokenClassificationTrainer,
+    HeadTrainConfig, freeze_backbone, build_encoder_with_head,
+)
 
 __all__ = [
     "DistillTrainer", "TrainConfig",
@@ -16,4 +20,6 @@ __all__ = [
     "EmbeddingDistillTrainer", "EmbeddingDistillConfig", "ToyEmbeddingTeacher",
     "MLMTrainer", "MLMConfig", "WithMLMHead",
     "EncoderDistillTrainer", "EncoderDistillConfig",
+    "SequenceClassificationTrainer", "TokenClassificationTrainer",
+    "HeadTrainConfig", "freeze_backbone", "build_encoder_with_head",
 ]

@@ -92,10 +92,41 @@ def layers_for_param_target(cfg: ArchConfig, target_params: float) -> tuple[int,
     return n_layers, new_cfg.shape_warning()
 
 
+def detect_layer_prefix(state_dict: dict[str, Any]) -> str:
+    """
+    Find the transformer block list prefix in any architecture's state dict.
+
+    Looks for the ``<prefix>.<int>.<rest>`` pattern and returns the prefix whose
+    integer index set is largest (the stack of transformer layers). Works across:
+
+        Llama / Mistral / Qwen   →  "model.layers"
+        BERT / RoBERTa (encoder) →  "encoder.layer"
+        BERT-for-X               →  "bert.encoder.layer"
+        GPT-2                    →  "transformer.h"
+
+    Raises ValueError if no numbered layer list is found.
+    """
+    import re
+    from collections import defaultdict
+
+    pat = re.compile(r"^(.*?)\.(\d+)\.")          # non-greedy → first numeric segment
+    indices: dict[str, set] = defaultdict(set)
+    for key in state_dict:
+        m = pat.match(key)
+        if m:
+            indices[m.group(1)].add(int(m.group(2)))
+    if not indices:
+        raise ValueError(
+            "Could not find a numbered transformer layer list (…<N>…) in the "
+            "state dict. Pass layer_prefix explicitly to build_upscaled_state_dict()."
+        )
+    return max(indices, key=lambda p: len(indices[p]))
+
+
 def build_upscaled_state_dict(
     src_state_dict: dict[str, Any],
     layer_map:      list[int],
-    layer_prefix:   str = "model.layers",
+    layer_prefix:   str | None = None,
 ) -> dict[str, Any]:
     """
     Materialize an upscaled state dict by copying source layers per the plan.
@@ -103,12 +134,17 @@ def build_upscaled_state_dict(
     Args:
         src_state_dict: The source model's state dict (torch tensors or numpy arrays).
         layer_map:      Output of upscale_layer_map().
-        layer_prefix:   Key prefix for layer weights (e.g. 'model.layers' for Llama).
+        layer_prefix:   Key prefix for layer weights. If None (default), it is
+                        auto-detected via detect_layer_prefix() so any architecture
+                        (Llama, BERT, GPT-2, …) works.
 
     Returns:
         New state dict with target_layers layers.
     """
     import copy
+
+    if layer_prefix is None:
+        layer_prefix = detect_layer_prefix(src_state_dict)
 
     # Separate layer keys from non-layer keys
     layer_keys: dict[int, dict[str, Any]] = {}

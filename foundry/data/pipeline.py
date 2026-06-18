@@ -81,6 +81,8 @@ class DataPipeline:
         mask_column:    str  = "attention_mask",
         pad_id:         int  = 0,
         drop_last:      bool = False,
+        label_column:   Optional[str] = None,
+        label_pad_id:   int  = -100,
     ) -> None:
         self.source         = source
         self.tokenizer      = tokenizer
@@ -93,6 +95,8 @@ class DataPipeline:
         self.mask_column    = mask_column
         self.pad_id         = pad_id
         self.drop_last      = drop_last
+        self.label_column   = label_column
+        self.label_pad_id   = label_pad_id
 
     # ── Length ──────────────────────────────────────────────────────────────
 
@@ -121,18 +125,36 @@ class DataPipeline:
 
         buf_ids:  list[np.ndarray] = []
         buf_mask: list[np.ndarray] = []
+        buf_lab:  list = []
 
         for example in src:
             ids_arr, mask_arr = self._to_ids_and_mask(example)
             buf_ids.append(ids_arr)
             buf_mask.append(mask_arr)
+            if self.label_column is not None:
+                buf_lab.append(self._extract_label(example))
 
             if len(buf_ids) == self.batch_size:
-                yield self._make_batch(buf_ids, buf_mask)
-                buf_ids, buf_mask = [], []
+                yield self._make_batch(buf_ids, buf_mask, buf_lab)
+                buf_ids, buf_mask, buf_lab = [], [], []
 
         if buf_ids and not self.drop_last:
-            yield self._make_batch(buf_ids, buf_mask)
+            yield self._make_batch(buf_ids, buf_mask, buf_lab)
+
+    def _extract_label(self, example):
+        """Return a scalar label, or a token-label sequence padded to max_length."""
+        if not isinstance(example, dict) or self.label_column not in example:
+            raise ValueError(
+                f"label_column='{self.label_column}' not found in example. "
+                f"Each row must be a dict containing that key."
+            )
+        lab = example[self.label_column]
+        if isinstance(lab, (list, tuple, np.ndarray)):     # token-level labels
+            lab = list(lab)[:self.max_length]
+            arr = np.full(self.max_length, self.label_pad_id, dtype=np.int64)
+            arr[:len(lab)] = lab
+            return arr
+        return int(lab)                                    # sequence-level label
 
     # ── Conversion helpers ───────────────────────────────────────────────────
 
@@ -210,9 +232,18 @@ class DataPipeline:
         self,
         ids_list:  list[np.ndarray],
         mask_list: list[np.ndarray],
+        lab_list:  list | None = None,
     ):
         ids  = np.stack(ids_list,  axis=0)   # (B, S)
         mask = np.stack(mask_list, axis=0)   # (B, S)
+        # When labels are requested, always emit a dict (head trainers need them).
+        if lab_list:
+            labels = (
+                np.stack(lab_list, axis=0)              # token labels → (B, S)
+                if isinstance(lab_list[0], np.ndarray)
+                else np.asarray(lab_list, dtype=np.int64)  # sequence labels → (B,)
+            )
+            return {"input_ids": ids, "attention_mask": mask, "labels": labels}
         if self.mode == "lm":
             return ids
         return {"input_ids": ids, "attention_mask": mask}

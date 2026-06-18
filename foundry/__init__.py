@@ -20,7 +20,7 @@ from foundry.fusion import FusionKernel, IdentityAlignment, EMAlignment, MinEDAl
 from foundry.fusion import STRATEGY_REGISTRY, min_ce, mean_ce
 from foundry.growth import (
     GrowthPlan, upscale_layer_map, layers_for_param_target, plan_growth,
-    build_upscaled_state_dict,
+    build_upscaled_state_dict, detect_layer_prefix,
     growth_plan_to_mergekit_yaml, save_mergekit_config, run_merge,
 )
 from foundry.skillpacks import (
@@ -35,6 +35,8 @@ from foundry.training import (
     EmbeddingDistillTrainer, EmbeddingDistillConfig, ToyEmbeddingTeacher,
     MLMTrainer, MLMConfig, WithMLMHead,
     EncoderDistillTrainer, EncoderDistillConfig,
+    SequenceClassificationTrainer, TokenClassificationTrainer,
+    HeadTrainConfig, freeze_backbone, build_encoder_with_head,
 )
 from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
@@ -52,7 +54,7 @@ __all__ = [
     "STRATEGY_REGISTRY", "min_ce", "mean_ce",
     # Growth
     "GrowthPlan", "upscale_layer_map", "layers_for_param_target", "plan_growth",
-    "build_upscaled_state_dict",
+    "build_upscaled_state_dict", "detect_layer_prefix",
     "growth_plan_to_mergekit_yaml", "save_mergekit_config", "run_merge",
     # Skill packs
     "SkillPack", "SkillRegistry",
@@ -66,6 +68,8 @@ __all__ = [
     "EmbeddingDistillTrainer", "EmbeddingDistillConfig", "ToyEmbeddingTeacher",
     "MLMTrainer", "MLMConfig", "WithMLMHead",
     "EncoderDistillTrainer", "EncoderDistillConfig",
+    "SequenceClassificationTrainer", "TokenClassificationTrainer",
+    "HeadTrainConfig", "freeze_backbone", "build_encoder_with_head",
     # IO / Seed
     "SeedResult", "load_seed",
     # Recipes
