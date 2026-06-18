@@ -11,7 +11,7 @@ def detect_backend() -> dict:
     Check which optional backends are installed and available.
 
     Returns:
-        dict with keys: torch, cuda, mps, peft, accelerate, mergekit,
+        dict with keys: torch, cuda, mps, peft, accelerate,
         safetensors, rapidfuzz, python_version, cuda_version,
         gpu_count, gpu_vram_gb, summary.
     """
@@ -24,7 +24,6 @@ def detect_backend() -> dict:
         "mps":            False,
         "peft":           False,
         "accelerate":     False,
-        "mergekit":       False,
         "safetensors":    False,
         "rapidfuzz":      False,
         "wandb":          False,
@@ -57,7 +56,6 @@ def detect_backend() -> dict:
     for pkg, key in [
         ("peft",        "peft"),
         ("accelerate",  "accelerate"),
-        ("mergekit",    "mergekit"),
         ("safetensors", "safetensors"),
         ("rapidfuzz",   "rapidfuzz"),
         ("wandb",       "wandb"),
@@ -85,7 +83,7 @@ def detect_backend() -> dict:
     else:
         parts.append("no torch — toy/numpy backend only")
 
-    for key in ("peft", "accelerate", "mergekit", "safetensors", "rapidfuzz", "wandb"):
+    for key in ("peft", "accelerate", "safetensors", "rapidfuzz", "wandb"):
         if result[key]:
             parts.append(key)
 

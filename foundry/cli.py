@@ -68,7 +68,6 @@ def _doctor() -> None:
         ("accelerate",  "distributed training (CachedDistillTrainer)"),
         ("safetensors", "fast/safe weight format (PEFT adapter save)"),
         ("peft",        "LoRA skill packs (lego backend)"),
-        ("mergekit",    "SOLAR depth upscale (merge backend)"),
         ("rapidfuzz",   "fast MinED alignment (align backend, optional)"),
         ("wandb",       "experiment tracking (set log_backend='wandb')"),
     ]
@@ -88,8 +87,6 @@ def _doctor() -> None:
         missing.append(("safetensors",       "pip install olaverse-foundry[torch]"))
     if not info["peft"]:
         missing.append(("peft (LoRA packs)", "pip install olaverse-foundry[lego]"))
-    if not info["mergekit"]:
-        missing.append(("mergekit (growth)", "pip install olaverse-foundry[merge]"))
     if not info["rapidfuzz"]:
         missing.append(("rapidfuzz (align)", "pip install olaverse-foundry[align]"))
     if not info["wandb"]:

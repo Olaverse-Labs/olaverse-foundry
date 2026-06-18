@@ -127,7 +127,7 @@ result = trainer.train(pipe, eval_dataset=eval_pipe)
 | `EmbeddingDistillTrainer` | MSE / cosine loss on pooled sentence vectors. Use for bi-encoder / reranker distillation. |
 | `TeacherRegistry` | Pool of HF teacher models with relative weights. Handles `AutoModelForCausalLM` and `AutoModel` (encoders). |
 | `LogitCache` | In-memory + on-disk cache for top-k teacher logit distributions. |
-| `GrowthPlan` / `plan_growth` | Depth up-scaling via SOLAR-style layer duplication. Generates mergekit-compatible YAML. |
+| `GrowthPlan` / `plan_growth` | Depth up-scaling via SOLAR-style layer duplication. Native merge (no external deps); also emits passthrough YAML for interop. |
 | `SkillPack` / `SkillRegistry` | Detachable LoRA adapters bound to a specific base model hash. |
 | `save_as_peft` / `load_from_peft` | PEFT-format adapter round-trip (no peft library required). |
 | `MinEDAlignment` | Cross-tokenizer vocabulary alignment via edit distance. |
@@ -212,9 +212,8 @@ output:
 
 | Extra | Installs | When to use |
 |---|---|---|
-| `[torch]` | torch, transformers, safetensors, accelerate | Real training |
+| `[torch]` | torch, transformers, safetensors, accelerate | Real training (incl. native SOLAR depth up-scaling) |
 | `[lego]` | peft | LoRA skill packs |
-| `[merge]` | mergekit | SOLAR depth up-scaling |
 | `[data]` | datasets | HuggingFace dataset streaming |
 | `[align]` | rapidfuzz | Fast cross-tokenizer alignment (100× speedup) |
 | `[logging]` | wandb | Experiment tracking |

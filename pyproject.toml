@@ -53,11 +53,6 @@ lego = [
   "peft>=0.10.0",
 ]
 
-# Depth up-scaling via mergekit passthrough backend
-merge = [
-  "mergekit",
-]
-
 # Datasets for training
 data = [
   "datasets>=2.18.0",
@@ -75,7 +70,7 @@ logging = [
 
 # Everything
 all = [
-  "olaverse-foundry[torch,lego,merge,data,align,logging]",
+  "olaverse-foundry[torch,lego,data,align,logging]",
 ]
 
 # Dev / test

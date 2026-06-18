@@ -220,5 +220,5 @@ def test_recipe_toy_run():
 
 def test_detect_backend_keys():
     info = detect_backend()
-    for key in ("torch", "cuda", "mps", "peft", "accelerate", "mergekit", "summary"):
+    for key in ("torch", "cuda", "mps", "peft", "accelerate", "summary"):
         assert key in info

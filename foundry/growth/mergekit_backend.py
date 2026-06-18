@@ -1,19 +1,20 @@
 """
-MergekitBackend — generate and execute mergekit configs from a GrowthPlan.
+Growth backend — materialise a SOLAR-upscaled model from a GrowthPlan.
 
-mergekit (https://github.com/arcee-ai/mergekit) handles the heavy lifting of
-copying and merging model weights on-disk without loading the full model into
-RAM. foundry generates the YAML; mergekit executes it.
+foundry performs the merge **natively** with transformers + safetensors (no
+external merge dependency). It also emits a passthrough YAML (the same slice
+format popularised by mergekit) purely for reference/interop — generating that
+text needs nothing installed.
 
-SOLAR passthrough in mergekit:
+SOLAR passthrough:
   The grown model is constructed by listing "slices" — contiguous ranges of
   transformer layers from the seed model, in the order they appear in the
   grown model. Each unique consecutive run in ``layer_map`` becomes one slice.
 
-M4 scope:
-  - ``growth_plan_to_mergekit_yaml()``  — pure config generation (no mergekit needed)
-  - ``save_mergekit_config()``          — write YAML to disk
-  - ``run_merge()``                     — requires mergekit; raises gracefully if missing
+Functions:
+  - ``growth_plan_to_mergekit_yaml()``  — pure config/YAML generation (no deps)
+  - ``save_mergekit_config()``          — write the passthrough YAML to disk
+  - ``run_merge()``                     — native merge → standard HF model dir
 
 Example generated YAML for layer_map [0,1,2,3, 0,1,2,3] (4→8 SOLAR double)::
 
@@ -138,21 +139,15 @@ def run_merge(
     plan:        GrowthPlan,
     seed_path:   str,
     output_dir:  str | Path,
-    config_path: str | Path | None = None,
     dtype:       str = "bfloat16",
-    backend:     str = "native",
 ) -> Path:
     """
-    Materialise the SOLAR-upscaled model on disk.
+    Materialise the SOLAR-upscaled model on disk — native, no mergekit.
 
-    Two backends:
-
-    * ``backend="native"`` (default) — uses transformers + foundry's own
-      :func:`build_upscaled_state_dict`. No mergekit required. Loads the seed,
-      rebuilds it at the grown depth, copies the duplicated layers, and saves a
-      standard HF directory. Also writes the mergekit YAML for reference.
-    * ``backend="mergekit"`` — delegates to mergekit's passthrough merge
-      (streams weights from disk; lower RAM for very large seeds).
+    Uses transformers + foundry's own :func:`build_upscaled_state_dict`: loads the
+    seed, rebuilds it at the grown depth, copies the duplicated layers (layer
+    prefix auto-detected for any architecture), and saves a standard HF directory.
+    A passthrough YAML is written alongside for reference/interop.
 
     The output is a standard HF model directory loadable with
     ``AutoModelForCausalLM.from_pretrained(output_dir)``.
@@ -161,9 +156,7 @@ def run_merge(
         plan:        GrowthPlan from ``plan_growth()``.
         seed_path:   Seed model path or HF model ID.
         output_dir:  Directory to write the grown model.
-        config_path: Optional path to a pre-written mergekit YAML (mergekit backend).
         dtype:       Output weight dtype.
-        backend:     "native" (default) or "mergekit".
 
     Returns:
         Path to the output directory.
@@ -176,19 +169,13 @@ def run_merge(
 
         cfg  = ArchConfig(n_layers=32, d_model=4096, vocab_size=32000)
         plan = plan_growth(cfg, to_params=15e9)
-        run_merge(plan, "meta-llama/Llama-3.1-8B", "./grown_15b")   # no mergekit needed
+        run_merge(plan, "meta-llama/Llama-3.1-8B", "./grown_15b")
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Always write the mergekit YAML alongside the output for reproducibility.
-    save_mergekit_config(plan, seed_path, output_dir / "mergekit_config.yaml", dtype=dtype)
-
-    if backend == "native":
-        return _run_merge_native(plan, seed_path, output_dir, dtype=dtype)
-    if backend == "mergekit":
-        return _run_merge_mergekit(plan, seed_path, output_dir, config_path, dtype=dtype)
-    raise ValueError(f"Unknown backend {backend!r}. Use 'native' or 'mergekit'.")
+    # Write the passthrough YAML alongside the output for reproducibility/interop.
+    save_mergekit_config(plan, seed_path, output_dir / "passthrough_config.yaml", dtype=dtype)
+    return _run_merge_native(plan, seed_path, output_dir, dtype=dtype)
 
 
 def _torch_dtype(dtype: str):
@@ -230,8 +217,8 @@ def _run_merge_native(
     if unexpected:
         raise RuntimeError(
             f"Native merge produced {len(unexpected)} unexpected keys "
-            f"(first: {unexpected[:3]}). Layer prefix may differ for this "
-            "architecture — fall back to backend='mergekit'."
+            f"(first: {unexpected[:3]}). The layer prefix could not be matched "
+            "for this architecture — pass layer_prefix to build_upscaled_state_dict()."
         )
 
     grown.save_pretrained(str(output_dir))
@@ -239,48 +226,4 @@ def _run_merge_native(
         AutoTokenizer.from_pretrained(seed_path).save_pretrained(str(output_dir))
     except Exception:
         pass  # not all seeds ship a tokenizer; the model dir is still valid
-    return output_dir
-
-
-def _run_merge_mergekit(
-    plan:        GrowthPlan,
-    seed_path:   str,
-    output_dir:  Path,
-    config_path: str | Path | None = None,
-    dtype:       str = "bfloat16",
-) -> Path:
-    """Delegate to mergekit's passthrough merge (streams weights from disk)."""
-    try:
-        import mergekit  # noqa: F401
-    except ImportError:
-        raise ImportError(
-            "mergekit is required for backend='mergekit'. "
-            "Install with: pip install olaverse-foundry[merge] "
-            "(or use the default backend='native', which needs no mergekit)."
-        )
-    try:
-        import yaml
-    except ImportError:
-        raise ImportError("PyYAML is required. Install with: pip install olaverse-foundry")
-
-    if config_path is None:
-        config_path = output_dir / "mergekit_config.yaml"
-        save_mergekit_config(plan, seed_path, config_path, dtype=dtype)
-
-    raw_cfg = yaml.safe_load(Path(config_path).read_text())
-    for k in list(raw_cfg.keys()):       # strip foundry-only metadata
-        if k.startswith("_foundry"):
-            del raw_cfg[k]
-
-    from mergekit.config.main import MergeConfiguration
-    from mergekit.merge import MergeOptions, run_merge as _mergekit_run
-
-    merge_cfg = MergeConfiguration.model_validate(raw_cfg)
-    options   = MergeOptions(
-        out_path=str(output_dir),
-        cuda=False,
-        copy_tokenizer=True,
-        low_cpu_memory=True,
-    )
-    _mergekit_run(merge_cfg, str(output_dir), options=options)
     return output_dir

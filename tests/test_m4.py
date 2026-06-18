@@ -295,23 +295,21 @@ class TestSaveMergekitConfig(unittest.TestCase):
 
 # ── run_merge raises without mergekit ─────────────────────────────────────
 
-class TestRunMergeRequiresMergekit(unittest.TestCase):
+class TestRunMergeNeedsTransformers(unittest.TestCase):
 
-    def test_raises_import_error_without_mergekit(self):
-        import sys
-        # Ensure mergekit is not importable in this test
-        original = sys.modules.get("mergekit")
-        sys.modules["mergekit"] = None   # type: ignore[assignment]
+    def test_raises_import_error_without_transformers(self):
+        # The native merge needs torch + transformers; raise clearly when absent.
         try:
-            cfg  = ArchConfig(n_layers=4, d_model=256, vocab_size=1000)
-            plan = plan_growth(cfg, to_params=5e7)
+            import transformers  # noqa: F401
+            self.skipTest("transformers installed — native merge would run")
+        except ImportError:
+            pass
+        import tempfile
+        cfg  = ArchConfig(n_layers=4, d_model=256, vocab_size=1000)
+        plan = plan_growth(cfg, to_params=5e7)
+        with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(ImportError):
-                run_merge(plan, "seed", "/tmp/merged")
-        finally:
-            if original is None:
-                del sys.modules["mergekit"]
-            else:
-                sys.modules["mergekit"] = original
+                run_merge(plan, "seed", tmp)
 
 
 # ── Top-level foundry exports ──────────────────────────────────────────────
