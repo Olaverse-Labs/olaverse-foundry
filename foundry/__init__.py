@@ -33,6 +33,8 @@ from foundry.training import (
     TorchDistillTrainer, TorchTrainConfig,
     CachedDistillTrainer, CachedDistillConfig,
     EmbeddingDistillTrainer, EmbeddingDistillConfig, ToyEmbeddingTeacher,
+    MLMTrainer, MLMConfig, WithMLMHead,
+    EncoderDistillTrainer, EncoderDistillConfig,
 )
 from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
@@ -62,6 +64,8 @@ __all__ = [
     "TorchDistillTrainer", "TorchTrainConfig",
     "CachedDistillTrainer", "CachedDistillConfig",
     "EmbeddingDistillTrainer", "EmbeddingDistillConfig", "ToyEmbeddingTeacher",
+    "MLMTrainer", "MLMConfig", "WithMLMHead",
+    "EncoderDistillTrainer", "EncoderDistillConfig",
     # IO / Seed
     "SeedResult", "load_seed",
     # Recipes
