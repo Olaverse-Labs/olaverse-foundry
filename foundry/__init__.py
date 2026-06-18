@@ -43,6 +43,9 @@ from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfi
 from foundry.backends import detect_backend
 from foundry.data import DataPipeline
 from foundry.inference import load_for_inference, generate
+from foundry.quant import (
+    prepare_qat, QATConfig, export_quantized, int8_state_dict, quantize_tensor,
+)
 
 __version__ = "0.1.0"
 
@@ -80,4 +83,6 @@ __all__ = [
     "DataPipeline",
     # Inference
     "load_for_inference", "generate",
+    # Quantization-aware training
+    "prepare_qat", "QATConfig", "export_quantized", "int8_state_dict", "quantize_tensor",
 ]
