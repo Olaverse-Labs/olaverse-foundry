@@ -131,6 +131,44 @@ class TestMLMTrainer(unittest.TestCase):
         self.assertTrue(all(np.isfinite(l) for l in result["losses"]))
 
 
+# ── MLM numerical stability (regression: empty-mask → NaN) ─────────────────────
+
+class TestMLMNoNaN(unittest.TestCase):
+    """Tiny batch×seq makes zero-mask batches likely; previously a zero-mask
+    batch produced a NaN CrossEntropy that poisoned the whole run."""
+
+    def _trainer(self, **kw):
+        from foundry.training import MLMTrainer, MLMConfig
+        vocab = 64
+        cfg = MLMConfig(device="cpu", epochs=1, log_every=1, **kw)
+        return MLMTrainer(TinyMaskedLM(vocab), tokenizer=FakeTokenizer(vocab), config=cfg)
+
+    def test_mask_always_marks_at_least_one(self):
+        import torch
+        trainer = self._trainer()
+        ids  = torch.randint(4, 64, (2, 6))
+        attn = torch.ones(2, 6, dtype=torch.long)
+        for _ in range(200):                       # would hit a zero-mask draw without the guard
+            _inp, labels = trainer._mask_tokens(ids, attn)
+            self.assertGreater(int((labels != -100).sum()), 0)
+
+    def test_tiny_short_batches_never_nan(self):
+        # Short sequences across many steps: the exact condition that used to NaN.
+        trainer = self._trainer(learning_rate=3e-4)
+        data    = _embed_batches(n=60, B=2, S=6)
+        result  = trainer.train(data)
+        self.assertTrue(all(np.isfinite(l) for l in result["losses"]),
+                        "MLM produced a non-finite loss on tiny batches")
+
+    def test_repeated_short_batch_stays_finite_all_lrs(self):
+        for lr in (3e-4, 1e-3, 5e-3):
+            trainer = self._trainer(learning_rate=lr)
+            fixed   = _embed_batches(n=1, B=2, S=6)[0]
+            result  = trainer.train([fixed] * 40)
+            self.assertTrue(all(np.isfinite(l) for l in result["losses"]),
+                            f"non-finite MLM loss at lr={lr}")
+
+
 # ── Token-level encoder distillation ──────────────────────────────────────────
 
 class TestEncoderDistillTrainer(unittest.TestCase):

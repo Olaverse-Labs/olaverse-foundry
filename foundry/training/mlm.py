@@ -265,6 +265,18 @@ class MLMTrainer:
         prob.masked_fill_(special, 0.0)
 
         masked = torch.bernoulli(prob).bool()
+
+        # Guarantee at least one masked position. If a batch happens to mask
+        # nothing (likely for small batch×seq), CrossEntropy with every target ==
+        # ignore_index averages over an empty set and returns NaN — which then
+        # propagates into the weights and poisons every subsequent step (NaN at
+        # any learning rate). Force-mask one random valid (non-special) position.
+        if not bool(masked.any()):
+            valid = (~special).view(-1).nonzero(as_tuple=False).flatten()
+            if valid.numel() > 0:
+                pick = valid[torch.randint(valid.numel(), (1,), device=self.device)]
+                masked.view(-1)[pick] = True
+
         labels[~masked] = -100   # only compute loss on masked positions
 
         inputs = ids_t.clone()
@@ -303,7 +315,12 @@ class MLMTrainer:
                 loss   = F.cross_entropy(
                     logits.view(-1, V), labels.view(-1), ignore_index=-100
                 )
-                (loss / n_acc).backward()
+            # Belt-and-suspenders: never backprop a non-finite loss (it would
+            # write NaN into the weights and poison the whole run).
+            if not torch.isfinite(loss):
+                self._optimizer.zero_grad()
+                return float(loss.item())
+            (loss / n_acc).backward()
         except RuntimeError as exc:
             if "out of memory" in str(exc).lower():
                 if torch.cuda.is_available():
