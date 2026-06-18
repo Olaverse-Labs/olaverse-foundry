@@ -16,6 +16,9 @@ htmlcov/
 *.pt
 *.bin
 
+# Vast.ai notebooks (kept local, not published)
+olaverse_foundry_*.ipynb
+
 # MkDocs build output
 site/
 
