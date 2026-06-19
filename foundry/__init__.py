@@ -35,6 +35,7 @@ from foundry.training import (
     EmbeddingDistillTrainer, EmbeddingDistillConfig, ToyEmbeddingTeacher,
     MLMTrainer, MLMConfig, WithMLMHead,
     EncoderDistillTrainer, EncoderDistillConfig,
+    DistilMLMTrainer, DistilMLMConfig,
     SequenceClassificationTrainer, TokenClassificationTrainer,
     HeadTrainConfig, freeze_backbone, build_encoder_with_head,
 )
@@ -74,6 +75,7 @@ __all__ = [
     "EmbeddingDistillTrainer", "EmbeddingDistillConfig", "ToyEmbeddingTeacher",
     "MLMTrainer", "MLMConfig", "WithMLMHead",
     "EncoderDistillTrainer", "EncoderDistillConfig",
+    "DistilMLMTrainer", "DistilMLMConfig",
     "SequenceClassificationTrainer", "TokenClassificationTrainer",
     "HeadTrainConfig", "freeze_backbone", "build_encoder_with_head",
     # IO / Seed
