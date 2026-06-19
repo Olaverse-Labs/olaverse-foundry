@@ -1,6 +1,6 @@
 # Quick Start
 
-Two end-to-end examples — one for causal LM distillation, one for embedding distillation. Both run on CPU for prototyping and scale to GPU with a single config change.
+End-to-end examples for the main workflows — causal-LM distillation, embedding distillation, and a full **encoder build** (base → heads → quantize → evaluate). They run on CPU for prototyping and scale to GPU with a single config change.
 
 ---
 
@@ -209,9 +209,116 @@ print(result["cache_stats"])   # hits / misses per teacher
 
 ---
 
+## Example 5 — Build an encoder: base → heads → quantize → evaluate
+
+A full encoder workflow. Distil a small base from a strong teacher (with QAT so it's int8-ready), attach a classification head, then compare it head-to-head with other models.
+
+### 5a. Build the base (QAT distillation)
+
+```python
+import torch
+from transformers import AutoModel, AutoTokenizer, BertConfig, BertModel
+from foundry import (
+    DataPipeline, EncoderDistillTrainer, EncoderDistillConfig,
+    prepare_qat, QATConfig, export_quantized,
+)
+
+# Teacher (any HF encoder) + its tokenizer; the student shares the vocab
+teacher = AutoModel.from_pretrained("intfloat/multilingual-e5-base")
+tok     = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-base")
+
+student = BertModel(BertConfig(
+    vocab_size=tok.vocab_size, hidden_size=256, num_hidden_layers=4,
+    num_attention_heads=4, intermediate_size=1024, max_position_embeddings=512,
+))
+student = prepare_qat(student, QATConfig(weight_bits=8))   # int8-aware
+
+pipe = DataPipeline(text_rows, tokenizer=tok, text_column="text",
+                    batch_size=16, max_length=128, mode="embed")
+
+EncoderDistillTrainer(student, teacher, EncoderDistillConfig(
+    device="cuda", torch_dtype="bfloat16", epochs=1, loss="mse",
+    lr_scheduler="cosine", warmup_steps=20,
+)).train(pipe)
+
+report = export_quantized(student, "./my-base", weight_bits=8)
+tok.save_pretrained("./my-base")
+print(report)            # {'orig_mb', 'quant_mb', 'compression', ...}
+```
+
+!!! tip "Pretrain from scratch instead"
+    To build the base without a teacher, swap 5a for [`MLMTrainer`](training/mlm.md): train an `AutoModelForMaskedLM` of your own architecture on raw text, then save its encoder body as `./my-base`.
+
+### 5b. Add a classification head
+
+```python
+from foundry import (DataPipeline, SequenceClassificationTrainer,
+                     HeadTrainConfig, build_encoder_with_head)
+
+train = DataPipeline(train_rows, batch_size=16, max_length=128,
+                     mode="embed", label_column="label")   # rows: {"input_ids"/"text", "label"}
+ev    = DataPipeline(eval_rows,  batch_size=16, max_length=128,
+                     mode="embed", label_column="label")
+
+model = build_encoder_with_head("./my-base", num_labels=NUM, task="sequence")
+res = SequenceClassificationTrainer(model, HeadTrainConfig(
+    num_labels=NUM, device="cuda", torch_dtype="bfloat16",
+    epochs=3, lr_scheduler="cosine", warmup_steps=20, eval_every=50,
+    # freeze_backbone=True,   # train only the head to share one frozen encoder
+)).train(train, eval_dataset=ev)
+print("accuracy:", res["eval_metrics"])
+```
+
+For NER, use `task="token"` + `TokenClassificationTrainer` with `label_column="ner"` (token labels are padded with `-100`).
+
+### 5c. Evaluate head-to-head
+
+```python
+from foundry import compare_encoders, print_comparison
+
+# raw rows: {"text": ..., "label": ...}
+results = compare_encoders(
+    {"My Base": "./my-base",
+     "mBERT":   "google-bert/bert-base-multilingual-cased",
+     "e5-base": "intfloat/multilingual-e5-base"},
+    train_rows, eval_rows, num_labels=NUM, task="sequence",
+)
+print_comparison(results)
+```
+
+```
+  model      accuracy   macro_f1   params(M)
+  ───────────────────────────────────────────
+  My Base        0.82       0.79        11.0
+  mBERT          0.80       0.77       178.0
+  e5-base        0.83       0.80       278.0
+```
+
+### 5d. Use it
+
+The base and the head model are standard HuggingFace directories — load them with `transformers`:
+
+```python
+from transformers import AutoModel, AutoModelForSequenceClassification, AutoTokenizer
+
+# the base encoder → token / pooled representations
+base = AutoModel.from_pretrained("./my-base")
+
+# the fine-tuned classifier from 5b (after model.save_pretrained("./my-clf"))
+clf  = AutoModelForSequenceClassification.from_pretrained("./my-clf")
+tok  = AutoTokenizer.from_pretrained("./my-base")
+```
+
+For **causal-LM** generation use [`load_for_inference` / `generate`](inference.md) instead — those are decoder helpers.
+
+---
+
 ## Next steps
 
-- [Training reference →](training/index.md) — all config fields explained
-- [DataPipeline →](data.md) — streaming, shuffle, custom columns
-- [Skill Packs →](skillpacks.md) — attach LoRA adapters to your distilled student
+- [Training reference →](training/index.md) — every trainer and config field
+- [MLM pretraining →](training/mlm.md) · [Encoder distillation →](training/encoder-distill.md) · [Task heads →](training/heads.md)
+- [Quantization (QAT) →](quantization.md) — int8/int4-aware training and export
+- [Evaluation →](evaluation.md) — head-to-head model comparison tables
+- [DataPipeline →](data.md) — streaming, shuffle, labels, custom columns
+- [Skill Packs →](skillpacks.md) — attach LoRA adapters to a base
 - [YAML Recipes →](recipes.md) — define the full pipeline in a single file
