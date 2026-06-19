@@ -79,6 +79,11 @@ dev = [
   "pytest-cov",
 ]
 
+# Documentation site (mkdocs build / serve / gh-deploy)
+docs = [
+  "mkdocs-material>=9.5",
+]
+
 [project.scripts]
 foundry = "foundry.cli:main"
 

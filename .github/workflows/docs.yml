@@ -27,7 +27,7 @@ jobs:
           cache: pip
 
       - name: Install MkDocs + Material
-        run: pip install mkdocs-material
+        run: pip install -e ".[docs]"
 
       - name: Validate build (strict)
         run: mkdocs build --strict --site-dir /tmp/site

@@ -223,7 +223,22 @@ output:
 | `[data]` | datasets | HuggingFace dataset streaming |
 | `[align]` | rapidfuzz | Fast cross-tokenizer alignment (100× speedup) |
 | `[logging]` | wandb | Experiment tracking |
-| `[all]` | everything | Full setup |
+| `[docs]` | mkdocs-material | Build the documentation site locally |
+| `[all]` | everything (runtime extras) | Full setup |
+
+---
+
+## Documentation
+
+Full docs: [olaverse-labs.github.io/olaverse-foundry](https://olaverse-labs.github.io/olaverse-foundry/) (auto-deployed from `main`).
+
+Build or preview the site locally:
+
+```bash
+pip install -e ".[docs]"
+mkdocs serve            # live preview at http://127.0.0.1:8000
+mkdocs build --strict   # validate (no broken links / nav)
+```
 
 ---
 
