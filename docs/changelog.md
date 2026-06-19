@@ -2,6 +2,43 @@
 
 ---
 
+## Unreleased
+
+### Encoder base models
+
+- **`MLMTrainer`** — masked-language-modeling pretraining of an encoder backbone from scratch (teacherless). `WithMLMHead` adds an MLM head to a custom encoder.
+- **`EncoderDistillTrainer`** — token-level hidden-state distillation from a teacher encoder into a smaller architecture, with automatic student→teacher projection.
+
+### Task heads
+
+- **`SequenceClassificationTrainer`** / **`TokenClassificationTrainer`** — fine-tune classification / NER heads on any base encoder (model-agnostic; any model returning `.logits`).
+- `freeze_backbone()` + `HeadTrainConfig(freeze_backbone=True)` — train only the head so many heads share one frozen encoder.
+- `build_encoder_with_head(base, num_labels, task)` — attach a fresh head in one line.
+- `DataPipeline(label_column=...)` — emit `{input_ids, attention_mask, labels}` (scalar or `-100`-padded token labels).
+
+### Quantization-aware training
+
+- `prepare_qat(model, QATConfig)` — int8/int4 fake-quant (straight-through) on any model's linears; train with any trainer.
+- `export_quantized()` (footprint report), `int8_state_dict()` (packed int8 + scales), `quantize_tensor()`.
+
+### Evaluation & inference
+
+- `compare_encoders()` / `evaluate_encoder()` / `print_comparison()` / `macro_f1()` — head-to-head accuracy / macro-F1 table (each model tokenised with its own tokenizer).
+- `load_for_inference()` (optional 4-bit/8-bit, optional skill-pack merge) and `generate()`.
+
+### Growth
+
+- **Native merge** — `run_merge()` materialises the grown model with transformers + safetensors; no external merge tool required.
+- `detect_layer_prefix()` — auto-detects the transformer block prefix, so growth works on Llama, BERT, GPT-2, and more.
+
+### Fixes
+
+- `MLMTrainer` no longer produces a NaN loss when a batch masks zero tokens.
+- `recipe.run()` raises instead of silently falling back to a numpy stub when torch is absent, and refuses to train on synthetic random tokens.
+- Removed the `mergekit` dependency (the native merge backend replaces it).
+
+---
+
 ## v0.1.0 — 2026-06-16
 
 First public release of `olaverse-foundry`.
@@ -72,7 +109,7 @@ First public release of `olaverse-foundry`.
 
 ### Backends
 
-- `detect_backend()` — torch, cuda, mps, accelerate, peft, datasets, wandb, rapidfuzz, mergekit
+- `detect_backend()` — torch, cuda, mps, accelerate, peft, safetensors, wandb, rapidfuzz
 
 ### Optional extras
 
@@ -80,7 +117,6 @@ First public release of `olaverse-foundry`.
 |---|---|
 | `[torch]` | torch, transformers, safetensors, accelerate |
 | `[lego]` | peft |
-| `[merge]` | mergekit |
 | `[data]` | datasets |
 | `[align]` | rapidfuzz |
 | `[logging]` | wandb |

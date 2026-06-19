@@ -13,7 +13,9 @@ pip install "olaverse-foundry[data]"   # for HuggingFace datasets support
 | Mode | Output per batch | Use with |
 |---|---|---|
 | `"lm"` | `(B, S)` int array | `TorchDistillTrainer`, `CachedDistillTrainer` |
-| `"embed"` | `{"input_ids": (B, S), "attention_mask": (B, S)}` | `EmbeddingDistillTrainer` |
+| `"embed"` | `{"input_ids": (B, S), "attention_mask": (B, S)}` | `EmbeddingDistillTrainer`, `MLMTrainer`, `EncoderDistillTrainer` |
+
+When `label_column` is set, every batch is a dict that also includes `"labels"` — ready for the [head trainers](training/heads.md).
 
 ---
 
@@ -32,6 +34,8 @@ DataPipeline(
     mask_column    = "attention_mask",
     pad_id         = 0,
     drop_last      = False,
+    label_column   = None,
+    label_pad_id   = -100,
 )
 ```
 
@@ -48,6 +52,8 @@ DataPipeline(
 | `mask_column` | `str` | `"attention_mask"` | Column name for attention mask |
 | `pad_id` | `int` | `0` | Padding token ID |
 | `drop_last` | `bool` | `False` | Drop the last incomplete batch |
+| `label_column` | `str` | `None` | If set, emit `"labels"` in every batch (head training) |
+| `label_pad_id` | `int` | `-100` | Pad value for token-label sequences (ignored in the loss) |
 
 ---
 
@@ -86,7 +92,7 @@ pipe = DataPipeline(
 ### List of strings
 
 ```python
-texts = ["Bawo ni, se dara ni?", "Kedu ka ị mere?", "How far, you dey?"]
+texts = ["the quick brown fox", "jumps over the lazy dog", "hello world"]
 
 pipe = DataPipeline(source=texts, tokenizer=tok, batch_size=4)
 ```
@@ -141,6 +147,26 @@ for batch in pipe:
     # batch = {"input_ids": np.array (B, S), "attention_mask": np.array (B, S)}
     out = student(**{k: torch.tensor(v) for k, v in batch.items()})
 ```
+
+---
+
+## Labels for head training
+
+Set `label_column` to carry labels through to the [head trainers](training/heads.md). Each batch then includes `"labels"`:
+
+```python
+# Sequence labels (scalar per row) → labels shape (B,)
+rows = [{"input_ids": [1, 2, 3], "label": 0}, ...]
+pipe = DataPipeline(rows, mode="embed", label_column="label")
+# batch = {"input_ids": (B,S), "attention_mask": (B,S), "labels": (B,)}
+
+# Token labels (one per token) → padded to max_length with label_pad_id (-100)
+rows = [{"input_ids": [1, 2, 3], "ner": [5, 6, 7]}, ...]
+pipe = DataPipeline(rows, mode="embed", label_column="ner")
+# batch["labels"] shape (B, S), padding positions = -100 (ignored in the loss)
+```
+
+List-valued labels are treated as token labels and padded; scalar labels are treated as sequence labels.
 
 ---
 

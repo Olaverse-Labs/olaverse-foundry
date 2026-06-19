@@ -1,129 +1,83 @@
 # CLI
 
-`olaverse-foundry` ships a `foundry` CLI for environment checks, recipe previews, and runs — no Python boilerplate required.
+`olaverse-foundry` ships a `foundry` CLI for environment checks, recipe previews, and runs. If the `foundry` script isn't on your `PATH` (e.g. inside some notebook kernels), use `python -m foundry` — it's equivalent.
 
 ```bash
 pip install olaverse-foundry
-foundry --help
+foundry --help          # or: python -m foundry --help
 ```
+
+Commands: `doctor`, `plan`, `run`, `embed`, `strategies`.
 
 ---
 
 ## `foundry doctor`
 
-Check your environment and print a summary of available backends.
+Check your environment and print a summary of available backends — foundry version, Python, torch/CUDA/MPS, and which optional packages are installed (accelerate, safetensors, peft, rapidfuzz, wandb). It also tells you whether real (GPU) training is enabled.
 
 ```bash
 foundry doctor
 ```
 
-```
-olaverse-foundry v0.1.0 — environment check
-────────────────────────────────────────────
-torch          ✓  2.3.1+cu121
-transformers   ✓  4.41.2
-accelerate     ✓  0.30.1
-safetensors    ✓  0.4.3
-peft           ✓  0.11.0
-datasets       ✓  2.19.1
-wandb          ✗  not installed  (pip install wandb)
-rapidfuzz      ✗  not installed  (pip install rapidfuzz)
-mergekit       ✗  not installed  (pip install mergekit)
-
-Device:        cuda  (NVIDIA A100 80GB, 4 GPUs)
-Mixed prec:    bfloat16 supported
-```
+Use it first on any new machine to confirm torch + CUDA are present.
 
 ---
 
 ## `foundry plan`
 
-Preview a recipe without executing it. No GPU or model downloads required.
+Preview a recipe without executing it — no GPU or model downloads. Prints the staged plan (seed, data, grow, teachers, heal, output) and any shape warnings.
 
 ```bash
 foundry plan recipe.yaml
 ```
 
-```
-[foundry] Plan: meta-llama/Llama-3.1-8B → 15B (48 layers)
-[foundry]   Teachers: meta-llama/Llama-3.1-70B (w=1.0)
-[foundry]   Fusion: min_ce, cache: topk_64, align: min_ed
-[foundry]   Heal: 100B tokens, alpha=0.3
-[foundry]   Output: freeze base + ola_math, ola_code
-[foundry] Estimated GPU hours: ~84h on 8×H100
-```
-
-```bash
-# Validate schema only (exit 0 = valid, exit 1 = invalid)
-foundry plan recipe.yaml --validate-only
-```
+See [Recipes](recipes.md) for the YAML schema.
 
 ---
 
 ## `foundry run`
 
-Execute a causal LM factory recipe end-to-end.
+Execute a causal-LM recipe end-to-end (seed → optional grow → distil/heal → save). Requires `[torch]` and a GPU; with no torch it raises rather than silently degrading.
 
 ```bash
 foundry run recipe.yaml
-foundry run recipe.yaml --output /custom/output/path
 ```
 
-Progress is logged to stdout. Pass `--log-backend wandb` to also log to W&B.
+The recipe must provide training data (a `data:` block) — see [Recipes](recipes.md).
 
 ---
 
 ## `foundry embed`
 
-Execute an embedding distillation recipe.
+Execute an embedding-distillation recipe (student encoder ← teacher embeddings). The recipe needs a `data:` block so the CLI can build the training pipeline.
 
 ```bash
 foundry embed embed_recipe.yaml
-foundry embed embed_recipe.yaml --output /checkpoints/embed-run
 ```
 
 ---
 
 ## `foundry strategies`
 
-List all available fusion strategies with descriptions.
+List the available fusion strategies with descriptions.
 
 ```bash
 foundry strategies
 ```
 
 ```
-Available fusion strategies
-────────────────────────────────────────────
-min_ce     Per-position: pick the teacher with lowest CE against ground truth.
-           Best when teachers specialise in different domains.
-
-mean_ce    Weighted average of all teacher distributions.
-           Best for ensemble distillation when teachers are similar.
+min_ce    MinCE  — per token, pick the teacher with highest p(gold).
+mean_ce   MeanCE — weighted average over all teacher distributions.
 ```
 
 ---
 
-## `foundry backends`
+## Help
 
-Same as `foundry doctor` — alias for quick environment inspection.
-
-```bash
-foundry backends
-```
-
----
-
-## Global flags
-
-| Flag | Description |
-|---|---|
-| `--help` | Show help |
-| `--version` | Print foundry version |
-
-All subcommands accept `--help`:
+Every command supports `--help`:
 
 ```bash
+foundry --help
 foundry run --help
-foundry embed --help
+python -m foundry doctor
 ```

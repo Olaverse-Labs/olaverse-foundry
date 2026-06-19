@@ -1,6 +1,20 @@
 # Training
 
-`olaverse-foundry` ships three production-ready trainers. All three share the same config base and feature set — choose based on your use case.
+`olaverse-foundry` ships a family of production-ready trainers that share the same config base and feature set. They fall into two groups: **distillation** trainers (learn from teachers) and **encoder / head** trainers (pretrain a base and add task heads). Choose based on what you're building.
+
+| Trainer | Builds | Page |
+|---|---|---|
+| `TorchDistillTrainer` | causal LM (CE+KL, teachers live) | [reference](torch.md) |
+| `CachedDistillTrainer` | causal LM (cached logits, multi-GPU) | [reference](cached.md) |
+| `EmbeddingDistillTrainer` | embedding model (pooled MSE/cosine) | [reference](embed.md) |
+| `MLMTrainer` | encoder base from scratch (masked LM) | [reference](mlm.md) |
+| `EncoderDistillTrainer` | encoder base (token-level distillation) | [reference](encoder-distill.md) |
+| `SequenceClassificationTrainer` | classification / langID / moderation head | [reference](heads.md) |
+| `TokenClassificationTrainer` | NER / token-classification head | [reference](heads.md) |
+
+---
+
+## Distillation trainers
 
 <div class="ov-compare-grid">
 

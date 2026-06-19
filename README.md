@@ -1,11 +1,11 @@
 # olaverse-foundry
 
-**Build model families from a single pretrained seed.**
+**A general-purpose toolkit for building transformer models — decoder or encoder.**
 
-`olaverse-foundry` is the training and model-factory layer of the Olaverse ecosystem. Where `olaverse` gives you ready-to-use NLP models, `foundry` lets you build new ones — distilling, growing, fusing, and adapting them for production.
+`olaverse-foundry` is the model-building layer of the Olaverse ecosystem. Where `olaverse` gives you ready-to-use models, `foundry` lets you build new ones — pretraining, distilling, growing, adding heads, quantizing, and evaluating them. It is model-agnostic: any HuggingFace model or your own `nn.Module` works.
 
 ```
-seed → grow → distil / fuse → freeze → skill packs
+pretrain / distil → grow → add heads → quantize → evaluate → serve
 ```
 
 ---
@@ -125,13 +125,19 @@ result = trainer.train(pipe, eval_dataset=eval_pipe)
 | `TorchDistillTrainer` | Single-GPU distillation: CE + KL loss against one or more teachers. |
 | `CachedDistillTrainer` | Like `TorchDistillTrainer` but caches teacher logits on disk after the first pass. Subsequent epochs are free. Supports `accelerate` for multi-GPU. |
 | `EmbeddingDistillTrainer` | MSE / cosine loss on pooled sentence vectors. Use for bi-encoder / reranker distillation. |
+| `MLMTrainer` | Masked-language-modeling pretraining of an encoder backbone from scratch (no teacher). `WithMLMHead` adds an MLM head to a custom encoder. |
+| `EncoderDistillTrainer` | Token-level hidden-state distillation from a teacher encoder into a smaller arch (auto projection). |
+| `SequenceClassificationTrainer` / `TokenClassificationTrainer` | Fine-tune classification / NER heads on any base. Full fine-tune or `freeze_backbone`. `build_encoder_with_head` attaches a head in one line. |
+| `prepare_qat` / `export_quantized` | Quantization-aware training (int8/int4 fake-quant) + int8 weight export and footprint report. |
+| `compare_encoders` / `evaluate_encoder` | Head-to-head accuracy / macro-F1 table across models. |
+| `load_for_inference` / `generate` | Load a built model (optional 4-bit/8-bit, optional skill pack) and generate. |
 | `TeacherRegistry` | Pool of HF teacher models with relative weights. Handles `AutoModelForCausalLM` and `AutoModel` (encoders). |
 | `LogitCache` | In-memory + on-disk cache for top-k teacher logit distributions. |
-| `GrowthPlan` / `plan_growth` | Depth up-scaling via SOLAR-style layer duplication. Native merge (no external deps); also emits passthrough YAML for interop. |
+| `GrowthPlan` / `plan_growth` / `detect_layer_prefix` | Depth up-scaling via SOLAR-style layer duplication. Native merge (no external deps); layer prefix auto-detected for any arch. |
 | `SkillPack` / `SkillRegistry` | Detachable LoRA adapters bound to a specific base model hash. |
 | `save_as_peft` / `load_from_peft` | PEFT-format adapter round-trip (no peft library required). |
 | `MinEDAlignment` | Cross-tokenizer vocabulary alignment via edit distance. |
-| `DataPipeline` | Unified dataset adapter — HF datasets, streaming, raw text, numpy. |
+| `DataPipeline` | Unified dataset adapter — HF datasets, streaming, raw text, numpy. Labels for head training via `label_column`. |
 | `FoundryRecipe` / `EmbedRecipe` | Pydantic-validated YAML recipes — fail fast before GPU spend. |
 
 ---
@@ -223,7 +229,7 @@ output:
 
 ## Links
 
-- **Main SDK** — [olaverse](https://pypi.org/project/olaverse/) — ready-to-use African NLP models
+- **Main SDK** — [olaverse](https://pypi.org/project/olaverse/) — ready-to-use models
 - **Homepage** — [olaverse.co.uk](https://olaverse.co.uk)
 - **GitHub** — [Olaverse-Labs/olaverse-foundry](https://github.com/Olaverse-Labs/olaverse-foundry)
 - **Issues** — [GitHub Issues](https://github.com/Olaverse-Labs/olaverse-foundry/issues)

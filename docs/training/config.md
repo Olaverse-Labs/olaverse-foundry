@@ -122,3 +122,16 @@ For streaming datasets (`len()` raises `TypeError`), `total_steps` defaults to `
 |---|---|
 | `"min_ce"` | Per-position, pick the teacher distribution with the lowest CE against ground truth. Encourages the student to learn from the most confident teacher. |
 | `"mean_ce"` | Weighted average of all teacher distributions (by `teacher.weight`). Smooths over teacher disagreements. |
+
+---
+
+## Other configs
+
+The encoder, head, and quantization trainers have their own configs (same shared production fields — mixed precision, grad accumulation, LR schedule, eval, checkpointing). Each is documented on its page:
+
+| Config | Trainer | Page |
+|---|---|---|
+| `MLMConfig` | `MLMTrainer` | [MLM pretraining](mlm.md) |
+| `EncoderDistillConfig` | `EncoderDistillTrainer` | [Encoder distillation](encoder-distill.md) |
+| `HeadTrainConfig` | `SequenceClassificationTrainer` / `TokenClassificationTrainer` | [Task heads](heads.md) |
+| `QATConfig` | `prepare_qat` | [Quantization](../quantization.md) |
