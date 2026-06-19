@@ -86,6 +86,19 @@ class EncoderDistillTrainer:
         if hasattr(teacher, "eval"):
             teacher.eval()
         self._projector: Any = None
+        # Eagerly add the student→teacher projection when both hidden sizes are
+        # known (the usual case for HF encoders) so the optimizer's param groups
+        # are final before the LR scheduler is built. Otherwise fall back to lazy
+        # creation on the first forward and defer the scheduler build.
+        sd = getattr(getattr(student, "config", None), "hidden_size", None)
+        td = getattr(getattr(teacher, "config", None), "hidden_size", None)
+        if sd is not None and td is not None:
+            if sd != td:
+                import torch.nn as nn
+                self._projector = nn.Linear(int(sd), int(td), bias=False).to(self.device)
+            self._defer_scheduler = False
+        else:
+            self._defer_scheduler = True
         self._optimizer = self._build_optimizer()
 
     # ── Setup ───────────────────────────────────────────────────────────────
@@ -117,8 +130,11 @@ class EncoderDistillTrainer:
 
     def _build_optimizer(self):
         import torch
+        params = list(self.student.parameters())
+        if self._projector is not None:
+            params += list(self._projector.parameters())
         return torch.optim.AdamW(
-            self.student.parameters(),
+            params,
             lr=self.cfg.learning_rate,
             weight_decay=self.cfg.weight_decay,
         )
@@ -289,12 +305,17 @@ class EncoderDistillTrainer:
             except TypeError:
                 total_steps = 0
 
-        # The student→teacher projection can be added to the optimizer lazily on
-        # the first forward (when hidden sizes differ). Build the LR scheduler
-        # *after* that first step so it sees the final set of param groups —
-        # otherwise torch's scheduler.step() mismatches param_groups vs lr values.
+        # If the projector was created eagerly (hidden sizes known), the param
+        # groups are final → build the scheduler now (correct warmup). Otherwise
+        # the projector may be added on the first forward, so defer the scheduler
+        # build to the first optimizer step so it sees the final param groups.
         scheduler = None
         sched_ready = False
+        if not self._defer_scheduler:
+            scheduler = build_scheduler(
+                self._optimizer, self.cfg.lr_scheduler, self.cfg.warmup_steps, total_steps
+            )
+            sched_ready = True
         logger = _FoundryLogger(
             backend=self.cfg.log_backend, project=self.cfg.project,
             run_name=self.cfg.run_name, config=vars(self.cfg),
