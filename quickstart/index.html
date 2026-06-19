@@ -408,6 +408,63 @@
   
   
     <li class="md-tabs__item">
+      <a href="../quantization/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quantization (QAT)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../inference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../evaluation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../cli/" class="md-tabs__link">
         
   
@@ -649,6 +706,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-5-build-an-encoder-base-heads-quantize-evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 5 — Build an encoder: base → heads → quantize → evaluate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example 5 — Build an encoder: base → heads → quantize → evaluate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5a-build-the-base-qat-distillation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5a. Build the base (QAT distillation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5b-add-a-classification-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5b. Add a classification head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5c-evaluate-head-to-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5c. Evaluate head-to-head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5d-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5d. Use it
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -678,6 +796,12 @@
       
         
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -813,6 +937,90 @@
     
   
     EmbeddingDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MLMTrainer (pretraining)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/encoder-distill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EncoderDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/heads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Task Heads
   
 
     
@@ -976,6 +1184,87 @@
   
   
     <li class="md-nav__item">
+      <a href="../quantization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantization (QAT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../cli/" class="md-nav__link">
         
   
@@ -1094,6 +1383,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-5-build-an-encoder-base-heads-quantize-evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 5 — Build an encoder: base → heads → quantize → evaluate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example 5 — Build an encoder: base → heads → quantize → evaluate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5a-build-the-base-qat-distillation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5a. Build the base (QAT distillation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5b-add-a-classification-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5b. Add a classification head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5c-evaluate-head-to-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5c. Evaluate head-to-head
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5d-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5d. Use it
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1125,7 +1475,7 @@
 
 
 <h1 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h1>
-<p>Two end-to-end examples — one for causal LM distillation, one for embedding distillation. Both run on CPU for prototyping and scale to GPU with a single config change.</p>
+<p>End-to-end examples for the main workflows — causal-LM distillation, embedding distillation, and a full <strong>encoder build</strong> (base → heads → quantize → evaluate). They run on CPU for prototyping and scale to GPU with a single config change.</p>
 <hr />
 <h2 id="example-1-causal-lm-distillation">Example 1 — Causal LM distillation<a class="headerlink" href="#example-1-causal-lm-distillation" title="Permanent link">&para;</a></h2>
 <p>Distill a large instruction-tuned model into a smaller one using <code>TorchDistillTrainer</code>.</p>
@@ -1313,11 +1663,99 @@
 </span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;cache_stats&quot;</span><span class="p">])</span>   <span class="c1"># hits / misses per teacher</span>
 </span></code></pre></div>
 <hr />
+<h2 id="example-5-build-an-encoder-base-heads-quantize-evaluate">Example 5 — Build an encoder: base → heads → quantize → evaluate<a class="headerlink" href="#example-5-build-an-encoder-base-heads-quantize-evaluate" title="Permanent link">&para;</a></h2>
+<p>A full encoder workflow. Distil a small base from a strong teacher (with QAT so it's int8-ready), attach a classification head, then compare it head-to-head with other models.</p>
+<h3 id="5a-build-the-base-qat-distillation">5a. Build the base (QAT distillation)<a class="headerlink" href="#5a-build-the-base-qat-distillation" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">BertConfig</span><span class="p">,</span> <span class="n">BertModel</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">DataPipeline</span><span class="p">,</span> <span class="n">EncoderDistillTrainer</span><span class="p">,</span> <span class="n">EncoderDistillConfig</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">prepare_qat</span><span class="p">,</span> <span class="n">QATConfig</span><span class="p">,</span> <span class="n">export_quantized</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Teacher (any HF encoder) + its tokenizer; the student shares the vocab</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">teacher</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;intfloat/multilingual-e5-base&quot;</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">tok</span>     <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;intfloat/multilingual-e5-base&quot;</span><span class="p">)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">student</span> <span class="o">=</span> <span class="n">BertModel</span><span class="p">(</span><span class="n">BertConfig</span><span class="p">(</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">vocab_size</span><span class="o">=</span><span class="n">tok</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">num_hidden_layers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">num_attention_heads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">intermediate_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">max_position_embeddings</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="p">))</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="n">student</span> <span class="o">=</span> <span class="n">prepare_qat</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">QATConfig</span><span class="p">(</span><span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>   <span class="c1"># int8-aware</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">text_rows</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">text_column</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">)</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="n">EncoderDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">EncoderDistillConfig</span><span class="p">(</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>    <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="p">))</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="n">report</span> <span class="o">=</span> <span class="n">export_quantized</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="n">tok</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">)</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>            <span class="c1"># {&#39;orig_mb&#39;, &#39;quant_mb&#39;, &#39;compression&#39;, ...}</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Pretrain from scratch instead</p>
+<p>To build the base without a teacher, swap 5a for <a href="../training/mlm/"><code>MLMTrainer</code></a>: train an <code>AutoModelForMaskedLM</code> of your own architecture on raw text, then save its encoder body as <code>./my-base</code>.</p>
+</div>
+<h3 id="5b-add-a-classification-head">5b. Add a classification head<a class="headerlink" href="#5b-add-a-classification-head" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DataPipeline</span><span class="p">,</span> <span class="n">SequenceClassificationTrainer</span><span class="p">,</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                     <span class="n">HeadTrainConfig</span><span class="p">,</span> <span class="n">build_encoder_with_head</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">train</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">train_rows</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>   <span class="c1"># rows: {&quot;input_ids&quot;/&quot;text&quot;, &quot;label&quot;}</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">ev</span>    <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">eval_rows</span><span class="p">,</span>  <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">model</span> <span class="o">=</span> <span class="n">build_encoder_with_head</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">)</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="n">res</span> <span class="o">=</span> <span class="n">SequenceClassificationTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">HeadTrainConfig</span><span class="p">(</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">eval_every</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="c1"># freeze_backbone=True,   # train only the head to share one frozen encoder</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">))</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">eval_dataset</span><span class="o">=</span><span class="n">ev</span><span class="p">)</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy:&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;eval_metrics&quot;</span><span class="p">])</span>
+</span></code></pre></div>
+<p>For NER, use <code>task="token"</code> + <code>TokenClassificationTrainer</code> with <code>label_column="ner"</code> (token labels are padded with <code>-100</code>).</p>
+<h3 id="5c-evaluate-head-to-head">5c. Evaluate head-to-head<a class="headerlink" href="#5c-evaluate-head-to-head" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">compare_encoders</span><span class="p">,</span> <span class="n">print_comparison</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># raw rows: {&quot;text&quot;: ..., &quot;label&quot;: ...}</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">results</span> <span class="o">=</span> <span class="n">compare_encoders</span><span class="p">(</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="p">{</span><span class="s2">&quot;My Base&quot;</span><span class="p">:</span> <span class="s2">&quot;./my-base&quot;</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>     <span class="s2">&quot;mBERT&quot;</span><span class="p">:</span>   <span class="s2">&quot;google-bert/bert-base-multilingual-cased&quot;</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>     <span class="s2">&quot;e5-base&quot;</span><span class="p">:</span> <span class="s2">&quot;intfloat/multilingual-e5-base&quot;</span><span class="p">},</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">)</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">print_comparison</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>  model      accuracy   macro_f1   params(M)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  ───────────────────────────────────────────
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  My Base        0.82       0.79        11.0
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  mBERT          0.80       0.77       178.0
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  e5-base        0.83       0.80       278.0
+</span></code></pre></div>
+<h3 id="5d-use-it">5d. Use it<a class="headerlink" href="#5d-use-it" title="Permanent link">&para;</a></h3>
+<p>The base and the head model are standard HuggingFace directories — load them with <code>transformers</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># the base encoder → token / pooled representations</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">base</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># the fine-tuned classifier from 5b (after model.save_pretrained(&quot;./my-clf&quot;))</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">clf</span>  <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-clf&quot;</span><span class="p">)</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">tok</span>  <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>For <strong>causal-LM</strong> generation use <a href="../inference/"><code>load_for_inference</code> / <code>generate</code></a> instead — those are decoder helpers.</p>
+<hr />
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../training/">Training reference →</a> — all config fields explained</li>
-<li><a href="../data/">DataPipeline →</a> — streaming, shuffle, custom columns</li>
-<li><a href="../skillpacks/">Skill Packs →</a> — attach LoRA adapters to your distilled student</li>
+<li><a href="../training/">Training reference →</a> — every trainer and config field</li>
+<li><a href="../training/mlm/">MLM pretraining →</a> · <a href="../training/encoder-distill/">Encoder distillation →</a> · <a href="../training/heads/">Task heads →</a></li>
+<li><a href="../quantization/">Quantization (QAT) →</a> — int8/int4-aware training and export</li>
+<li><a href="../evaluation/">Evaluation →</a> — head-to-head model comparison tables</li>
+<li><a href="../data/">DataPipeline →</a> — streaming, shuffle, labels, custom columns</li>
+<li><a href="../skillpacks/">Skill Packs →</a> — attach LoRA adapters to a base</li>
 <li><a href="../recipes/">YAML Recipes →</a> — define the full pipeline in a single file</li>
 </ul>
 

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/embed/">
+        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/heads/">
       
       
-        <link rel="prev" href="../cached/">
+        <link rel="prev" href="../encoder-distill/">
       
       
-        <link rel="next" href="../mlm/">
+        <link rel="next" href="../config/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>EmbeddingDistillTrainer - olaverse-foundry</title>
+        <title>Task Heads - olaverse-foundry</title>
       
     
     
@@ -100,7 +100,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#embeddingdistilltrainer" class="md-skip">
+        <a href="#task-heads-classification-ner" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              EmbeddingDistillTrainer
+              Task Heads
             
           </span>
         </div>
@@ -768,37 +768,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    EmbeddingDistillTrainer
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../embed/" class="md-nav__link">
         
   
   
@@ -814,142 +787,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#when-to-use" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When to use
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Usage
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#constructor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constructor
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#train" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        train()
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#loss-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loss functions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Loss functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cosine-losscosine" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cosine (loss="cosine")
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mse-lossmse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MSE (loss="mse")
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pooling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pooling
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pre-caching-teacher-embeddings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pre-caching teacher embeddings
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#embeddingdistillconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EmbeddingDistillConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1015,10 +852,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../heads/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Task Heads
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1034,6 +898,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#attach-a-head-in-one-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attach a head in one line
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequence-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequence classification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#token-classification-ner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Token classification (NER)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frozen-backbone-shared-encoder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frozen backbone (shared encoder)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-headtrainconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config — HeadTrainConfig
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results-prediction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results &amp; prediction
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1344,10 +1294,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#when-to-use" class="md-nav__link">
+  <a href="#attach-a-head-in-one-line" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to use
+        Attach a head in one line
       
     </span>
   </a>
@@ -1355,10 +1305,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#sequence-classification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Sequence classification
       
     </span>
   </a>
@@ -1366,10 +1316,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#constructor" class="md-nav__link">
+  <a href="#token-classification-ner" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Constructor
+        Token classification (NER)
       
     </span>
   </a>
@@ -1377,10 +1327,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#train" class="md-nav__link">
+  <a href="#frozen-backbone-shared-encoder" class="md-nav__link">
     <span class="md-ellipsis">
       
-        train()
+        Frozen backbone (shared encoder)
       
     </span>
   </a>
@@ -1388,49 +1338,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#loss-functions" class="md-nav__link">
+  <a href="#config-headtrainconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loss functions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Loss functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cosine-losscosine" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cosine (loss="cosine")
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mse-lossmse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MSE (loss="mse")
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pooling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pooling
+        Config — HeadTrainConfig
       
     </span>
   </a>
@@ -1438,21 +1349,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pre-caching-teacher-embeddings" class="md-nav__link">
+  <a href="#results-prediction" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pre-caching teacher embeddings
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#embeddingdistillconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EmbeddingDistillConfig
+        Results &amp; prediction
       
     </span>
   </a>
@@ -1479,319 +1379,142 @@
   
 
 
-<h1 id="embeddingdistilltrainer">EmbeddingDistillTrainer<a class="headerlink" href="#embeddingdistilltrainer" title="Permanent link">&para;</a></h1>
-<p>Distillation trainer for sentence embedding models. Uses MSE or cosine loss on mean-pooled (or CLS-pooled) vectors — the right tool for compressing bi-encoders and rerankers.</p>
+<h1 id="task-heads-classification-ner">Task heads — classification &amp; NER<a class="headerlink" href="#task-heads-classification-ner" title="Permanent link">&para;</a></h1>
+<p>Once you have a base encoder (from <a href="../mlm/"><code>MLMTrainer</code></a>, <a href="../encoder-distill/"><code>EncoderDistillTrainer</code></a>, or any HF encoder), you fine-tune <strong>task heads</strong> on top of it:</p>
+<ul>
+<li><strong><code>SequenceClassificationTrainer</code></strong> — classification, language ID, moderation, sentiment, reranking-as-classification. Labels are <code>(B,)</code> class ids (or <code>(B, num_labels)</code> floats when <code>multi_label=True</code>).</li>
+<li><strong><code>TokenClassificationTrainer</code></strong> — NER and other token-level tasks. Labels are <code>(B, S)</code> tag ids with <code>-100</code> at pad / sub-word positions (ignored in the loss).</li>
+</ul>
+<p>Both are <strong>model-agnostic</strong>: they accept any model whose <code>forward(input_ids=..., attention_mask=...)</code> returns <code>.logits</code> — any HF <code>AutoModelForSequenceClassification</code> / <code>AutoModelForTokenClassification</code>, or your own head module.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
 </span></code></pre></div>
 <hr />
-<h2 id="when-to-use">When to use<a class="headerlink" href="#when-to-use" title="Permanent link">&para;</a></h2>
-<p>Use <code>EmbeddingDistillTrainer</code> when:</p>
-<ul>
-<li>Your <strong>teacher and student are encoders</strong> (<code>AutoModel</code>, not <code>AutoModelForCausalLM</code>)</li>
-<li>You want to compress a <strong>large bi-encoder</strong> (e.g. <code>bge-large-en</code>) into a smaller one</li>
-<li>You are training a <strong>reranker or semantic similarity</strong> model</li>
-</ul>
-<hr />
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingDistillTrainer</span><span class="p">,</span> <span class="n">EmbeddingDistillConfig</span><span class="p">,</span> <span class="n">DataPipeline</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">student</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;microsoft/deberta-v3-base&quot;</span><span class="p">)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">teacher</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;BAAI/bge-large-en-v1.5&quot;</span><span class="p">)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">tok</span>     <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;microsoft/deberta-v3-base&quot;</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">source</span>      <span class="o">=</span> <span class="n">my_dataset</span><span class="p">,</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">tokenizer</span>   <span class="o">=</span> <span class="n">tok</span><span class="p">,</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">batch_size</span>  <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">max_length</span>  <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">mode</span>        <span class="o">=</span> <span class="s2">&quot;embed&quot;</span><span class="p">,</span>    <span class="c1"># yields {&quot;input_ids&quot;: ..., &quot;attention_mask&quot;: ...}</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">)</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">EmbeddingDistillTrainer</span><span class="p">(</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">student</span> <span class="o">=</span> <span class="n">student</span><span class="p">,</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">teacher</span> <span class="o">=</span> <span class="n">teacher</span><span class="p">,</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">config</span>  <span class="o">=</span> <span class="n">EmbeddingDistillConfig</span><span class="p">(</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>        <span class="n">loss</span>         <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>        <span class="n">pool</span>         <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>        <span class="n">normalize</span>    <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>        <span class="n">temperature</span>  <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>        <span class="n">epochs</span>       <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>        <span class="n">lr_scheduler</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>        <span class="n">warmup_steps</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>        <span class="n">torch_dtype</span>  <span class="o">=</span> <span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span>
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="n">eval_every</span>   <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>        <span class="n">save_every</span>   <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="n">save_dir</span>     <span class="o">=</span> <span class="s2">&quot;/checkpoints/embed&quot;</span><span class="p">,</span>
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>        <span class="n">log_backend</span>  <span class="o">=</span> <span class="s2">&quot;wandb&quot;</span><span class="p">,</span>
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>    <span class="p">),</span>
-</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="p">)</span>
-</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>
-</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">eval_dataset</span><span class="o">=</span><span class="n">eval_pipe</span><span class="p">)</span>
-</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;eval_losses&quot;</span><span class="p">])</span>
+<h2 id="attach-a-head-in-one-line">Attach a head in one line<a class="headerlink" href="#attach-a-head-in-one-line" title="Permanent link">&para;</a></h2>
+<p><code>build_encoder_with_head</code> bolts a fresh head onto a saved base (or model id):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_encoder_with_head</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">clf</span> <span class="o">=</span> <span class="n">build_encoder_with_head</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">ner</span> <span class="o">=</span> <span class="n">build_encoder_with_head</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
-<h2 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">EmbeddingDistillTrainer</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">student</span><span class="p">,</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">teacher</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># defaults to EmbeddingDistillConfig()</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
+<h2 id="sequence-classification">Sequence classification<a class="headerlink" href="#sequence-classification" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DataPipeline</span><span class="p">,</span> <span class="n">SequenceClassificationTrainer</span><span class="p">,</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                     <span class="n">HeadTrainConfig</span><span class="p">,</span> <span class="n">build_encoder_with_head</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># rows carry a label; DataPipeline emits {&quot;input_ids&quot;,&quot;attention_mask&quot;,&quot;labels&quot;}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">train</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">train_rows</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">ev</span>    <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">eval_rows</span><span class="p">,</span>  <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">model</span>   <span class="o">=</span> <span class="n">build_encoder_with_head</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">SequenceClassificationTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">HeadTrainConfig</span><span class="p">(</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">eval_every</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">))</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">eval_dataset</span><span class="o">=</span><span class="n">ev</span><span class="p">)</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;eval_metrics&quot;</span><span class="p">])</span>    <span class="c1"># {step: accuracy}</span>
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>student</code></td>
-<td><code>nn.Module</code></td>
-<td>Encoder whose <code>forward()</code> returns <code>.last_hidden_state</code></td>
-</tr>
-<tr>
-<td><code>teacher</code></td>
-<td><code>nn.Module</code></td>
-<td>Larger encoder — same interface</td>
-</tr>
-<tr>
-<td><code>config</code></td>
-<td><code>EmbeddingDistillConfig</code></td>
-<td>Training configuration</td>
-</tr>
-</tbody>
-</table>
 <hr />
-<h2 id="train"><code>train()</code><a class="headerlink" href="#train" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">eval_dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">on_step</span>      <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">shuffle</span>      <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">pre_cache</span>    <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">total_steps</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">)</span>
+<h2 id="token-classification-ner">Token classification (NER)<a class="headerlink" href="#token-classification-ner" title="Permanent link">&para;</a></h2>
+<p>Word-level tags are aligned to sub-word tokens with <code>-100</code> on continuation / special positions so they are ignored in the loss. With <code>DataPipeline(label_column=...)</code>, list-valued labels are padded to <code>max_length</code> with <code>-100</code> automatically.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenClassificationTrainer</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">ner_train</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">ner_rows</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>                         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;ner&quot;</span><span class="p">)</span>   <span class="c1"># each row: {&quot;input_ids&quot;, &quot;ner&quot;: [...]}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">model</span>   <span class="o">=</span> <span class="n">build_encoder_with_head</span><span class="p">(</span><span class="s2">&quot;./my-base&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">TAGS</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TokenClassificationTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">HeadTrainConfig</span><span class="p">(</span><span class="n">num_labels</span><span class="o">=</span><span class="n">TAGS</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">))</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">ner_train</span><span class="p">,</span> <span class="n">eval_dataset</span><span class="o">=</span><span class="n">ner_eval</span><span class="p">)</span>
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>dataset</code></td>
-<td>iterable</td>
-<td>Batches of <code>{"input_ids": ..., "attention_mask": ...}</code> dicts, or a <code>DataPipeline(mode="embed")</code></td>
-</tr>
-<tr>
-<td><code>eval_dataset</code></td>
-<td>iterable</td>
-<td>Optional eval set</td>
-</tr>
-<tr>
-<td><code>on_step</code></td>
-<td>callable</td>
-<td>Callback(step, loss)</td>
-</tr>
-<tr>
-<td><code>shuffle</code></td>
-<td><code>bool</code></td>
-<td>Shuffle dataset per epoch</td>
-</tr>
-<tr>
-<td><code>pre_cache</code></td>
-<td><code>bool</code></td>
-<td>Pre-compute teacher embeddings for all batches before training starts</td>
-</tr>
-<tr>
-<td><code>total_steps</code></td>
-<td><code>int</code></td>
-<td>Override total steps for LR scheduler</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Returns</strong> <code>dict</code> with <code>losses</code>, <code>eval_losses</code>, <code>device</code>.</p>
 <hr />
-<h2 id="loss-functions">Loss functions<a class="headerlink" href="#loss-functions" title="Permanent link">&para;</a></h2>
-<h3 id="cosine-losscosine">Cosine (<code>loss="cosine"</code>)<a class="headerlink" href="#cosine-losscosine" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>loss = 1 - cosine_similarity(student_emb, teacher_emb).mean()
+<h2 id="frozen-backbone-shared-encoder">Frozen backbone (shared encoder)<a class="headerlink" href="#frozen-backbone-shared-encoder" title="Permanent link">&para;</a></h2>
+<p>Set <code>freeze_backbone=True</code> to train <strong>only the head</strong> while the encoder stays frozen. Many heads can then share one base encoder / one forward pass — the small-footprint, on-device path.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">freeze_backbone</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># inside the config</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">HeadTrainConfig</span><span class="p">(</span><span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">freeze_backbone</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># or inspect/apply manually</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">model</span><span class="p">,</span> <span class="n">n_trainable</span><span class="p">,</span> <span class="n">n_frozen</span> <span class="o">=</span> <span class="n">freeze_backbone</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;head: </span><span class="si">{</span><span class="n">n_trainable</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">K trainable | backbone: </span><span class="si">{</span><span class="n">n_frozen</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">M frozen&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>With <code>normalize=True</code>, both embeddings are L2-normalised before the similarity is computed (equivalent to dot product after normalisation). This is the standard loss for bi-encoder distillation.</p>
-<h3 id="mse-lossmse">MSE (<code>loss="mse"</code>)<a class="headerlink" href="#mse-lossmse" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>loss = mean_squared_error(student_emb, teacher_emb)
-</span></code></pre></div>
-<p>Useful when preserving the absolute scale of embeddings matters, e.g. for regression tasks.</p>
+<p><code>freeze_backbone</code> keeps trainable only the parameters whose names contain a head keyword (<code>classifier</code>, <code>score</code>, <code>head</code>).</p>
 <hr />
-<h2 id="pooling">Pooling<a class="headerlink" href="#pooling" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th><code>pool</code></th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>"mean"</code></td>
-<td>Average over all non-padding token positions (recommended)</td>
-</tr>
-<tr>
-<td><code>"cls"</code></td>
-<td>Use the first token's hidden state</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="pre-caching-teacher-embeddings">Pre-caching teacher embeddings<a class="headerlink" href="#pre-caching-teacher-embeddings" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">pre_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span></code></pre></div>
-<p>With <code>pre_cache=True</code>, teacher embeddings are computed and stored in memory before the training loop starts. Subsequent epochs reuse the cache — teacher inference cost is paid once. Useful for multi-epoch runs on finite datasets when the dataset fits in memory.</p>
-<hr />
-<h2 id="embeddingdistillconfig">EmbeddingDistillConfig<a class="headerlink" href="#embeddingdistillconfig" title="Permanent link">&para;</a></h2>
+<h2 id="config-headtrainconfig">Config — <code>HeadTrainConfig</code><a class="headerlink" href="#config-headtrainconfig" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Field</th>
-<th>Type</th>
 <th>Default</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>loss</code></td>
-<td><code>str</code></td>
-<td><code>"cosine"</code></td>
-<td>Loss function: <code>"cosine"</code> or <code>"mse"</code></td>
+<td><code>num_labels</code></td>
+<td><code>2</code></td>
+<td>Number of classes / tags</td>
 </tr>
 <tr>
-<td><code>pool</code></td>
-<td><code>str</code></td>
-<td><code>"mean"</code></td>
-<td>Pooling strategy: <code>"mean"</code> or <code>"cls"</code></td>
+<td><code>multi_label</code></td>
+<td><code>False</code></td>
+<td>Sequence task → <code>BCEWithLogits</code> over <code>(B, num_labels)</code> labels</td>
 </tr>
 <tr>
-<td><code>normalize</code></td>
-<td><code>bool</code></td>
-<td><code>True</code></td>
-<td>L2-normalise embeddings before loss</td>
+<td><code>freeze_backbone</code></td>
+<td><code>False</code></td>
+<td>Train only the head</td>
 </tr>
 <tr>
-<td><code>temperature</code></td>
-<td><code>float</code></td>
-<td><code>0.05</code></td>
-<td>Scaling factor applied before cosine similarity</td>
+<td><code>pad_token_id</code></td>
+<td><code>0</code></td>
+<td>Mask derivation when absent</td>
 </tr>
 <tr>
 <td><code>learning_rate</code></td>
-<td><code>float</code></td>
 <td><code>2e-5</code></td>
-<td>AdamW learning rate</td>
+<td>AdamW LR (use a higher LR when frozen)</td>
 </tr>
 <tr>
 <td><code>epochs</code></td>
-<td><code>int</code></td>
 <td><code>3</code></td>
-<td>Training epochs</td>
+<td>Passes over the dataset</td>
 </tr>
 <tr>
-<td><code>weight_decay</code></td>
-<td><code>float</code></td>
-<td><code>0.01</code></td>
-<td>AdamW weight decay</td>
-</tr>
-<tr>
-<td><code>max_grad_norm</code></td>
-<td><code>float</code></td>
-<td><code>1.0</code></td>
-<td>Gradient clipping norm</td>
-</tr>
-<tr>
-<td><code>device</code></td>
-<td><code>str</code></td>
-<td><code>"auto"</code></td>
-<td><code>"auto"</code> / <code>"cpu"</code> / <code>"cuda"</code> / <code>"mps"</code></td>
-</tr>
-<tr>
-<td><code>log_every</code></td>
-<td><code>int</code></td>
-<td><code>10</code></td>
-<td>Log loss every N steps</td>
-</tr>
-<tr>
-<td><code>lr_scheduler</code></td>
-<td><code>str</code></td>
-<td><code>"constant"</code></td>
-<td><code>"constant"</code> / <code>"cosine"</code> / <code>"linear"</code></td>
-</tr>
-<tr>
-<td><code>warmup_steps</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Linear warmup steps</td>
+<td><code>device</code> / <code>torch_dtype</code></td>
+<td><code>"auto"</code> / <code>"float32"</code></td>
+<td>Device &amp; mixed precision</td>
 </tr>
 <tr>
 <td><code>grad_accumulation_steps</code></td>
-<td><code>int</code></td>
 <td><code>1</code></td>
-<td>Gradient accumulation</td>
+<td>Accumulate over N batches</td>
 </tr>
 <tr>
-<td><code>torch_dtype</code></td>
-<td><code>str</code></td>
-<td><code>"float32"</code></td>
-<td>Mixed precision dtype</td>
+<td><code>lr_scheduler</code> / <code>warmup_steps</code></td>
+<td><code>"cosine"</code> / <code>0</code></td>
+<td>Schedule</td>
 </tr>
 <tr>
 <td><code>eval_every</code></td>
-<td><code>int</code></td>
 <td><code>0</code></td>
-<td>Eval every N steps (0 = off)</td>
+<td>Eval cadence</td>
 </tr>
 <tr>
-<td><code>save_every</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Auto-checkpoint every N steps (0 = off)</td>
-</tr>
-<tr>
-<td><code>save_dir</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>Checkpoint directory</td>
-</tr>
-<tr>
-<td><code>log_backend</code></td>
-<td><code>str</code></td>
-<td><code>"none"</code></td>
-<td><code>"wandb"</code> / <code>"tensorboard"</code> / <code>"none"</code></td>
-</tr>
-<tr>
-<td><code>run_name</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>W&amp;B / TB run name</td>
-</tr>
-<tr>
-<td><code>project</code></td>
-<td><code>str</code></td>
-<td><code>"olaverse-foundry"</code></td>
-<td>W&amp;B project name</td>
+<td><code>save_every</code> / <code>save_dir</code></td>
+<td><code>0</code> / <code>""</code></td>
+<td>Auto-checkpoint</td>
 </tr>
 <tr>
 <td><code>seed</code></td>
-<td><code>int</code></td>
 <td><code>42</code></td>
-<td>Random seed</td>
+<td>Reproducibility</td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="results-prediction">Results &amp; prediction<a class="headerlink" href="#results-prediction" title="Permanent link">&para;</a></h2>
+<p><code>train()</code> returns <code>{"losses", "eval_losses", "eval_metrics", "device"}</code>, where <code>eval_metrics</code> maps optimizer step → accuracy. For metric collection (used by the <a href="../../evaluation/">evaluation harness</a>), <code>trainer.predict(dataset)</code> returns flat <code>(preds, labels)</code> numpy arrays (token tasks drop <code>-100</code> positions).</p>
 
 
 

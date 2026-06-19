@@ -408,6 +408,63 @@
   
   
     <li class="md-tabs__item">
+      <a href="../quantization/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quantization (QAT)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../inference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../evaluation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../cli/" class="md-tabs__link">
         
   
@@ -586,6 +643,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -711,6 +774,90 @@
     
   
     EmbeddingDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MLMTrainer (pretraining)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/encoder-distill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EncoderDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/heads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Task Heads
   
 
     
@@ -942,6 +1089,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#labels-for-head-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels for head training
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#length" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1040,6 +1198,87 @@
     
   
     Growth & Scaling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantization (QAT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
   
 
     
@@ -1249,6 +1488,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#labels-for-head-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels for head training
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#length" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1313,10 +1563,11 @@
 <tr>
 <td><code>"embed"</code></td>
 <td><code>{"input_ids": (B, S), "attention_mask": (B, S)}</code></td>
-<td><code>EmbeddingDistillTrainer</code></td>
+<td><code>EmbeddingDistillTrainer</code>, <code>MLMTrainer</code>, <code>EncoderDistillTrainer</code></td>
 </tr>
 </tbody>
 </table>
+<p>When <code>label_column</code> is set, every batch is a dict that also includes <code>"labels"</code> — ready for the <a href="../training/heads/">head trainers</a>.</p>
 <hr />
 <h2 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">DataPipeline</span><span class="p">(</span>
@@ -1331,7 +1582,9 @@
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">mask_column</span>    <span class="o">=</span> <span class="s2">&quot;attention_mask&quot;</span><span class="p">,</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">pad_id</span>         <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">drop_last</span>      <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">)</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">label_column</span>   <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">label_pad_id</span>   <span class="o">=</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">)</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -1409,6 +1662,18 @@
 <td><code>False</code></td>
 <td>Drop the last incomplete batch</td>
 </tr>
+<tr>
+<td><code>label_column</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>If set, emit <code>"labels"</code> in every batch (head training)</td>
+</tr>
+<tr>
+<td><code>label_pad_id</code></td>
+<td><code>int</code></td>
+<td><code>-100</code></td>
+<td>Pad value for token-label sequences (ignored in the loss)</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1436,7 +1701,7 @@
 </span></code></pre></div>
 <p><code>len(pipe)</code> raises <code>TypeError</code> for streaming sources — pass <code>total_steps</code> to <code>trainer.train()</code> to keep the LR scheduler working.</p>
 <h3 id="list-of-strings">List of strings<a class="headerlink" href="#list-of-strings" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Bawo ni, se dara ni?&quot;</span><span class="p">,</span> <span class="s2">&quot;Kedu ka ị mere?&quot;</span><span class="p">,</span> <span class="s2">&quot;How far, you dey?&quot;</span><span class="p">]</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;the quick brown fox&quot;</span><span class="p">,</span> <span class="s2">&quot;jumps over the lazy dog&quot;</span><span class="p">,</span> <span class="s2">&quot;hello world&quot;</span><span class="p">]</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </span></code></pre></div>
@@ -1475,29 +1740,43 @@
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">out</span> <span class="o">=</span> <span class="n">student</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
 </span></code></pre></div>
 <hr />
+<h2 id="labels-for-head-training">Labels for head training<a class="headerlink" href="#labels-for-head-training" title="Permanent link">&para;</a></h2>
+<p>Set <code>label_column</code> to carry labels through to the <a href="../training/heads/">head trainers</a>. Each batch then includes <code>"labels"</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Sequence labels (scalar per row) → labels shape (B,)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">rows</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="o">...</span><span class="p">]</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># batch = {&quot;input_ids&quot;: (B,S), &quot;attention_mask&quot;: (B,S), &quot;labels&quot;: (B,)}</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Token labels (one per token) → padded to max_length with label_pad_id (-100)</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">rows</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;ner&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]},</span> <span class="o">...</span><span class="p">]</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">,</span> <span class="n">label_column</span><span class="o">=</span><span class="s2">&quot;ner&quot;</span><span class="p">)</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># batch[&quot;labels&quot;] shape (B, S), padding positions = -100 (ignored in the loss)</span>
+</span></code></pre></div>
+<p>List-valued labels are treated as token labels and padded; scalar labels are treated as sequence labels.</p>
+<hr />
 <h2 id="length">Length<a class="headerlink" href="#length" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">len</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>   <span class="c1"># number of batches for finite sources</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>            <span class="c1"># raises TypeError for streaming sources</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">len</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>   <span class="c1"># number of batches for finite sources</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>            <span class="c1"># raises TypeError for streaming sources</span>
 </span></code></pre></div>
 <hr />
 <h2 id="example-train-with-datapipeline">Example: train with DataPipeline<a class="headerlink" href="#example-train-with-datapipeline" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataPipeline</span><span class="p">,</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">ds</span>   <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;allenai/c4&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">streaming</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">tok</span>  <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;my_model&quot;</span><span class="p">)</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">source</span>         <span class="o">=</span> <span class="n">ds</span><span class="p">,</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">tokenizer</span>      <span class="o">=</span> <span class="n">tok</span><span class="p">,</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">batch_size</span>     <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="n">max_length</span>     <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">mode</span>           <span class="o">=</span> <span class="s2">&quot;lm&quot;</span><span class="p">,</span>
-</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="n">shuffle_buffer</span> <span class="o">=</span> <span class="mi">20_000</span><span class="p">,</span>
-</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="p">)</span>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>
-</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="n">result</span>  <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">total_steps</span><span class="o">=</span><span class="mi">50_000</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataPipeline</span><span class="p">,</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">ds</span>   <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;allenai/c4&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">streaming</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">tok</span>  <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;my_model&quot;</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">source</span>         <span class="o">=</span> <span class="n">ds</span><span class="p">,</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">tokenizer</span>      <span class="o">=</span> <span class="n">tok</span><span class="p">,</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">batch_size</span>     <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">max_length</span>     <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">mode</span>           <span class="o">=</span> <span class="s2">&quot;lm&quot;</span><span class="p">,</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="n">shuffle_buffer</span> <span class="o">=</span> <span class="mi">20_000</span><span class="p">,</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="p">)</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="n">result</span>  <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">total_steps</span><span class="o">=</span><span class="mi">50_000</span><span class="p">)</span>
 </span></code></pre></div>
 
 

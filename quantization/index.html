@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/growth/">
+        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/quantization/">
       
       
-        <link rel="prev" href="../skillpacks/">
+        <link rel="prev" href="../growth/">
       
       
-        <link rel="next" href="../quantization/">
+        <link rel="next" href="../inference/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Growth & Scaling - olaverse-foundry</title>
+        <title>Quantization (QAT) - olaverse-foundry</title>
       
     
     
@@ -100,7 +100,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#growth-scaling" class="md-skip">
+        <a href="#quantization-aware-training-qat" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Growth & Scaling
+              Quantization (QAT)
             
           </span>
         </div>
@@ -385,11 +385,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../growth/" class="md-tabs__link">
         
   
   
@@ -406,9 +404,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../quantization/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -991,6 +991,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../growth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Growth & Scaling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -1010,7 +1037,7 @@
   <span class="md-ellipsis">
     
   
-    Growth & Scaling
+    Quantization (QAT)
   
 
     
@@ -1028,7 +1055,7 @@
   <span class="md-ellipsis">
     
   
-    Growth & Scaling
+    Quantization (QAT)
   
 
     
@@ -1054,10 +1081,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#concepts" class="md-nav__link">
+  <a href="#workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Concepts
+        Workflow
       
     </span>
   </a>
@@ -1065,22 +1092,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#plan-a-growth" class="md-nav__link">
+  <a href="#prepare_qat" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Plan a growth
+        prepare_qat
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Plan a growth">
+    <nav class="md-nav" aria-label="prepare_qat">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
+  <a href="#qatconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Helpers
+        QATConfig
       
     </span>
   </a>
@@ -1093,57 +1120,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-the-merge-native" class="md-nav__link">
+  <a href="#export-inspection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run the merge (native)
+        Export &amp; inspection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export &amp; inspection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#export_quantized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_quantized
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#any-architecture-layer-prefix-detection" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#int8_state_dict" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Any architecture — layer-prefix detection
+        int8_state_dict
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#passthrough-yaml-interop" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quantize_tensor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Passthrough YAML (interop)
+        quantize_tensor
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#heal-the-grown-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Heal the grown model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cross-tokenizer-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cross-tokenizer alignment
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1151,33 +1173,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../quantization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Quantization (QAT)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1317,10 +1312,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#concepts" class="md-nav__link">
+  <a href="#workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Concepts
+        Workflow
       
     </span>
   </a>
@@ -1328,22 +1323,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#plan-a-growth" class="md-nav__link">
+  <a href="#prepare_qat" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Plan a growth
+        prepare_qat
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Plan a growth">
+    <nav class="md-nav" aria-label="prepare_qat">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
+  <a href="#qatconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Helpers
+        QATConfig
       
     </span>
   </a>
@@ -1356,57 +1351,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-the-merge-native" class="md-nav__link">
+  <a href="#export-inspection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run the merge (native)
+        Export &amp; inspection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export &amp; inspection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#export_quantized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_quantized
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#any-architecture-layer-prefix-detection" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#int8_state_dict" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Any architecture — layer-prefix detection
+        int8_state_dict
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#passthrough-yaml-interop" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quantize_tensor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Passthrough YAML (interop)
+        quantize_tensor
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#heal-the-grown-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Heal the grown model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cross-tokenizer-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cross-tokenizer alignment
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1430,101 +1420,83 @@
   
 
 
-<h1 id="growth-scaling">Growth &amp; scaling<a class="headerlink" href="#growth-scaling" title="Permanent link">&para;</a></h1>
-<p><code>olaverse-foundry</code> implements SOLAR-style depth up-scaling: duplicate existing layers from a pretrained model to grow it to a target parameter count, then heal with distillation. The merge runs <strong>natively</strong> (transformers + safetensors) — no external merge tool required — and the layer prefix is <strong>auto-detected</strong>, so it works on Llama, BERT, GPT-2, and other architectures.</p>
+<h1 id="quantization-aware-training-qat">Quantization-aware training (QAT)<a class="headerlink" href="#quantization-aware-training-qat" title="Permanent link">&para;</a></h1>
+<p>QAT inserts <strong>fake quantization</strong> into the forward pass during training: weights (and optionally activations) are rounded to int8/int4 and back, with a straight-through gradient. The model learns to be robust to quantization, so the final int8/int4 deployment keeps far more accuracy than post-training quantization.</p>
+<p>It is <strong>model-agnostic</strong>: <code>prepare_qat</code> swaps the <code>nn.Linear</code> layers of <em>any</em> model (HF or custom), then you train it with <strong>any</strong> foundry trainer (MLM, encoder distillation, the head trainers, the distillers, …).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
 </span></code></pre></div>
 <hr />
-<h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h2>
-<p>The depth up-scaling approach (from the <a href="https://arxiv.org/abs/2312.15166">SOLAR paper</a>) duplicates transformer layers rather than reinitialising them. The duplicated layers start with the same weights as the originals, so the grown model still produces reasonable output immediately. A short healing run (distillation or SFT) then adapts the extra capacity.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>8B (32 layers) → duplicate layers → 15B (48 layers) → heal → production model
+<h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_qat</span><span class="p">,</span> <span class="n">QATConfig</span><span class="p">,</span> <span class="n">export_quantized</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">EncoderDistillTrainer</span><span class="p">,</span> <span class="n">EncoderDistillConfig</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># 1. Wrap any model in fake-quant linears</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">student</span> <span class="o">=</span> <span class="n">prepare_qat</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">QATConfig</span><span class="p">(</span><span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 2. Train it as usual with any trainer</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">EncoderDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">EncoderDistillConfig</span><span class="p">(</span><span class="o">...</span><span class="p">))</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># 3. Export the quantization-robust model + a footprint report</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">report</span> <span class="o">=</span> <span class="n">export_quantized</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="s2">&quot;./model-int8&quot;</span><span class="p">,</span> <span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># {&#39;orig_mb&#39;: ..., &#39;quant_mb&#39;: ..., &#39;compression&#39;: ..., &#39;weight_bits&#39;: 8, &#39;path&#39;: ...}</span>
 </span></code></pre></div>
 <hr />
-<h2 id="plan-a-growth">Plan a growth<a class="headerlink" href="#plan-a-growth" title="Permanent link">&para;</a></h2>
-<p><code>plan_growth</code> takes an <code>ArchConfig</code> describing the seed and a target parameter count, and returns a <code>GrowthPlan</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">plan_growth</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArchConfig</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoConfig</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">hf</span>   <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;meta-llama/Llama-3.1-8B&quot;</span><span class="p">)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">arch</span> <span class="o">=</span> <span class="n">ArchConfig</span><span class="p">(</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">n_layers</span>   <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">num_hidden_layers</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">d_model</span>    <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">vocab_size</span> <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">d_ff</span>       <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hf</span><span class="p">,</span> <span class="s2">&quot;intermediate_size&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">)</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">plan</span> <span class="o">=</span> <span class="n">plan_growth</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">to_params</span><span class="o">=</span><span class="mf">15e9</span><span class="p">)</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="c1"># Growth Plan: 32 → 48 layers (1.50×)</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Layer map: [0, 1, ..., 31, 16, 17, ..., 31]</span>
+<h2 id="prepare_qat"><code>prepare_qat</code><a class="headerlink" href="#prepare_qat" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">prepare_qat</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">QATConfig</span><span class="p">(),</span> <span class="n">skip</span><span class="o">=</span><span class="p">())</span>
 </span></code></pre></div>
-<p><code>GrowthPlan</code> fields: <code>src_layers</code>, <code>target_layers</code>, <code>layer_map</code> (source layer index per output position), <code>scale_factor</code>, and <code>shape_warning</code> (set when the resulting shape is unusually deep/narrow).</p>
-<h3 id="helpers">Helpers<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">upscale_layer_map</span><span class="p">,</span> <span class="n">layers_for_param_target</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">upscale_layer_map</span><span class="p">(</span><span class="n">n_src</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">n_target</span><span class="o">=</span><span class="mi">48</span><span class="p">)</span>          <span class="c1"># → [0, 1, ..., 31, 16, ..., 31]</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">layers_for_param_target</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">target_params</span><span class="o">=</span><span class="mf">15e9</span><span class="p">)</span> <span class="c1"># → (48, warning_or_None)</span>
-</span></code></pre></div>
+<p>Replaces every <code>nn.Linear</code> in <code>model</code> (in place) with a fake-quantized QAT version, copying the original weights. <code>skip</code> is a tuple of name substrings to leave un-quantized (e.g. <code>skip=("lm_head",)</code>).</p>
+<h3 id="qatconfig"><code>QATConfig</code><a class="headerlink" href="#qatconfig" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>weight_bits</code></td>
+<td><code>8</code></td>
+<td><code>8</code> (int8) or <code>4</code> (int4) for weight fake-quant</td>
+</tr>
+<tr>
+<td><code>act_bits</code></td>
+<td><code>0</code></td>
+<td><code>0</code> disables activation quant; <code>8</code> enables dynamic int8 activations</td>
+</tr>
+<tr>
+<td><code>per_channel</code></td>
+<td><code>True</code></td>
+<td>Per-output-channel weight scales (recommended) vs per-tensor</td>
+</tr>
+<tr>
+<td><code>symmetric</code></td>
+<td><code>True</code></td>
+<td>Symmetric quantization (zero-point fixed at 0)</td>
+</tr>
+</tbody>
+</table>
 <hr />
-<h2 id="run-the-merge-native">Run the merge (native)<a class="headerlink" href="#run-the-merge-native" title="Permanent link">&para;</a></h2>
-<p><code>run_merge</code> loads the seed, rebuilds it at the grown depth, copies the duplicated layers, and saves a standard HF model directory — loadable with <code>AutoModelForCausalLM.from_pretrained</code>.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_merge</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">run_merge</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="s2">&quot;meta-llama/Llama-3.1-8B&quot;</span><span class="p">,</span> <span class="s2">&quot;./grown-15b&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># → Path(&quot;./grown-15b&quot;)   (no external merge tool needed)</span>
+<h2 id="export-inspection">Export &amp; inspection<a class="headerlink" href="#export-inspection" title="Permanent link">&para;</a></h2>
+<h3 id="export_quantized"><code>export_quantized</code><a class="headerlink" href="#export_quantized" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">export_quantized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
-<p>A passthrough YAML is also written alongside the output for reference/interop.</p>
-<hr />
-<h2 id="any-architecture-layer-prefix-detection">Any architecture — layer-prefix detection<a class="headerlink" href="#any-architecture-layer-prefix-detection" title="Permanent link">&para;</a></h2>
-<p>The transformer block list lives under a different prefix per architecture. <code>detect_layer_prefix</code> finds it automatically, and <code>build_upscaled_state_dict</code> uses it under the hood:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">detect_layer_prefix</span><span class="p">,</span> <span class="n">build_upscaled_state_dict</span><span class="p">,</span> <span class="n">upscale_layer_map</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">detect_layer_prefix</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>   <span class="c1"># &quot;model.layers&quot; (Llama) | &quot;encoder.layer&quot; (BERT) | &quot;transformer.h&quot; (GPT-2)</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">new_state</span> <span class="o">=</span> <span class="n">build_upscaled_state_dict</span><span class="p">(</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">src_state_dict</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">layer_map</span>      <span class="o">=</span> <span class="n">upscale_layer_map</span><span class="p">(</span><span class="n">n_src</span><span class="p">,</span> <span class="n">n_target</span><span class="p">),</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">layer_prefix</span>   <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>            <span class="c1"># None = auto-detect</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">)</span>
+<p>Saves the (quantization-robust) model to <code>path</code>, writes <code>quantization.json</code> describing the scheme, and returns a footprint report comparing the original (bf16) vs quantized weight size and the compression ratio.</p>
+<h3 id="int8_state_dict"><code>int8_state_dict</code><a class="headerlink" href="#int8_state_dict" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">sd</span> <span class="o">=</span> <span class="n">int8_state_dict</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># {&quot;&lt;layer&gt;.weight_int&quot;: int8 tensor, &quot;&lt;layer&gt;.weight_scale&quot;: fp tensor, ...}</span>
 </span></code></pre></div>
-<p>This is what makes growth work on encoders (BERT-style backbones) as well as decoders.</p>
-<hr />
-<h2 id="passthrough-yaml-interop">Passthrough YAML (interop)<a class="headerlink" href="#passthrough-yaml-interop" title="Permanent link">&para;</a></h2>
-<p>For interoperability you can emit the passthrough slice config as a dict / file (pure Python, no dependency):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">growth_plan_to_mergekit_yaml</span><span class="p">,</span> <span class="n">save_mergekit_config</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">cfg</span>  <span class="o">=</span> <span class="n">growth_plan_to_mergekit_yaml</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">seed_path</span><span class="o">=</span><span class="s2">&quot;meta-llama/Llama-3.1-8B&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">path</span> <span class="o">=</span> <span class="n">save_mergekit_config</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="s2">&quot;meta-llama/Llama-3.1-8B&quot;</span><span class="p">,</span> <span class="s2">&quot;./passthrough.yaml&quot;</span><span class="p">)</span>
+<p>Real packed integer weights + per-channel scales, for hand-off to an int runtime (ONNX Runtime, ExecuTorch, TFLite). Non-quantized parameters are left as-is.</p>
+<h3 id="quantize_tensor"><code>quantize_tensor</code><a class="headerlink" href="#quantize_tensor" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">q</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">quantize_tensor</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">bits</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h2 id="heal-the-grown-model">Heal the grown model<a class="headerlink" href="#heal-the-grown-model" title="Permanent link">&para;</a></h2>
-<p>A freshly grown model under-performs the seed until healed. Feed it back into a distiller as the student:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModelForCausalLM</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">,</span> <span class="n">TeacherRegistry</span><span class="p">,</span> <span class="n">HFTeacher</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">grown</span>    <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;./grown-15b&quot;</span><span class="p">)</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">teachers</span> <span class="o">=</span> <span class="n">TeacherRegistry</span><span class="p">([</span><span class="n">HFTeacher</span><span class="p">(</span><span class="s2">&quot;meta-llama/Llama-3.1-8B&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)])</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">teachers</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">grown</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">(</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="p">))</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">healing_dataset</span><span class="p">)</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">grown</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">&quot;./grown-15b-healed&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<hr />
-<h2 id="cross-tokenizer-alignment">Cross-tokenizer alignment<a class="headerlink" href="#cross-tokenizer-alignment" title="Permanent link">&para;</a></h2>
-<p>When distilling across tokenizers (e.g. teacher uses BPE, student uses WordPiece), use <code>MinEDAlignment</code> to map teacher token IDs to the nearest student tokens via edit distance:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinEDAlignment</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">alignment</span> <span class="o">=</span> <span class="n">MinEDAlignment</span><span class="p">(</span><span class="n">teacher_tokenizer</span><span class="p">,</span> <span class="n">student_tokenizer</span><span class="p">)</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">trainer</span>   <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">alignment</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
-</span></code></pre></div>
-<p>Install <code>rapidfuzz</code> for a ~100× speedup:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[align]&quot;</span>
-</span></code></pre></div>
-<p>Also available: <code>IdentityAlignment</code> (shared tokenizer, fast path) and <code>EMAlignment</code> (exact surface-form match).</p>
+<p>Returns the packed int8 weights and the scale for a single tensor — useful for inspection.</p>
+<div class="admonition note">
+<p class="admonition-title">Where the int packing happens</p>
+<p>QAT makes the model <strong>robust</strong> to quantization. The final on-device int8/int4 artifact is produced by your target runtime, which consumes <code>int8_state_dict(model)</code>. <code>export_quantized</code> reports the theoretical packed size and saves the trained weights.</p>
+</div>
 
 
 

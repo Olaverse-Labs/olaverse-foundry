@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/cli/">
       
       
-        <link rel="prev" href="../growth/">
+        <link rel="prev" href="../evaluation/">
       
       
         <link rel="next" href="../changelog/">
@@ -404,6 +404,63 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../quantization/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quantization (QAT)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../inference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../evaluation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -586,6 +643,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -711,6 +774,90 @@
     
   
     EmbeddingDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MLMTrainer (pretraining)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/encoder-distill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EncoderDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/heads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Task Heads
   
 
     
@@ -871,6 +1018,87 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantization (QAT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -989,21 +1217,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundry-backends" class="md-nav__link">
+  <a href="#help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        foundry backends
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#global-flags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Global flags
+        Help
       
     </span>
   </a>
@@ -1127,21 +1344,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundry-backends" class="md-nav__link">
+  <a href="#help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        foundry backends
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#global-flags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Global flags
+        Help
       
     </span>
   </a>
@@ -1169,99 +1375,48 @@
 
 
 <h1 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h1>
-<p><code>olaverse-foundry</code> ships a <code>foundry</code> CLI for environment checks, recipe previews, and runs — no Python boilerplate required.</p>
+<p><code>olaverse-foundry</code> ships a <code>foundry</code> CLI for environment checks, recipe previews, and runs. If the <code>foundry</code> script isn't on your <code>PATH</code> (e.g. inside some notebook kernels), use <code>python -m foundry</code> — it's equivalent.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>olaverse-foundry
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>foundry<span class="w"> </span>--help
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>foundry<span class="w"> </span>--help<span class="w">          </span><span class="c1"># or: python -m foundry --help</span>
 </span></code></pre></div>
+<p>Commands: <code>doctor</code>, <code>plan</code>, <code>run</code>, <code>embed</code>, <code>strategies</code>.</p>
 <hr />
 <h2 id="foundry-doctor"><code>foundry doctor</code><a class="headerlink" href="#foundry-doctor" title="Permanent link">&para;</a></h2>
-<p>Check your environment and print a summary of available backends.</p>
+<p>Check your environment and print a summary of available backends — foundry version, Python, torch/CUDA/MPS, and which optional packages are installed (accelerate, safetensors, peft, rapidfuzz, wandb). It also tells you whether real (GPU) training is enabled.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>foundry<span class="w"> </span>doctor
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>olaverse-foundry v0.1.0 — environment check
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>────────────────────────────────────────────
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>torch          ✓  2.3.1+cu121
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>transformers   ✓  4.41.2
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>accelerate     ✓  0.30.1
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>safetensors    ✓  0.4.3
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>peft           ✓  0.11.0
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>datasets       ✓  2.19.1
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>wandb          ✗  not installed  (pip install wandb)
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>rapidfuzz      ✗  not installed  (pip install rapidfuzz)
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>mergekit       ✗  not installed  (pip install mergekit)
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Device:        cuda  (NVIDIA A100 80GB, 4 GPUs)
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>Mixed prec:    bfloat16 supported
-</span></code></pre></div>
+<p>Use it first on any new machine to confirm torch + CUDA are present.</p>
 <hr />
 <h2 id="foundry-plan"><code>foundry plan</code><a class="headerlink" href="#foundry-plan" title="Permanent link">&para;</a></h2>
-<p>Preview a recipe without executing it. No GPU or model downloads required.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>foundry<span class="w"> </span>plan<span class="w"> </span>recipe.yaml
+<p>Preview a recipe without executing it — no GPU or model downloads. Prints the staged plan (seed, data, grow, teachers, heal, output) and any shape warnings.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>foundry<span class="w"> </span>plan<span class="w"> </span>recipe.yaml
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[foundry] Plan: meta-llama/Llama-3.1-8B → 15B (48 layers)
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>[foundry]   Teachers: meta-llama/Llama-3.1-70B (w=1.0)
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>[foundry]   Fusion: min_ce, cache: topk_64, align: min_ed
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>[foundry]   Heal: 100B tokens, alpha=0.3
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>[foundry]   Output: freeze base + ola_math, ola_code
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>[foundry] Estimated GPU hours: ~84h on 8×H100
-</span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Validate schema only (exit 0 = valid, exit 1 = invalid)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>foundry<span class="w"> </span>plan<span class="w"> </span>recipe.yaml<span class="w"> </span>--validate-only
-</span></code></pre></div>
+<p>See <a href="../recipes/">Recipes</a> for the YAML schema.</p>
 <hr />
 <h2 id="foundry-run"><code>foundry run</code><a class="headerlink" href="#foundry-run" title="Permanent link">&para;</a></h2>
-<p>Execute a causal LM factory recipe end-to-end.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>foundry<span class="w"> </span>run<span class="w"> </span>recipe.yaml
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>foundry<span class="w"> </span>run<span class="w"> </span>recipe.yaml<span class="w"> </span>--output<span class="w"> </span>/custom/output/path
+<p>Execute a causal-LM recipe end-to-end (seed → optional grow → distil/heal → save). Requires <code>[torch]</code> and a GPU; with no torch it raises rather than silently degrading.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>foundry<span class="w"> </span>run<span class="w"> </span>recipe.yaml
 </span></code></pre></div>
-<p>Progress is logged to stdout. Pass <code>--log-backend wandb</code> to also log to W&amp;B.</p>
+<p>The recipe must provide training data (a <code>data:</code> block) — see <a href="../recipes/">Recipes</a>.</p>
 <hr />
 <h2 id="foundry-embed"><code>foundry embed</code><a class="headerlink" href="#foundry-embed" title="Permanent link">&para;</a></h2>
-<p>Execute an embedding distillation recipe.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>foundry<span class="w"> </span>embed<span class="w"> </span>embed_recipe.yaml
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>foundry<span class="w"> </span>embed<span class="w"> </span>embed_recipe.yaml<span class="w"> </span>--output<span class="w"> </span>/checkpoints/embed-run
+<p>Execute an embedding-distillation recipe (student encoder ← teacher embeddings). The recipe needs a <code>data:</code> block so the CLI can build the training pipeline.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>foundry<span class="w"> </span>embed<span class="w"> </span>embed_recipe.yaml
 </span></code></pre></div>
 <hr />
 <h2 id="foundry-strategies"><code>foundry strategies</code><a class="headerlink" href="#foundry-strategies" title="Permanent link">&para;</a></h2>
-<p>List all available fusion strategies with descriptions.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>foundry<span class="w"> </span>strategies
+<p>List the available fusion strategies with descriptions.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>foundry<span class="w"> </span>strategies
 </span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Available fusion strategies
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>────────────────────────────────────────────
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>min_ce     Per-position: pick the teacher with lowest CE against ground truth.
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>           Best when teachers specialise in different domains.
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>mean_ce    Weighted average of all teacher distributions.
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>           Best for ensemble distillation when teachers are similar.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>min_ce    MinCE  — per token, pick the teacher with highest p(gold).
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>mean_ce   MeanCE — weighted average over all teacher distributions.
 </span></code></pre></div>
 <hr />
-<h2 id="foundry-backends"><code>foundry backends</code><a class="headerlink" href="#foundry-backends" title="Permanent link">&para;</a></h2>
-<p>Same as <code>foundry doctor</code> — alias for quick environment inspection.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>foundry<span class="w"> </span>backends
-</span></code></pre></div>
-<hr />
-<h2 id="global-flags">Global flags<a class="headerlink" href="#global-flags" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--help</code></td>
-<td>Show help</td>
-</tr>
-<tr>
-<td><code>--version</code></td>
-<td>Print foundry version</td>
-</tr>
-</tbody>
-</table>
-<p>All subcommands accept <code>--help</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>foundry<span class="w"> </span>run<span class="w"> </span>--help
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>foundry<span class="w"> </span>embed<span class="w"> </span>--help
+<h2 id="help">Help<a class="headerlink" href="#help" title="Permanent link">&para;</a></h2>
+<p>Every command supports <code>--help</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>foundry<span class="w"> </span>--help
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>foundry<span class="w"> </span>run<span class="w"> </span>--help
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>python<span class="w"> </span>-m<span class="w"> </span>foundry<span class="w"> </span>doctor
 </span></code></pre></div>
 
 

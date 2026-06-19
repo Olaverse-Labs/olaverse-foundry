@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/config/">
       
       
-        <link rel="prev" href="../embed/">
+        <link rel="prev" href="../heads/">
       
       
         <link rel="next" href="../../data/">
@@ -408,6 +408,63 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../quantization/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quantization (QAT)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../inference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../evaluation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../cli/" class="md-tabs__link">
         
   
@@ -588,6 +645,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -716,6 +779,90 @@
     
   
     EmbeddingDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MLMTrainer (pretraining)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encoder-distill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EncoderDistillTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../heads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Task Heads
   
 
     
@@ -872,6 +1019,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#other-configs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other configs
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -984,6 +1142,87 @@
     
   
     Growth & Scaling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quantization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantization (QAT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
   
 
     
@@ -1147,6 +1386,17 @@
     <span class="md-ellipsis">
       
         Fusion strategies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-configs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other configs
       
     </span>
   </a>
@@ -1567,6 +1817,40 @@
 <tr>
 <td><code>"mean_ce"</code></td>
 <td>Weighted average of all teacher distributions (by <code>teacher.weight</code>). Smooths over teacher disagreements.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="other-configs">Other configs<a class="headerlink" href="#other-configs" title="Permanent link">&para;</a></h2>
+<p>The encoder, head, and quantization trainers have their own configs (same shared production fields — mixed precision, grad accumulation, LR schedule, eval, checkpointing). Each is documented on its page:</p>
+<table>
+<thead>
+<tr>
+<th>Config</th>
+<th>Trainer</th>
+<th>Page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MLMConfig</code></td>
+<td><code>MLMTrainer</code></td>
+<td><a href="../mlm/">MLM pretraining</a></td>
+</tr>
+<tr>
+<td><code>EncoderDistillConfig</code></td>
+<td><code>EncoderDistillTrainer</code></td>
+<td><a href="../encoder-distill/">Encoder distillation</a></td>
+</tr>
+<tr>
+<td><code>HeadTrainConfig</code></td>
+<td><code>SequenceClassificationTrainer</code> / <code>TokenClassificationTrainer</code></td>
+<td><a href="../heads/">Task heads</a></td>
+</tr>
+<tr>
+<td><code>QATConfig</code></td>
+<td><code>prepare_qat</code></td>
+<td><a href="../../quantization/">Quantization</a></td>
 </tr>
 </tbody>
 </table>
