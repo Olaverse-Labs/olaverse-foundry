@@ -289,9 +289,12 @@ class EncoderDistillTrainer:
             except TypeError:
                 total_steps = 0
 
-        scheduler = build_scheduler(
-            self._optimizer, self.cfg.lr_scheduler, self.cfg.warmup_steps, total_steps
-        )
+        # The student→teacher projection can be added to the optimizer lazily on
+        # the first forward (when hidden sizes differ). Build the LR scheduler
+        # *after* that first step so it sees the final set of param groups —
+        # otherwise torch's scheduler.step() mismatches param_groups vs lr values.
+        scheduler = None
+        sched_ready = False
         logger = _FoundryLogger(
             backend=self.cfg.log_backend, project=self.cfg.project,
             run_name=self.cfg.run_name, config=vars(self.cfg),
@@ -319,6 +322,12 @@ class EncoderDistillTrainer:
                     losses.append(loss)
                     accum_idx += 1
                     if is_last:
+                        if not sched_ready:   # build once, after projector exists
+                            scheduler = build_scheduler(
+                                self._optimizer, self.cfg.lr_scheduler,
+                                self.cfg.warmup_steps, total_steps,
+                            )
+                            sched_ready = True
                         if scheduler is not None:
                             scheduler.step()
                         logger.log(global_step, loss)

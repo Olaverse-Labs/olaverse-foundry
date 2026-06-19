@@ -193,6 +193,19 @@ class TestEncoderDistillTrainer(unittest.TestCase):
         self.assertIsNotNone(trainer._projector)
         self.assertTrue(all(np.isfinite(l) for l in result["losses"]))
 
+    def test_projection_plus_scheduler_steps_ok(self):
+        """Regression: the lazily-added projector param group must not desync the
+        LR scheduler (torch >= 2.x uses a strict zip in scheduler.step())."""
+        from foundry.training import EncoderDistillTrainer, EncoderDistillConfig
+        student = TinyEncoder(64, 16)     # different dims -> projector added lazily
+        teacher = TinyEncoder(64, 32)
+        cfg     = EncoderDistillConfig(device="cpu", epochs=1,
+                                       lr_scheduler="cosine", warmup_steps=2)
+        trainer = EncoderDistillTrainer(student, teacher, config=cfg)
+        result  = trainer.train(_embed_batches(n=8))   # several scheduler.step() calls
+        self.assertIsNotNone(trainer._projector)
+        self.assertTrue(all(np.isfinite(l) for l in result["losses"]))
+
     def test_loss_decreases_cosine(self):
         from foundry.training import EncoderDistillTrainer, EncoderDistillConfig
         # Teacher is fixed (eval); student should move toward it on a repeated batch.
