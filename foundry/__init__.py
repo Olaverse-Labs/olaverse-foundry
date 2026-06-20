@@ -44,6 +44,10 @@ from foundry.retrieval import (
     evaluate_retrieval, compare_retrievers, print_retrieval_comparison,
     encode_texts, ndcg_at_k, recall_at_k,
 )
+from foundry.synthetic import (
+    load_generator, llm_generate, generate_hard_negatives, synthesize_pairs,
+    mine_hard_negatives,
+)
 from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
 from foundry.backends import detect_backend
@@ -101,4 +105,7 @@ __all__ = [
     # Retrieval (cross-lingual)
     "evaluate_retrieval", "compare_retrievers", "print_retrieval_comparison",
     "encode_texts", "ndcg_at_k", "recall_at_k",
+    # Synthetic data (open-LLM hard negatives + mining)
+    "load_generator", "llm_generate", "generate_hard_negatives", "synthesize_pairs",
+    "mine_hard_negatives",
 ]
