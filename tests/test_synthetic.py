@@ -30,10 +30,22 @@ def test_generator_type_error():
         _as_callable(42)
 
 
+def test_synthesize_parallel_with_callable():
+    from foundry import synthesize_parallel
+    src = ["hello", "world"]
+    # fake translator: prefix the lang code
+    tr = lambda texts, lang: [f"[{lang}] {t}" for t in texts]
+    pairs = synthesize_parallel(src, tr, ["sw", "yo"])
+    assert len(pairs) == 4                                  # 2 sentences × 2 languages
+    assert {"anchor": "hello", "positive": "[sw] hello"} in pairs
+    assert {"anchor": "world", "positive": "[yo] world"} in pairs
+
+
 def test_exports():
     import foundry
     for n in ("load_generator", "generate_hard_negatives", "synthesize_pairs",
-              "mine_hard_negatives", "llm_generate"):
+              "mine_hard_negatives", "llm_generate", "load_translator",
+              "translate_texts", "synthesize_parallel"):
         assert n in foundry.__all__
 
 

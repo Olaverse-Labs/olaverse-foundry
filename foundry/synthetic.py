@@ -110,6 +110,70 @@ def synthesize_pairs(passages, generator, anchor_key: str = "anchor",
     return [{anchor_key: q, positive_key: t} for q, t in zip(queries, passages)]
 
 
+# ── Translation synthesis (for no-data / low-resource languages) ──────────────
+
+def load_translator(model_id: str = "google/madlad400-3b-mt",
+                    device: str = "auto", dtype: str = "bfloat16"):
+    """
+    Load an open, **Apache-licensed** translation model that covers low-resource
+    languages. ``google/madlad400-3b-mt`` handles 400+ languages — far better than a
+    general LLM at the languages that *have no parallel data*, and commercially clean.
+    Returns ``(model, tokenizer)``.
+    """
+    try:
+        import torch
+        from transformers import T5ForConditionalGeneration, AutoTokenizer
+    except ImportError:
+        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]")
+    td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
+          "float32": torch.float32}.get(dtype, torch.bfloat16)
+    tok = AutoTokenizer.from_pretrained(model_id)
+    model = T5ForConditionalGeneration.from_pretrained(model_id, torch_dtype=td, device_map=device)
+    return model, tok
+
+
+def translate_texts(translator, texts, target_lang: str,
+                    max_new_tokens: int = 200, batch_size: int = 16) -> list[str]:
+    """Translate texts into ``target_lang`` (ISO code, e.g. 'sw', 'yo'). MADLAD uses a
+    ``<2xx>`` target prefix."""
+    import torch
+    model, tok = translator
+    out: list[str] = []
+    for i in range(0, len(texts), batch_size):
+        chunk = [f"<2{target_lang}> {t}" for t in texts[i:i + batch_size]]
+        enc = tok(chunk, return_tensors="pt", padding=True, truncation=True,
+                  max_length=256).to(model.device)
+        with torch.no_grad():
+            gen = model.generate(**enc, max_new_tokens=max_new_tokens)
+        out += tok.batch_decode(gen, skip_special_tokens=True)
+    return out
+
+
+def _as_translate(translator) -> Callable[[list, str], list]:
+    if isinstance(translator, tuple):
+        return lambda texts, lang: translate_texts(translator, texts, lang)
+    if callable(translator):
+        return translator
+    raise TypeError("translator must be a (model, tokenizer) tuple or a callable (texts, lang)->list.")
+
+
+def synthesize_parallel(source_texts, translator, target_langs,
+                        anchor_key: str = "anchor", positive_key: str = "positive") -> list[dict]:
+    """
+    Create synthetic parallel pairs for languages with no data: translate
+    ``source_texts`` (e.g. English) into each ``target_langs`` →
+    ``{anchor: source, positive: translation}``. Use an MT model (``load_translator``)
+    — not a general LLM — for low-resource languages.
+    """
+    tr = _as_translate(translator)
+    pairs = []
+    for lang in target_langs:
+        translations = tr(list(source_texts), lang)
+        pairs += [{anchor_key: s, positive_key: t}
+                  for s, t in zip(source_texts, translations) if t and t.strip()]
+    return pairs
+
+
 # ── Encoder-based mining ──────────────────────────────────────────────────────
 
 def mine_hard_negatives(pairs, model, tokenizer, anchor_key: str = "anchor",
