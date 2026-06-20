@@ -158,14 +158,22 @@ def _as_translate(translator) -> Callable[[list, str], list]:
 
 
 def synthesize_parallel(source_texts, translator, target_langs,
-                        anchor_key: str = "anchor", positive_key: str = "positive") -> list[dict]:
+                        anchor_key: str = "anchor", positive_key: str = "positive",
+                        max_new_tokens: int = 128, batch_size: int = 32) -> list[dict]:
     """
     Create synthetic parallel pairs for languages with no data: translate
     ``source_texts`` (e.g. English) into each ``target_langs`` →
     ``{anchor: source, positive: translation}``. Use an MT model (``load_translator``)
     — not a general LLM — for low-resource languages.
+
+    ``batch_size`` / ``max_new_tokens`` control throughput (bigger batch + fewer
+    tokens = faster); they apply when ``translator`` is a ``(model, tokenizer)`` tuple.
     """
-    tr = _as_translate(translator)
+    if isinstance(translator, tuple):
+        tr = lambda texts, lang: translate_texts(translator, texts, lang,
+                                                 max_new_tokens=max_new_tokens, batch_size=batch_size)
+    else:
+        tr = _as_translate(translator)
     pairs = []
     for lang in target_langs:
         translations = tr(list(source_texts), lang)
