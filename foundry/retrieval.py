@@ -74,7 +74,8 @@ def encode_texts(model, tokenizer, texts, pool: str = "mean", normalize: bool = 
     """Encode a list of strings → (N, D) numpy embeddings (no grad)."""
     import torch
     import torch.nn.functional as F
-    dev = device or next(model.parameters()).device
+    dev = device if device is not None else next(model.parameters()).device
+    model = model.to(dev)          # keep model + inputs on the same device
     model.eval()
     out = []
     with torch.no_grad():
