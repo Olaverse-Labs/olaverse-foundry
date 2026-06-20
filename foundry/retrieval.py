@@ -70,8 +70,10 @@ def _pool(hidden, mask, mode):
 
 
 def encode_texts(model, tokenizer, texts, pool: str = "mean", normalize: bool = True,
-                 max_length: int = 128, batch_size: int = 64, device=None) -> np.ndarray:
-    """Encode a list of strings → (N, D) numpy embeddings (no grad)."""
+                 max_length: int = 128, batch_size: int = 64, device=None,
+                 prefix: str = "") -> np.ndarray:
+    """Encode a list of strings → (N, D) numpy embeddings (no grad). ``prefix`` is
+    prepended to each text (e.g. ``"query: "`` for e5)."""
     import torch
     import torch.nn.functional as F
     dev = device if device is not None else next(model.parameters()).device
@@ -80,7 +82,7 @@ def encode_texts(model, tokenizer, texts, pool: str = "mean", normalize: bool = 
     out = []
     with torch.no_grad():
         for i in range(0, len(texts), batch_size):
-            chunk = list(texts[i:i + batch_size])
+            chunk = [prefix + t for t in texts[i:i + batch_size]] if prefix else list(texts[i:i + batch_size])
             enc = tokenizer(chunk, padding=True, truncation=True,
                             max_length=max_length, return_tensors="pt")
             enc = {k: v.to(dev) for k, v in enc.items()}
@@ -94,24 +96,52 @@ def encode_texts(model, tokenizer, texts, pool: str = "mean", normalize: bool = 
 
 # ── Compare ────────────────────────────────────────────────────────────────────
 
+# Recommended per-model encoding for a fair comparison (pooling + e5 prefixes).
+RETRIEVER_SPECS = {
+    "e5":    {"pool": "mean", "query_prefix": "query: ", "doc_prefix": "passage: "},
+    "bge":   {"pool": "cls"},
+    "labse": {"pool": "cls"},
+}
+
+
+def _spec_for(name: str, base: str, specs: dict) -> dict:
+    """Resolve the encoding spec for a model: explicit > name/id heuristic > default."""
+    if name in specs:
+        return specs[name]
+    key = f"{name} {base}".lower()
+    if "e5" in key:    return RETRIEVER_SPECS["e5"]
+    if "bge" in key:   return RETRIEVER_SPECS["bge"]
+    if "labse" in key: return RETRIEVER_SPECS["labse"]
+    return {}
+
+
 def compare_retrievers(models, queries, corpus, qrels, k: int = 10,
                        pool: str = "mean", max_length: int = 128,
-                       batch_size: int = 64, device: str = "cuda") -> dict:
+                       batch_size: int = 64, device: str = "cuda", specs: dict | None = None) -> dict:
     """
-    Encode + score several models on the same retrieval set.
+    Encode + score several models on the same retrieval set, each with **its own**
+    encoding (pooling + prefixes) for a fair comparison.
 
-    ``models`` is a ``{name: model_id_or_path}`` dict. Returns
-    ``{name: {ndcg@k, recall@k, params_m}}``. One model failing is recorded as NaN.
+    ``models`` is a ``{name: model_id_or_path}`` dict. ``specs`` optionally maps a
+    model name to ``{"pool", "query_prefix", "doc_prefix"}``; otherwise known models
+    (e5 / bge / LaBSE) are auto-configured and the rest default to ``pool``.
+    Returns ``{name: {ndcg@k, recall@k, params_m}}``; a failing model is recorded as NaN.
     """
     from transformers import AutoModel, AutoTokenizer
+    specs = specs or {}
     results: dict[str, Any] = {}
     for name, base in (models.items() if isinstance(models, dict) else [(m, m) for m in models]):
-        print(f"[retrieval] encoding + scoring: {name} …")
+        sp   = _spec_for(name, base, specs)
+        mpool = sp.get("pool", pool)
+        qpre  = sp.get("query_prefix", "")
+        dpre  = sp.get("doc_prefix", "")
+        print(f"[retrieval] encoding + scoring: {name}  (pool={mpool}"
+              + (f", prefixes" if qpre or dpre else "") + ") …")
         try:
             tok = AutoTokenizer.from_pretrained(base)
             mdl = AutoModel.from_pretrained(base).to(device)
-            q_emb = encode_texts(mdl, tok, queries, pool, True, max_length, batch_size, device)
-            c_emb = encode_texts(mdl, tok, corpus,  pool, True, max_length, batch_size, device)
+            q_emb = encode_texts(mdl, tok, queries, mpool, True, max_length, batch_size, device, prefix=qpre)
+            c_emb = encode_texts(mdl, tok, corpus,  mpool, True, max_length, batch_size, device, prefix=dpre)
             m = evaluate_retrieval(q_emb, c_emb, qrels, k)
             m["params_m"] = round(sum(p.numel() for p in mdl.parameters()) / 1e6, 1)
             results[name] = m
