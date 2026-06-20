@@ -36,8 +36,13 @@ from foundry.training import (
     MLMTrainer, MLMConfig, WithMLMHead,
     EncoderDistillTrainer, EncoderDistillConfig,
     DistilMLMTrainer, DistilMLMConfig,
+    ContrastiveTrainer, ContrastiveConfig,
     SequenceClassificationTrainer, TokenClassificationTrainer,
     HeadTrainConfig, freeze_backbone, build_encoder_with_head,
+)
+from foundry.retrieval import (
+    evaluate_retrieval, compare_retrievers, print_retrieval_comparison,
+    encode_texts, ndcg_at_k, recall_at_k,
 )
 from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
@@ -76,6 +81,7 @@ __all__ = [
     "MLMTrainer", "MLMConfig", "WithMLMHead",
     "EncoderDistillTrainer", "EncoderDistillConfig",
     "DistilMLMTrainer", "DistilMLMConfig",
+    "ContrastiveTrainer", "ContrastiveConfig",
     "SequenceClassificationTrainer", "TokenClassificationTrainer",
     "HeadTrainConfig", "freeze_backbone", "build_encoder_with_head",
     # IO / Seed
@@ -92,4 +98,7 @@ __all__ = [
     "prepare_qat", "QATConfig", "export_quantized", "int8_state_dict", "quantize_tensor",
     # Evaluation harness
     "evaluate_encoder", "compare_encoders", "print_comparison", "macro_f1",
+    # Retrieval (cross-lingual)
+    "evaluate_retrieval", "compare_retrievers", "print_retrieval_comparison",
+    "encode_texts", "ndcg_at_k", "recall_at_k",
 ]
