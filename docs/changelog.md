@@ -2,7 +2,7 @@
 
 ---
 
-## v0.2.0 — Unreleased
+## v0.2.0 — 2026-07-16
 
 ### Encoder base models
 

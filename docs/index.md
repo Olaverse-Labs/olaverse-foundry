@@ -1,5 +1,5 @@
 <div class="ov-hero">
-  <div class="ov-hero-badge">v0.1.0</div>
+  <div class="ov-hero-badge">v0.2.0</div>
   <h1 class="ov-hero-title">olaverse-foundry</h1>
   <p class="ov-hero-sub">A toolkit for building model families — pretrain, distil, grow, adapt, quantize, evaluate</p>
   <div class="ov-hero-install">
