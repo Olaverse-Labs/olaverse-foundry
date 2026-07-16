@@ -16,7 +16,7 @@
 
 ## What is olaverse-foundry?
 
-`olaverse-foundry` is a general-purpose toolkit for **building** transformer models — decoder (causal-LM) or encoder — from existing ones or from scratch. It works with any HuggingFace model and any of your own `nn.Module` architectures.
+Big models are expensive to serve, and small ones are expensive to train well. `olaverse-foundry` closes that gap: it builds **small, specialised transformer models out of big, general ones** — a compact classifier from a 178M-parameter teacher, a retriever for a language with no training data, an int8 encoder that runs on CPU. It works with any HuggingFace model and any of your own `nn.Module` architectures.
 
 A single pipeline takes you end to end:
 
@@ -25,6 +25,8 @@ pretrain / distil  →  grow  →  add heads  →  quantize  →  evaluate  → 
 ```
 
 Everything is **model-agnostic**: pass an HF `AutoModel*`, or your own module that returns `.logits` / `.last_hidden_state`, and the same trainers, growth, QAT, and eval tooling apply.
+
+**Start here:** [60-second quickstart](quickstart/) · [Which trainer do I need?](choosing/) · [Concepts & glossary](concepts/)
 
 ---
 

@@ -95,7 +95,13 @@ plugins:
 nav:
   - 🏠 Main Site: https://www.olaverse.co.uk/
   - Home: index.md
-  - Quick Start: quickstart.md
+  - Getting Started:
+    - Quick Start: quickstart.md
+    - Which trainer do I need?: choosing.md
+    - Concepts & Glossary: concepts.md
+  - Guides:
+    - Build a small classifier: guides/small-classifier.md
+    - Low-resource retriever: guides/low-resource-retriever.md
   - Training:
     - training/index.md
     - TorchDistillTrainer: training/torch.md
@@ -107,14 +113,16 @@ nav:
     - ContrastiveTrainer: training/contrastive.md
     - Task Heads: training/heads.md
     - Config Reference: training/config.md
-  - DataPipeline: data.md
-  - Synthetic Data: synthetic.md
+  - Data:
+    - DataPipeline: data.md
+    - Synthetic Data: synthetic.md
+  - Evaluation:
+    - Classification / NER: evaluation.md
+    - Retrieval: retrieval.md
   - Recipes (YAML): recipes.md
   - Skill Packs: skillpacks.md
   - Growth & Scaling: growth.md
   - Quantization (QAT): quantization.md
   - Inference: inference.md
-  - Evaluation: evaluation.md
-  - Retrieval: retrieval.md
   - CLI: cli.md
   - Changelog: changelog.md

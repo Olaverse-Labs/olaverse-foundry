@@ -1,6 +1,9 @@
 # Training
 
-`olaverse-foundry` ships a family of production-ready trainers that share the same config base and feature set. They fall into two groups: **distillation** trainers (learn from teachers) and **encoder / head** trainers (pretrain a base and add task heads). Choose based on what you're building.
+`olaverse-foundry` ships a family of production-ready trainers that share the same config base and feature set. They fall into two groups: **distillation** trainers (learn from teachers) and **encoder / head** trainers (pretrain a base and add task heads).
+
+!!! tip "Not sure which one you need?"
+    Start from your goal, not the class list: [Which trainer do I need? →](../choosing.md)
 
 | Trainer | Builds | Page |
 |---|---|---|
