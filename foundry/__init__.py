@@ -60,7 +60,7 @@ from foundry.eval import (
     evaluate_encoder, compare_encoders, print_comparison, macro_f1,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     # Contracts
