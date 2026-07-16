@@ -2,12 +2,25 @@
 
 ---
 
-## Unreleased
+## v0.2.0 — Unreleased
 
 ### Encoder base models
 
 - **`MLMTrainer`** — masked-language-modeling pretraining of an encoder backbone from scratch (teacherless). `WithMLMHead` adds an MLM head to a custom encoder.
 - **`EncoderDistillTrainer`** — token-level hidden-state distillation from a teacher encoder into a smaller architecture, with automatic student→teacher projection.
+- **`DistilMLMTrainer`** — combined distillation + MLM in a single multi-part loss (the DistilBERT objective: MLM CE + temperature-scaled KL + hidden-state cosine).
+
+### Retrieval
+
+- **`ContrastiveTrainer`** — InfoNCE / MultipleNegativesRanking training on `{anchor, positive[, negative]}` pairs, with in-batch negatives and optional hard negatives, for (cross-lingual) retrieval.
+- `evaluate_retrieval()` / `compare_retrievers()` / `print_retrieval_comparison()` — nDCG@k / Recall@k scoring and a head-to-head model table; each model encoded with its own tokenizer, pooling, and prefixes (e5 / bge / LaBSE auto-configured).
+- `encode_texts()` — batched no-grad encoding to numpy, with pooling, normalisation, and prefix support.
+
+### Synthetic data
+
+- `synthesize_pairs()` / `generate_hard_negatives()` — query + hard-negative generation with an open, Apache-licensed instruct LLM (`load_generator`, Qwen/Mistral).
+- `mine_hard_negatives()` — encoder-based hard-negative mining (LLM-free; the right choice for low-resource languages).
+- `synthesize_parallel()` / `translate_texts()` — synthetic parallel pairs for no-data languages via an open MT model (`load_translator`, MADLAD-400).
 
 ### Task heads
 
@@ -33,6 +46,8 @@
 
 ### Fixes
 
+- **Security** — all trainers now load checkpoints with `torch.load(..., weights_only=True)`, so resuming from a checkpoint can never execute arbitrary pickled code.
+- The test suite now skips torch-dependent tests cleanly when torch is not installed, instead of failing at collection.
 - `MLMTrainer` no longer produces a NaN loss when a batch masks zero tokens.
 - `recipe.run()` raises instead of silently falling back to a numpy stub when torch is absent, and refuses to train on synthetic random tokens.
 - Removed the `mergekit` dependency (the native merge backend replaces it).

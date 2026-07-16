@@ -9,6 +9,8 @@
 | `EmbeddingDistillTrainer` | embedding model (pooled MSE/cosine) | [reference](embed.md) |
 | `MLMTrainer` | encoder base from scratch (masked LM) | [reference](mlm.md) |
 | `EncoderDistillTrainer` | encoder base (token-level distillation) | [reference](encoder-distill.md) |
+| `DistilMLMTrainer` | encoder base (distillation + MLM combined, DistilBERT-style) | [reference](distil-mlm.md) |
+| `ContrastiveTrainer` | retrieval embedding model (InfoNCE) | [reference](contrastive.md) |
 | `SequenceClassificationTrainer` | classification / langID / moderation head | [reference](heads.md) |
 | `TokenClassificationTrainer` | NER / token-classification head | [reference](heads.md) |
 
@@ -131,7 +133,7 @@ trainer.resume_from_checkpoint("/checkpoints/run1")
 result = trainer.train(dataset)
 ```
 
-`checkpoint.pt` contains model weights, optimizer state, and the config dict.
+`checkpoint.pt` contains model weights, optimizer state, and the config dict. Checkpoints are loaded with `torch.load(..., weights_only=True)`, so resuming never executes arbitrary pickled code.
 
 ### Eval loop
 

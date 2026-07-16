@@ -4,6 +4,8 @@ The evaluation harness measures how good a base encoder is, **head-to-head** wit
 
 Each model is tokenised with **its own** tokenizer (the fair thing to do), so you pass **raw rows**, not pre-tokenised ids. Metrics are pure numpy (no sklearn).
 
+This page covers **classification / NER** evaluation. For embedding models, see [Retrieval evaluation](retrieval.md) (nDCG / Recall, `compare_retrievers`).
+
 ```bash
 pip install "olaverse-foundry[torch]"
 ```

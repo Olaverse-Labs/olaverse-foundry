@@ -133,5 +133,7 @@ The encoder, head, and quantization trainers have their own configs (same shared
 |---|---|---|
 | `MLMConfig` | `MLMTrainer` | [MLM pretraining](mlm.md) |
 | `EncoderDistillConfig` | `EncoderDistillTrainer` | [Encoder distillation](encoder-distill.md) |
+| `DistilMLMConfig` | `DistilMLMTrainer` | [Distillation + MLM](distil-mlm.md) |
+| `ContrastiveConfig` | `ContrastiveTrainer` | [Contrastive retrieval](contrastive.md) |
 | `HeadTrainConfig` | `SequenceClassificationTrainer` / `TokenClassificationTrainer` | [Task heads](heads.md) |
 | `QATConfig` | `prepare_qat` | [Quantization](../quantization.md) |

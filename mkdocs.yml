@@ -103,14 +103,18 @@ nav:
     - EmbeddingDistillTrainer: training/embed.md
     - MLMTrainer (pretraining): training/mlm.md
     - EncoderDistillTrainer: training/encoder-distill.md
+    - DistilMLMTrainer: training/distil-mlm.md
+    - ContrastiveTrainer: training/contrastive.md
     - Task Heads: training/heads.md
     - Config Reference: training/config.md
   - DataPipeline: data.md
+  - Synthetic Data: synthetic.md
   - Recipes (YAML): recipes.md
   - Skill Packs: skillpacks.md
   - Growth & Scaling: growth.md
   - Quantization (QAT): quantization.md
   - Inference: inference.md
   - Evaluation: evaluation.md
+  - Retrieval: retrieval.md
   - CLI: cli.md
   - Changelog: changelog.md
