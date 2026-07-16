@@ -172,7 +172,7 @@ class CachedDistillTrainer:
         import torch
         p = Path(path)
         ckpt = p if p.suffix == ".pt" else p / "checkpoint.pt"
-        data = torch.load(ckpt, map_location=self.device, weights_only=False)
+        data = torch.load(ckpt, map_location=self.device, weights_only=True)
         student = getattr(self.student, "module", self.student)
         student.load_state_dict(data["model_state"])
         self._optimizer.load_state_dict(data["optimizer_state"])
