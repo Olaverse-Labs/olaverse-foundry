@@ -6,7 +6,7 @@ cross-entropy with the gold token) beats simple averaging in quality.
 """
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 import numpy as np
 
 
@@ -75,7 +75,7 @@ def mean_ce(
 
 
 # ── Registry ───────────────────────────────────────────────────────────────
-_StrategyFn = Callable[[list[np.ndarray], np.ndarray, list[float] | None], np.ndarray]
+_StrategyFn = Callable[[list[np.ndarray], np.ndarray, Optional[list[float]]], np.ndarray]
 
 STRATEGY_REGISTRY: dict[str, _StrategyFn] = {
     "min_ce": min_ce,

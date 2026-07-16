@@ -2,6 +2,14 @@
 
 ---
 
+## Unreleased
+
+### Fixes
+
+- Python 3.9 support actually works: a runtime `X | None` type alias in the fusion strategy registry broke every import of `foundry.fusion` on 3.9 (CI had never been green).
+
+---
+
 ## v0.2.0 — 2026-07-16
 
 ### Encoder base models
