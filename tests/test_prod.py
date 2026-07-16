@@ -18,6 +18,10 @@ All tests use TinyLM / ToyTeacher — no HF downloads, no GPU required.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from pathlib import Path

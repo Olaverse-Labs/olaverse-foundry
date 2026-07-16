@@ -6,6 +6,10 @@ No HF downloads, no GPU, no remote calls.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import types
 import unittest
 from types import SimpleNamespace

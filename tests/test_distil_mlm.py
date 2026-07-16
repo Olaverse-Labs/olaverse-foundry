@@ -4,6 +4,10 @@ Torch required; tiny in-process masked-LM modules — no downloads, no GPU.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from types import SimpleNamespace

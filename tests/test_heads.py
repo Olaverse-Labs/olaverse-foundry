@@ -7,6 +7,10 @@ All use tiny in-process nn.Modules returning .logits.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from types import SimpleNamespace

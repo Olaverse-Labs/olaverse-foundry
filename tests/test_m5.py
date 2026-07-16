@@ -5,6 +5,10 @@ No HF downloads. ToyEmbeddingTeacher + TinyEncoder for all trainer tests.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import unittest
 import warnings
 from types import SimpleNamespace

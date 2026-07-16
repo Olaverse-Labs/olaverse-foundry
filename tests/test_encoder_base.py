@@ -8,6 +8,10 @@ All tests use tiny in-process nn.Modules — no HF downloads, no GPU.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from pathlib import Path

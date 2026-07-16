@@ -6,6 +6,10 @@ accelerate is bypassed via use_accelerate=False.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from pathlib import Path

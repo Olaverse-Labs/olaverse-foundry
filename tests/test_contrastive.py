@@ -3,6 +3,10 @@ ContrastiveTrainer tests (torch). Tiny in-process encoder + fake tokenizer.
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")
+
 import tempfile
 import unittest
 from types import SimpleNamespace
