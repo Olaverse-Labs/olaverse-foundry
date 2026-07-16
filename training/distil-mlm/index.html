@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/config/">
+        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/distil-mlm/">
       
       
-        <link rel="prev" href="../heads/">
+        <link rel="prev" href="../encoder-distill/">
       
       
-        <link rel="next" href="../../data/">
+        <link rel="next" href="../contrastive/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Config Reference - olaverse-foundry</title>
+        <title>DistilMLMTrainer - olaverse-foundry</title>
       
     
     
@@ -100,7 +100,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-reference" class="md-skip">
+        <a href="#distilmlmtrainer-combined-distillation-mlm" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Config Reference
+              DistilMLMTrainer
             
           </span>
         </div>
@@ -894,10 +894,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../distil-mlm/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DistilMLMTrainer
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -913,6 +940,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contracts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-distilmlmconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config — DistilMLMConfig
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vs-the-other-encoder-trainers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vs the other encoder trainers
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -978,37 +1069,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Config Reference
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
         
   
   
@@ -1024,114 +1088,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#trainconfig-base" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TrainConfig (base)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#torchtrainconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TorchTrainConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cacheddistillconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CachedDistillConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#embeddingdistillconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EmbeddingDistillConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inheritance-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inheritance diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lr-scheduler-details" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LR scheduler details
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fusion-strategies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fusion strategies
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#other-configs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Other configs
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1468,10 +1424,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#trainconfig-base" class="md-nav__link">
+  <a href="#contracts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TrainConfig (base)
+        Contracts
       
     </span>
   </a>
@@ -1479,10 +1435,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#torchtrainconfig" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TorchTrainConfig
+        Quick start
       
     </span>
   </a>
@@ -1490,10 +1446,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cacheddistillconfig" class="md-nav__link">
+  <a href="#config-distilmlmconfig" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CachedDistillConfig
+        Config — DistilMLMConfig
       
     </span>
   </a>
@@ -1501,54 +1457,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#embeddingdistillconfig" class="md-nav__link">
+  <a href="#vs-the-other-encoder-trainers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        EmbeddingDistillConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inheritance-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inheritance diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lr-scheduler-details" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LR scheduler details
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fusion-strategies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fusion strategies
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#other-configs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Other configs
+        vs the other encoder trainers
       
     </span>
   </a>
@@ -1575,444 +1487,185 @@
   
 
 
-<h1 id="config-reference">Config Reference<a class="headerlink" href="#config-reference" title="Permanent link">&para;</a></h1>
-<p>All trainer configs share a common base (<code>TrainConfig</code>) extended by <code>TorchTrainConfig</code> which is further extended by <code>CachedDistillConfig</code>. <code>EmbeddingDistillConfig</code> is standalone with a similar set of fields.</p>
+<h1 id="distilmlmtrainer-combined-distillation-mlm">DistilMLMTrainer — combined distillation + MLM<a class="headerlink" href="#distilmlmtrainer-combined-distillation-mlm" title="Permanent link">&para;</a></h1>
+<p><code>DistilMLMTrainer</code> trains a student encoder against a teacher with a <em>single</em> multi-part loss — <strong>the DistilBERT objective</strong> — so the distillation and the data-learning signals never fight each other (the failure mode of running distillation then MLM sequentially):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>L = w_mlm · CE(student_mlm, masked_labels)               # learn from data
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  + w_ce  · T² · KL(student_logits/T ‖ teacher_logits/T) # copy the teacher&#39;s soft predictions
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  + w_cos · (1 − cos(student_hidden, teacher_hidden))    # align representations
+</span></code></pre></div>
+<p>Use it when you have a strong teacher <strong>and</strong> raw text in your target domain, and want the student to both mimic the teacher and keep learning from the data.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
+</span></code></pre></div>
 <hr />
-<h2 id="trainconfig-base">TrainConfig (base)<a class="headerlink" href="#trainconfig-base" title="Permanent link">&para;</a></h2>
-<p>Shared by <code>TorchDistillTrainer</code> and <code>CachedDistillTrainer</code>.</p>
+<h2 id="contracts">Contracts<a class="headerlink" href="#contracts" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>student / teacher</strong> — masked-LM models: <code>forward(input_ids=..., attention_mask=..., output_hidden_states=True)</code> returns <code>.logits</code> of shape <code>(B, S, V)</code> and <code>.hidden_states</code> (the last entry is the final encoder state). Any HF <code>AutoModelForMaskedLM</code> satisfies this.</li>
+<li><strong>Shared vocabulary</strong> — student and teacher must share a vocab so the logit-level KL aligns. This holds when the student is warm-started from the teacher (fewer layers, same embeddings). Hidden sizes may differ — a trainable projection is added automatically for the cosine loss.</li>
+<li><strong>tokenizer</strong> — pass one so the mask / pad / special token ids and vocab size are inferred; otherwise set <code>mask_token_id</code> (required), <code>pad_token_id</code>, and <code>vocab_size</code> in the config.</li>
+</ul>
+<hr />
+<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModelForMaskedLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">BertConfig</span><span class="p">,</span> <span class="n">BertForMaskedLM</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataPipeline</span><span class="p">,</span> <span class="n">DistilMLMTrainer</span><span class="p">,</span> <span class="n">DistilMLMConfig</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">teacher</span> <span class="o">=</span> <span class="n">AutoModelForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;google-bert/bert-base-multilingual-cased&quot;</span><span class="p">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">tok</span>     <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;google-bert/bert-base-multilingual-cased&quot;</span><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 4-layer student sharing the teacher&#39;s vocab</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">student</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="p">(</span><span class="n">BertConfig</span><span class="p">(</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">vocab_size</span><span class="o">=</span><span class="n">tok</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">312</span><span class="p">,</span> <span class="n">num_hidden_layers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">num_attention_heads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">intermediate_size</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">max_position_embeddings</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">))</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">text_rows</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">text_column</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;embed&quot;</span><span class="p">)</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">DistilMLMTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DistilMLMConfig</span><span class="p">(</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">,</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">))</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;losses&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="n">student</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-distil-base&quot;</span><span class="p">)</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="n">tok</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-distil-base&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="config-distilmlmconfig">Config — <code>DistilMLMConfig</code><a class="headerlink" href="#config-distilmlmconfig" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Field</th>
-<th>Type</th>
 <th>Default</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>learning_rate</code></td>
-<td><code>float</code></td>
-<td><code>1e-4</code></td>
-<td>AdamW learning rate</td>
+<td><code>mlm_weight</code></td>
+<td><code>2.0</code></td>
+<td>Weight of the MLM cross-entropy term</td>
 </tr>
 <tr>
-<td><code>epochs</code></td>
-<td><code>int</code></td>
-<td><code>3</code></td>
-<td>Number of training epochs</td>
+<td><code>distill_weight</code></td>
+<td><code>5.0</code></td>
+<td>Weight of the KL distillation term</td>
 </tr>
 <tr>
-<td><code>batch_size</code></td>
-<td><code>int</code></td>
-<td><code>4</code></td>
-<td>Input batch size (informational; actual size comes from your dataset)</td>
-</tr>
-<tr>
-<td><code>alpha</code></td>
-<td><code>float</code></td>
-<td><code>0.3</code></td>
-<td>CE loss weight. KL weight = <code>1 - alpha</code>.</td>
-</tr>
-<tr>
-<td><code>fusion_strategy</code></td>
-<td><code>str</code></td>
-<td><code>"min_ce"</code></td>
-<td>How to fuse multiple teacher distributions: <code>"min_ce"</code> or <code>"mean_ce"</code></td>
-</tr>
-<tr>
-<td><code>top_k</code></td>
-<td><code>int</code></td>
-<td><code>64</code></td>
-<td>Top-k teacher logits to consider during fusion</td>
-</tr>
-<tr>
-<td><code>log_every</code></td>
-<td><code>int</code></td>
-<td><code>10</code></td>
-<td>Print / callback loss every N optimizer steps</td>
-</tr>
-<tr>
-<td><code>seed</code></td>
-<td><code>int</code></td>
-<td><code>42</code></td>
-<td>Random seed for torch, numpy, and random</td>
-</tr>
-<tr>
-<td><code>lr_scheduler</code></td>
-<td><code>str</code></td>
-<td><code>"constant"</code></td>
-<td>LR schedule: <code>"constant"</code> / <code>"cosine"</code> / <code>"linear"</code></td>
-</tr>
-<tr>
-<td><code>warmup_steps</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Linear warmup steps before the main schedule</td>
-</tr>
-<tr>
-<td><code>eval_every</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Run eval loop every N steps. <code>0</code> = disabled.</td>
-</tr>
-<tr>
-<td><code>save_every</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Auto-checkpoint every N steps. <code>0</code> = disabled.</td>
-</tr>
-<tr>
-<td><code>save_dir</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>Directory for auto-checkpoints</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="torchtrainconfig">TorchTrainConfig<a class="headerlink" href="#torchtrainconfig" title="Permanent link">&para;</a></h2>
-<p>Extends <code>TrainConfig</code> with torch-specific fields.</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>max_grad_norm</code></td>
-<td><code>float</code></td>
+<td><code>cosine_weight</code></td>
 <td><code>1.0</code></td>
-<td>Gradient clipping norm</td>
-</tr>
-<tr>
-<td><code>weight_decay</code></td>
-<td><code>float</code></td>
-<td><code>0.01</code></td>
-<td>AdamW weight decay</td>
-</tr>
-<tr>
-<td><code>device</code></td>
-<td><code>str</code></td>
-<td><code>"auto"</code></td>
-<td><code>"auto"</code> (CUDA→MPS→CPU), <code>"cpu"</code>, <code>"cuda"</code>, <code>"cuda:0"</code>, <code>"mps"</code></td>
-</tr>
-<tr>
-<td><code>grad_accumulation_steps</code></td>
-<td><code>int</code></td>
-<td><code>1</code></td>
-<td>Accumulate gradients over N batches before stepping</td>
-</tr>
-<tr>
-<td><code>torch_dtype</code></td>
-<td><code>str</code></td>
-<td><code>"float32"</code></td>
-<td>Mixed precision: <code>"float32"</code> / <code>"bfloat16"</code> / <code>"float16"</code></td>
-</tr>
-<tr>
-<td><code>log_backend</code></td>
-<td><code>str</code></td>
-<td><code>"none"</code></td>
-<td>Logging backend: <code>"wandb"</code> / <code>"tensorboard"</code> / <code>"none"</code></td>
-</tr>
-<tr>
-<td><code>run_name</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>W&amp;B or TensorBoard run name</td>
-</tr>
-<tr>
-<td><code>project</code></td>
-<td><code>str</code></td>
-<td><code>"olaverse-foundry"</code></td>
-<td>W&amp;B project name</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="cacheddistillconfig">CachedDistillConfig<a class="headerlink" href="#cacheddistillconfig" title="Permanent link">&para;</a></h2>
-<p>Extends <code>TorchTrainConfig</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>cache_dir</code></td>
-<td><code>str \| None</code></td>
-<td><code>None</code></td>
-<td>Directory to save/load <code>.npz</code> logit cache files. <code>None</code> = in-memory only.</td>
-</tr>
-<tr>
-<td><code>cache_top_k</code></td>
-<td><code>int</code></td>
-<td><code>64</code></td>
-<td>Top-k logits to cache per token position</td>
-</tr>
-<tr>
-<td><code>use_accelerate</code></td>
-<td><code>bool</code></td>
-<td><code>True</code></td>
-<td>Use <code>accelerate.Accelerator</code> for DDP/FSDP. Falls back to plain torch if not installed.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="embeddingdistillconfig">EmbeddingDistillConfig<a class="headerlink" href="#embeddingdistillconfig" title="Permanent link">&para;</a></h2>
-<p>Standalone config for <code>EmbeddingDistillTrainer</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>loss</code></td>
-<td><code>str</code></td>
-<td><code>"cosine"</code></td>
-<td>Loss function: <code>"cosine"</code> or <code>"mse"</code></td>
-</tr>
-<tr>
-<td><code>pool</code></td>
-<td><code>str</code></td>
-<td><code>"mean"</code></td>
-<td>Pooling: <code>"mean"</code> or <code>"cls"</code></td>
-</tr>
-<tr>
-<td><code>normalize</code></td>
-<td><code>bool</code></td>
-<td><code>True</code></td>
-<td>L2-normalise embeddings before loss computation</td>
+<td>Weight of the hidden-state cosine term</td>
 </tr>
 <tr>
 <td><code>temperature</code></td>
-<td><code>float</code></td>
-<td><code>0.05</code></td>
-<td>Scaling factor applied before cosine similarity</td>
+<td><code>2.0</code></td>
+<td>Softmax temperature for the KL term</td>
+</tr>
+<tr>
+<td><code>mask_prob</code></td>
+<td><code>0.15</code></td>
+<td>Fraction of tokens masked</td>
+</tr>
+<tr>
+<td><code>mask_token_id</code></td>
+<td><code>None</code></td>
+<td>Required if no tokenizer is given</td>
+</tr>
+<tr>
+<td><code>pad_token_id</code></td>
+<td><code>0</code></td>
+<td>Used to derive the attention mask if absent</td>
+</tr>
+<tr>
+<td><code>vocab_size</code></td>
+<td><code>None</code></td>
+<td>Inferred from the tokenizer if <code>None</code></td>
 </tr>
 <tr>
 <td><code>learning_rate</code></td>
-<td><code>float</code></td>
-<td><code>2e-5</code></td>
-<td>AdamW learning rate</td>
+<td><code>5e-5</code></td>
+<td>AdamW LR</td>
 </tr>
 <tr>
 <td><code>epochs</code></td>
-<td><code>int</code></td>
-<td><code>3</code></td>
-<td>Training epochs</td>
+<td><code>1</code></td>
+<td>Passes over the dataset</td>
 </tr>
 <tr>
 <td><code>weight_decay</code></td>
-<td><code>float</code></td>
 <td><code>0.01</code></td>
 <td>AdamW weight decay</td>
 </tr>
 <tr>
 <td><code>max_grad_norm</code></td>
-<td><code>float</code></td>
 <td><code>1.0</code></td>
-<td>Gradient clipping norm</td>
+<td>Gradient clipping</td>
 </tr>
 <tr>
 <td><code>device</code></td>
-<td><code>str</code></td>
 <td><code>"auto"</code></td>
 <td>Device selection</td>
 </tr>
 <tr>
-<td><code>log_every</code></td>
-<td><code>int</code></td>
-<td><code>10</code></td>
-<td>Log every N steps</td>
-</tr>
-<tr>
-<td><code>lr_scheduler</code></td>
-<td><code>str</code></td>
-<td><code>"constant"</code></td>
-<td><code>"constant"</code> / <code>"cosine"</code> / <code>"linear"</code></td>
-</tr>
-<tr>
-<td><code>warmup_steps</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Linear warmup steps</td>
-</tr>
-<tr>
 <td><code>grad_accumulation_steps</code></td>
-<td><code>int</code></td>
 <td><code>1</code></td>
-<td>Gradient accumulation steps</td>
+<td>Accumulate over N batches</td>
 </tr>
 <tr>
 <td><code>torch_dtype</code></td>
-<td><code>str</code></td>
 <td><code>"float32"</code></td>
-<td>Mixed precision dtype</td>
+<td>Mixed precision</td>
+</tr>
+<tr>
+<td><code>lr_scheduler</code> / <code>warmup_steps</code></td>
+<td><code>"cosine"</code> / <code>0</code></td>
+<td>Schedule</td>
 </tr>
 <tr>
 <td><code>eval_every</code></td>
-<td><code>int</code></td>
 <td><code>0</code></td>
-<td>Eval every N steps</td>
+<td>Eval cadence (0 = off)</td>
 </tr>
 <tr>
-<td><code>save_every</code></td>
-<td><code>int</code></td>
-<td><code>0</code></td>
-<td>Auto-checkpoint every N steps</td>
+<td><code>save_every</code> / <code>save_dir</code></td>
+<td><code>0</code> / <code>""</code></td>
+<td>Auto-checkpoint</td>
 </tr>
 <tr>
-<td><code>save_dir</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>Checkpoint directory</td>
-</tr>
-<tr>
-<td><code>log_backend</code></td>
-<td><code>str</code></td>
-<td><code>"none"</code></td>
-<td>Logging backend</td>
-</tr>
-<tr>
-<td><code>run_name</code></td>
-<td><code>str</code></td>
-<td><code>""</code></td>
-<td>Run name</td>
-</tr>
-<tr>
-<td><code>project</code></td>
-<td><code>str</code></td>
-<td><code>"olaverse-foundry"</code></td>
-<td>W&amp;B project name</td>
+<td><code>log_every</code> / <code>log_backend</code></td>
+<td><code>50</code> / <code>"none"</code></td>
+<td>Logging</td>
 </tr>
 <tr>
 <td><code>seed</code></td>
-<td><code>int</code></td>
 <td><code>42</code></td>
-<td>Random seed</td>
+<td>Reproducibility</td>
 </tr>
 </tbody>
 </table>
+<p>The DistilBERT default loss weights (<code>2 / 5 / 1</code>) are a good starting point.</p>
+<p><code>train()</code> has the same signature and return value as the other trainers; <code>save_checkpoint</code> / <code>resume_from_checkpoint</code> persist the student, the projector (if created), and optimizer state.</p>
 <hr />
-<h2 id="inheritance-diagram">Inheritance diagram<a class="headerlink" href="#inheritance-diagram" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>TrainConfig
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>└── TorchTrainConfig
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    └── CachedDistillConfig
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>EmbeddingDistillConfig  (standalone, same fields)
-</span></code></pre></div>
-<hr />
-<h2 id="lr-scheduler-details">LR scheduler details<a class="headerlink" href="#lr-scheduler-details" title="Permanent link">&para;</a></h2>
+<h2 id="vs-the-other-encoder-trainers">vs the other encoder trainers<a class="headerlink" href="#vs-the-other-encoder-trainers" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th><code>lr_scheduler</code></th>
-<th><code>warmup_steps</code></th>
-<th>Behaviour</th>
+<th>You have</th>
+<th>Use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>"constant"</code></td>
-<td><code>0</code></td>
-<td>Fixed LR throughout. No scheduler object created.</td>
+<td>Only raw text, no teacher</td>
+<td><a href="../mlm/"><code>MLMTrainer</code></a></td>
 </tr>
 <tr>
-<td><code>"constant"</code></td>
-<td><code>&gt; 0</code></td>
-<td>Linear warmup, then constant LR.</td>
+<td>A teacher, little raw text</td>
+<td><a href="../encoder-distill/"><code>EncoderDistillTrainer</code></a></td>
 </tr>
 <tr>
-<td><code>"cosine"</code></td>
-<td>any</td>
-<td>Linear warmup, then cosine decay to 0.</td>
-</tr>
-<tr>
-<td><code>"linear"</code></td>
-<td>any</td>
-<td>Linear warmup, then linear decay to 0.</td>
-</tr>
-</tbody>
-</table>
-<p><code>total_steps</code> for the decay phase is computed as:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>total_steps = ceil(len(dataset) × epochs / grad_accumulation_steps)
-</span></code></pre></div>
-<p>For streaming datasets (<code>len()</code> raises <code>TypeError</code>), <code>total_steps</code> defaults to <code>0</code> which keeps LR constant after warmup. Override with <code>trainer.train(..., total_steps=N)</code>.</p>
-<hr />
-<h2 id="fusion-strategies">Fusion strategies<a class="headerlink" href="#fusion-strategies" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th><code>fusion_strategy</code></th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>"min_ce"</code></td>
-<td>Per-position, pick the teacher distribution with the lowest CE against ground truth. Encourages the student to learn from the most confident teacher.</td>
-</tr>
-<tr>
-<td><code>"mean_ce"</code></td>
-<td>Weighted average of all teacher distributions (by <code>teacher.weight</code>). Smooths over teacher disagreements.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="other-configs">Other configs<a class="headerlink" href="#other-configs" title="Permanent link">&para;</a></h2>
-<p>The encoder, head, and quantization trainers have their own configs (same shared production fields — mixed precision, grad accumulation, LR schedule, eval, checkpointing). Each is documented on its page:</p>
-<table>
-<thead>
-<tr>
-<th>Config</th>
-<th>Trainer</th>
-<th>Page</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MLMConfig</code></td>
-<td><code>MLMTrainer</code></td>
-<td><a href="../mlm/">MLM pretraining</a></td>
-</tr>
-<tr>
-<td><code>EncoderDistillConfig</code></td>
-<td><code>EncoderDistillTrainer</code></td>
-<td><a href="../encoder-distill/">Encoder distillation</a></td>
-</tr>
-<tr>
-<td><code>DistilMLMConfig</code></td>
+<td>A teacher <strong>and</strong> in-domain raw text (shared vocab)</td>
 <td><code>DistilMLMTrainer</code></td>
-<td><a href="../distil-mlm/">Distillation + MLM</a></td>
-</tr>
-<tr>
-<td><code>ContrastiveConfig</code></td>
-<td><code>ContrastiveTrainer</code></td>
-<td><a href="../contrastive/">Contrastive retrieval</a></td>
-</tr>
-<tr>
-<td><code>HeadTrainConfig</code></td>
-<td><code>SequenceClassificationTrainer</code> / <code>TokenClassificationTrainer</code></td>
-<td><a href="../heads/">Task heads</a></td>
-</tr>
-<tr>
-<td><code>QATConfig</code></td>
-<td><code>prepare_qat</code></td>
-<td><a href="../../quantization/">Quantization</a></td>
 </tr>
 </tbody>
 </table>

@@ -16,7 +16,7 @@
         <link rel="prev" href="../inference/">
       
       
-        <link rel="next" href="../cli/">
+        <link rel="next" href="../retrieval/">
       
       
         
@@ -349,6 +349,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../synthetic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Synthetic Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../recipes/" class="md-tabs__link">
         
   
@@ -453,6 +472,25 @@
     
   
   Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../retrieval/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Retrieval
 
       </a>
     </li>
@@ -633,6 +671,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -850,6 +892,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../training/distil-mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DistilMLMTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/contrastive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ContrastiveTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../training/heads/" class="md-nav__link">
         
   
@@ -921,6 +1019,33 @@
     
   
     DataPipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic Data
   
 
     
@@ -1193,6 +1318,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Retrieval
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../cli/" class="md-nav__link">
         
   
@@ -1333,6 +1485,7 @@
 <h1 id="evaluation-harness">Evaluation harness<a class="headerlink" href="#evaluation-harness" title="Permanent link">&para;</a></h1>
 <p>The evaluation harness measures how good a base encoder is, <strong>head-to-head</strong> with other models. It fine-tunes the same task head on each model with identical data and config, then prints an accuracy / macro-F1 / params table — so "better" is a table, not a vibe.</p>
 <p>Each model is tokenised with <strong>its own</strong> tokenizer (the fair thing to do), so you pass <strong>raw rows</strong>, not pre-tokenised ids. Metrics are pure numpy (no sklearn).</p>
+<p>This page covers <strong>classification / NER</strong> evaluation. For embedding models, see <a href="../retrieval/">Retrieval evaluation</a> (nDCG / Recall, <code>compare_retrievers</code>).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
 </span></code></pre></div>
 <hr />

@@ -351,6 +351,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../synthetic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Synthetic Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../recipes/" class="md-tabs__link">
         
   
@@ -453,6 +472,25 @@
     
   
   Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../retrieval/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Retrieval
 
       </a>
     </li>
@@ -635,6 +673,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -855,6 +897,62 @@
   
   
     <li class="md-nav__item">
+      <a href="distil-mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DistilMLMTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contrastive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ContrastiveTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="heads/" class="md-nav__link">
         
   
@@ -926,6 +1024,33 @@
     
   
     DataPipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic Data
   
 
     
@@ -1088,6 +1213,33 @@
     
   
     Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Retrieval
   
 
     
@@ -1353,6 +1505,16 @@
 <td><a href="encoder-distill/">reference</a></td>
 </tr>
 <tr>
+<td><code>DistilMLMTrainer</code></td>
+<td>encoder base (distillation + MLM combined, DistilBERT-style)</td>
+<td><a href="distil-mlm/">reference</a></td>
+</tr>
+<tr>
+<td><code>ContrastiveTrainer</code></td>
+<td>retrieval embedding model (InfoNCE)</td>
+<td><a href="contrastive/">reference</a></td>
+</tr>
+<tr>
 <td><code>SequenceClassificationTrainer</code></td>
 <td>classification / langID / moderation head</td>
 <td><a href="heads/">reference</a></td>
@@ -1461,7 +1623,7 @@
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">trainer</span><span class="o">.</span><span class="n">resume_from_checkpoint</span><span class="p">(</span><span class="s2">&quot;/checkpoints/run1&quot;</span><span class="p">)</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </span></code></pre></div>
-<p><code>checkpoint.pt</code> contains model weights, optimizer state, and the config dict.</p>
+<p><code>checkpoint.pt</code> contains model weights, optimizer state, and the config dict. Checkpoints are loaded with <code>torch.load(..., weights_only=True)</code>, so resuming never executes arbitrary pickled code.</p>
 <h3 id="eval-loop">Eval loop<a class="headerlink" href="#eval-loop" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">eval_every</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>   <span class="c1"># evaluate every 100 optimizer steps</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>

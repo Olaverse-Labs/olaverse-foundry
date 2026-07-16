@@ -347,6 +347,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../synthetic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Synthetic Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../recipes/" class="md-tabs__link">
         
   
@@ -449,6 +468,25 @@
     
   
   Evaluation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../retrieval/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Retrieval
 
       </a>
     </li>
@@ -631,6 +669,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -848,6 +890,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../training/distil-mlm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DistilMLMTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/contrastive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ContrastiveTrainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../training/heads/" class="md-nav__link">
         
   
@@ -919,6 +1017,33 @@
     
   
     DataPipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic Data
   
 
     
@@ -1100,6 +1225,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../retrieval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Retrieval
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../cli/" class="md-nav__link">
         
   
@@ -1187,15 +1339,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
+  <a href="#v020-unreleased" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Unreleased
+        v0.2.0 — Unreleased
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Unreleased">
+    <nav class="md-nav" aria-label="v0.2.0 — Unreleased">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1203,6 +1355,28 @@
     <span class="md-ellipsis">
       
         Encoder base models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synthetic-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synthetic data
       
     </span>
   </a>
@@ -1442,15 +1616,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
+  <a href="#v020-unreleased" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Unreleased
+        v0.2.0 — Unreleased
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Unreleased">
+    <nav class="md-nav" aria-label="v0.2.0 — Unreleased">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1458,6 +1632,28 @@
     <span class="md-ellipsis">
       
         Encoder base models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synthetic-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synthetic data
       
     </span>
   </a>
@@ -1684,11 +1880,24 @@
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="v020-unreleased">v0.2.0 — Unreleased<a class="headerlink" href="#v020-unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="encoder-base-models">Encoder base models<a class="headerlink" href="#encoder-base-models" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>MLMTrainer</code></strong> — masked-language-modeling pretraining of an encoder backbone from scratch (teacherless). <code>WithMLMHead</code> adds an MLM head to a custom encoder.</li>
 <li><strong><code>EncoderDistillTrainer</code></strong> — token-level hidden-state distillation from a teacher encoder into a smaller architecture, with automatic student→teacher projection.</li>
+<li><strong><code>DistilMLMTrainer</code></strong> — combined distillation + MLM in a single multi-part loss (the DistilBERT objective: MLM CE + temperature-scaled KL + hidden-state cosine).</li>
+</ul>
+<h3 id="retrieval">Retrieval<a class="headerlink" href="#retrieval" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>ContrastiveTrainer</code></strong> — InfoNCE / MultipleNegativesRanking training on <code>{anchor, positive[, negative]}</code> pairs, with in-batch negatives and optional hard negatives, for (cross-lingual) retrieval.</li>
+<li><code>evaluate_retrieval()</code> / <code>compare_retrievers()</code> / <code>print_retrieval_comparison()</code> — nDCG@k / Recall@k scoring and a head-to-head model table; each model encoded with its own tokenizer, pooling, and prefixes (e5 / bge / LaBSE auto-configured).</li>
+<li><code>encode_texts()</code> — batched no-grad encoding to numpy, with pooling, normalisation, and prefix support.</li>
+</ul>
+<h3 id="synthetic-data">Synthetic data<a class="headerlink" href="#synthetic-data" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>synthesize_pairs()</code> / <code>generate_hard_negatives()</code> — query + hard-negative generation with an open, Apache-licensed instruct LLM (<code>load_generator</code>, Qwen/Mistral).</li>
+<li><code>mine_hard_negatives()</code> — encoder-based hard-negative mining (LLM-free; the right choice for low-resource languages).</li>
+<li><code>synthesize_parallel()</code> / <code>translate_texts()</code> — synthetic parallel pairs for no-data languages via an open MT model (<code>load_translator</code>, MADLAD-400).</li>
 </ul>
 <h3 id="task-heads">Task heads<a class="headerlink" href="#task-heads" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1714,6 +1923,8 @@
 </ul>
 <h3 id="fixes">Fixes<a class="headerlink" href="#fixes" title="Permanent link">&para;</a></h3>
 <ul>
+<li><strong>Security</strong> — all trainers now load checkpoints with <code>torch.load(..., weights_only=True)</code>, so resuming from a checkpoint can never execute arbitrary pickled code.</li>
+<li>The test suite now skips torch-dependent tests cleanly when torch is not installed, instead of failing at collection.</li>
 <li><code>MLMTrainer</code> no longer produces a NaN loss when a batch masks zero tokens.</li>
 <li><code>recipe.run()</code> raises instead of silently falling back to a numpy stub when torch is absent, and refuses to train on synthetic random tokens.</li>
 <li>Removed the <code>mergekit</code> dependency (the native merge backend replaces it).</li>
