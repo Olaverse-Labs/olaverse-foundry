@@ -1,5 +1,5 @@
 site_name: olaverse-foundry
-site_description: Build model families from a single pretrained seed — distillation, growth, fusion, and LoRA skill packs.
+site_description: Small, specialised models from big general ones — synthetic data for no-data languages, distillation, contrastive retrieval training, and head-to-head benchmarks.
 site_url: https://olaverse-labs.github.io/olaverse-foundry/
 repo_url: https://github.com/Olaverse-Labs/olaverse-foundry
 repo_name: Olaverse-Labs/olaverse-foundry

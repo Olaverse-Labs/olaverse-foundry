@@ -1,12 +1,22 @@
 # olaverse-foundry
 
-**A general-purpose toolkit for building transformer models — decoder or encoder.**
+**Small, specialised models from big general ones — even when your language or domain has no training data.**
 
-`olaverse-foundry` is the model-building layer of the Olaverse ecosystem. Where `olaverse` gives you ready-to-use models, `foundry` lets you build new ones — pretraining, distilling, growing, adding heads, quantizing, and evaluating them. It is model-agnostic: any HuggingFace model or your own `nn.Module` works.
+The normal way assumes you have data. `foundry` is the pipeline for when you don't: **synthesize** the training data (translation into 400+ languages, LLM query generation, encoder-mined hard negatives), **distil or contrastively train** a small model on it, and **prove it** head-to-head against mBERT / e5 / LaBSE — one library, one afternoon, and everything exits as a standard HuggingFace directory that production code loads with `transformers` alone.
 
-```
-pretrain / distil → grow → add heads → quantize → evaluate → serve
-```
+`foundry` is the model-building layer of the Olaverse ecosystem (where [`olaverse`](https://pypi.org/project/olaverse/) gives you ready-to-use models). It is model-agnostic: any HuggingFace model or your own `nn.Module` works.
+
+---
+
+## Why foundry, honestly
+
+If you have plenty of data and a standard task, use the standard tool — HF `Trainer` for classifiers, [sentence-transformers](https://sbert.net) for embeddings, TRL for LLM distillation. Foundry earns its place where those assume things you don't have:
+
+- **No data in your language.** `synthesize_parallel` (MADLAD-400 into Yoruba, Swahili, Hausa, …) → `mine_hard_negatives` → `ContrastiveTrainer` → `compare_retrievers` is a complete zero-to-benchmarked-retriever pipeline. The pieces exist elsewhere; the pipeline doesn't.
+- **The DistilBERT objective, maintained.** Combined distillation + MLM (`DistilMLMTrainer`) still isn't in HF `Trainer` — people copy 2019-era scripts.
+- **Multi-teacher distillation that doesn't melt your budget.** Weighted teacher pools with per-token fusion (`min_ce` / `mean_ce`), and disk-cached top-k logits so every epoch after the first runs without the teachers.
+- **"Better" as a table, not a vibe.** The eval harness fine-tunes the *same* head on every model (or encodes with each model's *own* pooling and prefixes, for retrieval) and prints accuracy / nDCG / params side by side.
+- **One workflow.** Every trainer takes the same `DataPipeline`, the same config shape, and the same checkpoint/eval/logging features — and every artifact is a plain HF directory.
 
 ---
 
@@ -28,7 +38,43 @@ pip install olaverse-foundry[all]
 
 ---
 
-## Quick start — embedding distillation (200M student)
+## The flagship: no data → benchmarked retriever
+
+```python
+from foundry import (load_translator, synthesize_parallel, mine_hard_negatives,
+                     ContrastiveTrainer, ContrastiveConfig,
+                     compare_retrievers, print_retrieval_comparison)
+from transformers import AutoModel, AutoTokenizer
+
+model = AutoModel.from_pretrained("my/multilingual-base")
+tok   = AutoTokenizer.from_pretrained("my/multilingual-base")
+
+# 1. Manufacture pairs for a language with no data (open MT model, 400+ languages)
+tr    = load_translator("google/madlad400-3b-mt")
+pairs = synthesize_parallel(english_corpus, tr, target_langs=["yo"])
+
+# 2. Mine hard negatives with the encoder itself (no LLM)
+pairs = mine_hard_negatives(pairs, model, tok, device="cuda")
+
+# 3. Contrastive training — the e5 / bge recipe
+ContrastiveTrainer(model, tok, ContrastiveConfig(batch_size=64, device="cuda")).train(pairs)
+model.save_pretrained("./my-retriever"); tok.save_pretrained("./my-retriever")
+
+# 4. Prove it — each baseline encoded with its own pooling & prefixes
+results = compare_retrievers({"mine": "./my-retriever",
+                              "e5":   "intfloat/multilingual-e5-base",
+                              "LaBSE": "sentence-transformers/LaBSE"},
+                             queries, corpus, qrels)
+print_retrieval_comparison(results)
+```
+
+The narrated version, with what to expect at each step: [Guide — a retriever for a low-resource language](https://olaverse-labs.github.io/olaverse-foundry/guides/low-resource-retriever/).
+
+---
+
+## More examples
+
+### Embedding distillation (200M student)
 
 ```python
 from foundry import DataPipeline, EmbeddingDistillTrainer, EmbeddingDistillConfig
@@ -72,7 +118,7 @@ print(result["eval_losses"])
 
 ---
 
-## Quick start — causal LM distillation with multiple teachers
+### Causal LM distillation with multiple teachers
 
 ```python
 from foundry import (
@@ -127,6 +173,10 @@ result = trainer.train(pipe, eval_dataset=eval_pipe)
 | `EmbeddingDistillTrainer` | MSE / cosine loss on pooled sentence vectors. Use for bi-encoder / reranker distillation. |
 | `MLMTrainer` | Masked-language-modeling pretraining of an encoder backbone from scratch (no teacher). `WithMLMHead` adds an MLM head to a custom encoder. |
 | `EncoderDistillTrainer` | Token-level hidden-state distillation from a teacher encoder into a smaller arch (auto projection). |
+| `DistilMLMTrainer` | Combined distillation + MLM in one loss — the DistilBERT objective. |
+| `ContrastiveTrainer` | InfoNCE / MultipleNegativesRanking on `{anchor, positive[, negative]}` pairs — the e5/bge retrieval recipe. |
+| `synthesize_parallel` / `synthesize_pairs` / `mine_hard_negatives` | Synthetic training data: MT translation for no-data languages, LLM query generation, encoder-mined hard negatives. |
+| `compare_retrievers` / `evaluate_retrieval` | nDCG@k / Recall@k, and a head-to-head retriever table with per-model pooling & prefixes. |
 | `SequenceClassificationTrainer` / `TokenClassificationTrainer` | Fine-tune classification / NER heads on any base. Full fine-tune or `freeze_backbone`. `build_encoder_with_head` attaches a head in one line. |
 | `prepare_qat` / `export_quantized` | Quantization-aware training (int8/int4 fake-quant) + int8 weight export and footprint report. |
 | `compare_encoders` / `evaluate_encoder` | Head-to-head accuracy / macro-F1 table across models. |
@@ -137,7 +187,6 @@ result = trainer.train(pipe, eval_dataset=eval_pipe)
 | `SkillPack` / `SkillRegistry` | Detachable LoRA adapters bound to a specific base model hash. |
 | `save_as_peft` / `load_from_peft` | PEFT-format adapter round-trip (no peft library required). |
 | `MinEDAlignment` | Cross-tokenizer vocabulary alignment via edit distance. |
-| `DataPipeline` | Unified dataset adapter — HF datasets, streaming, raw text, numpy. Labels for head training via `label_column`. |
 | `FoundryRecipe` / `EmbedRecipe` | Pydantic-validated YAML recipes — fail fast before GPU spend. |
 
 ---

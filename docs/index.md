@@ -1,7 +1,7 @@
 <div class="ov-hero">
   <div class="ov-hero-badge">v0.2.0</div>
   <h1 class="ov-hero-title">olaverse-foundry</h1>
-  <p class="ov-hero-sub">A toolkit for building model families — pretrain, distil, grow, adapt, quantize, evaluate</p>
+  <p class="ov-hero-sub">Small, specialised models from big general ones — even when your language has no training data</p>
   <div class="ov-hero-install">
     <span class="ov-hero-install-label">pip install olaverse-foundry</span>
   </div>
@@ -16,17 +16,13 @@
 
 ## What is olaverse-foundry?
 
-Big models are expensive to serve, and small ones are expensive to train well. `olaverse-foundry` closes that gap: it builds **small, specialised transformer models out of big, general ones** — a compact classifier from a 178M-parameter teacher, a retriever for a language with no training data, an int8 encoder that runs on CPU. It works with any HuggingFace model and any of your own `nn.Module` architectures.
+The normal way to train a model assumes you have data. `olaverse-foundry` is the pipeline for when you don't: **synthesize** the training data (MT translation into 400+ languages, LLM query generation, mined hard negatives), **distil or contrastively train** a small model on it, and **prove it** head-to-head against mBERT / e5 / LaBSE — one library, one afternoon. Every artifact is a standard HuggingFace directory; production code needs only `transformers`.
 
-A single pipeline takes you end to end:
-
-```
-pretrain / distil  →  grow  →  add heads  →  quantize  →  evaluate  →  serve
-```
-
-Everything is **model-agnostic**: pass an HF `AutoModel*`, or your own module that returns `.logits` / `.last_hidden_state`, and the same trainers, growth, QAT, and eval tooling apply.
+The same machinery covers the data-rich cases too — a compact classifier distilled from a 178M-parameter teacher, an int8 encoder that runs on CPU, a multi-teacher causal-LM student — and it is **model-agnostic**: pass an HF `AutoModel*`, or your own module that returns `.logits` / `.last_hidden_state`.
 
 **Start here:** [60-second quickstart](quickstart/) · [Which trainer do I need?](choosing/) · [Concepts & glossary](concepts/)
+
+**The flagship walkthrough:** [a retriever for a language with no training data →](guides/low-resource-retriever/)
 
 ---
 
@@ -39,6 +35,20 @@ Everything is **model-agnostic**: pass an HF `AutoModel*`, or your own module th
   <div class="ov-card-title">Distillation</div>
   <div class="ov-card-body">Transfer knowledge from one or many teachers into a smaller student. CE+KL for causal LMs, pooled MSE/cosine for embeddings, and token-level hidden-state distillation for encoders. Logit caching and cross-tokenizer alignment included.</div>
   <a href="training/" class="ov-card-link">Explore Training →</a>
+</div>
+
+<div class="ov-card">
+  <div class="ov-card-icon">🌍</div>
+  <div class="ov-card-title">Synthetic data</div>
+  <div class="ov-card-body">No training data in your language? Manufacture it: MT translation into 400+ languages (MADLAD), LLM query generation, and encoder-mined hard negatives — commercially clean, ready for contrastive training.</div>
+  <a href="synthetic/" class="ov-card-link">Explore Synthetic Data →</a>
+</div>
+
+<div class="ov-card">
+  <div class="ov-card-icon">🔎</div>
+  <div class="ov-card-title">Retrieval</div>
+  <div class="ov-card-body">Train an embedding model with InfoNCE (the e5/bge recipe) and score it with nDCG / Recall against the strong multilingual baselines — each model encoded with its own pooling and prefixes.</div>
+  <a href="retrieval/" class="ov-card-link">Explore Retrieval →</a>
 </div>
 
 <div class="ov-card">
@@ -153,6 +163,8 @@ Quantized inference additionally needs `bitsandbytes`; QAT and growth need only 
 | [`EmbeddingDistillTrainer`](training/embed.md) | embedding model | yes | pooled MSE / cosine for bi-encoders / rerankers |
 | [`MLMTrainer`](training/mlm.md) | encoder base | **no** | masked-LM pretraining from scratch |
 | [`EncoderDistillTrainer`](training/encoder-distill.md) | encoder base | yes | token-level hidden-state distillation |
+| [`DistilMLMTrainer`](training/distil-mlm.md) | encoder base | yes | distillation + MLM in one loss (DistilBERT objective) |
+| [`ContrastiveTrainer`](training/contrastive.md) | retrieval embeddings | **no** | InfoNCE on pairs; in-batch + hard negatives |
 | [`SequenceClassificationTrainer`](training/heads.md) | classifier head | — | sequence labels; full or frozen backbone |
 | [`TokenClassificationTrainer`](training/heads.md) | token head (NER) | — | token labels; full or frozen backbone |
 
