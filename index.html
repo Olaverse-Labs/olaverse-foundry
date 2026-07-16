@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Build model families from a single pretrained seed — distillation, growth, fusion, and LoRA skill packs.">
+        <meta name="description" content="Small, specialised models from big general ones — synthetic data for no-data languages, distillation, contrastive retrieval training, and head-to-head benchmarks.">
       
       
       
@@ -1893,7 +1893,7 @@
 <div class="ov-hero">
   <div class="ov-hero-badge">v0.2.0</div>
   <h1 class="ov-hero-title">olaverse-foundry</h1>
-  <p class="ov-hero-sub">A toolkit for building model families — pretrain, distil, grow, adapt, quantize, evaluate</p>
+  <p class="ov-hero-sub">Small, specialised models from big general ones — even when your language has no training data</p>
   <div class="ov-hero-install">
     <span class="ov-hero-install-label">pip install olaverse-foundry</span>
   </div>
@@ -1906,12 +1906,10 @@
 
 <hr />
 <h2 id="what-is-olaverse-foundry">What is olaverse-foundry?<a class="headerlink" href="#what-is-olaverse-foundry" title="Permanent link">&para;</a></h2>
-<p>Big models are expensive to serve, and small ones are expensive to train well. <code>olaverse-foundry</code> closes that gap: it builds <strong>small, specialised transformer models out of big, general ones</strong> — a compact classifier from a 178M-parameter teacher, a retriever for a language with no training data, an int8 encoder that runs on CPU. It works with any HuggingFace model and any of your own <code>nn.Module</code> architectures.</p>
-<p>A single pipeline takes you end to end:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pretrain / distil  →  grow  →  add heads  →  quantize  →  evaluate  →  serve
-</span></code></pre></div>
-<p>Everything is <strong>model-agnostic</strong>: pass an HF <code>AutoModel*</code>, or your own module that returns <code>.logits</code> / <code>.last_hidden_state</code>, and the same trainers, growth, QAT, and eval tooling apply.</p>
+<p>The normal way to train a model assumes you have data. <code>olaverse-foundry</code> is the pipeline for when you don't: <strong>synthesize</strong> the training data (MT translation into 400+ languages, LLM query generation, mined hard negatives), <strong>distil or contrastively train</strong> a small model on it, and <strong>prove it</strong> head-to-head against mBERT / e5 / LaBSE — one library, one afternoon. Every artifact is a standard HuggingFace directory; production code needs only <code>transformers</code>.</p>
+<p>The same machinery covers the data-rich cases too — a compact classifier distilled from a 178M-parameter teacher, an int8 encoder that runs on CPU, a multi-teacher causal-LM student — and it is <strong>model-agnostic</strong>: pass an HF <code>AutoModel*</code>, or your own module that returns <code>.logits</code> / <code>.last_hidden_state</code>.</p>
 <p><strong>Start here:</strong> <a href="quickstart/">60-second quickstart</a> · <a href="choosing/">Which trainer do I need?</a> · <a href="concepts/">Concepts &amp; glossary</a></p>
+<p><strong>The flagship walkthrough:</strong> <a href="guides/low-resource-retriever/">a retriever for a language with no training data →</a></p>
 <hr />
 <h2 id="what-you-can-do">What you can do<a class="headerlink" href="#what-you-can-do" title="Permanent link">&para;</a></h2>
 <div class="ov-grid">
@@ -1921,6 +1919,20 @@
   <div class="ov-card-title">Distillation</div>
   <div class="ov-card-body">Transfer knowledge from one or many teachers into a smaller student. CE+KL for causal LMs, pooled MSE/cosine for embeddings, and token-level hidden-state distillation for encoders. Logit caching and cross-tokenizer alignment included.</div>
   <a href="training/" class="ov-card-link">Explore Training →</a>
+</div>
+
+<div class="ov-card">
+  <div class="ov-card-icon">🌍</div>
+  <div class="ov-card-title">Synthetic data</div>
+  <div class="ov-card-body">No training data in your language? Manufacture it: MT translation into 400+ languages (MADLAD), LLM query generation, and encoder-mined hard negatives — commercially clean, ready for contrastive training.</div>
+  <a href="synthetic/" class="ov-card-link">Explore Synthetic Data →</a>
+</div>
+
+<div class="ov-card">
+  <div class="ov-card-icon">🔎</div>
+  <div class="ov-card-title">Retrieval</div>
+  <div class="ov-card-body">Train an embedding model with InfoNCE (the e5/bge recipe) and score it with nDCG / Recall against the strong multilingual baselines — each model encoded with its own pooling and prefixes.</div>
+  <a href="retrieval/" class="ov-card-link">Explore Retrieval →</a>
 </div>
 
 <div class="ov-card">
@@ -1997,26 +2009,26 @@
 
 <hr />
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Core — schema validation, growth planning, recipe parsing (no GPU required)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pip<span class="w"> </span>install<span class="w"> </span>olaverse-foundry
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Real training + inference (torch, transformers, safetensors, accelerate)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># LoRA skill packs</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,lego]&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># HuggingFace dataset streaming</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,data]&quot;</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># Fast cross-tokenizer alignment (rapidfuzz)</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,align]&quot;</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="c1"># W&amp;B experiment tracking</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,logging]&quot;</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="c1"># Everything</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[all]&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Core — schema validation, growth planning, recipe parsing (no GPU required)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pip<span class="w"> </span>install<span class="w"> </span>olaverse-foundry
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Real training + inference (torch, transformers, safetensors, accelerate)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># LoRA skill packs</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,lego]&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># HuggingFace dataset streaming</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,data]&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># Fast cross-tokenizer alignment (rapidfuzz)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,align]&quot;</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1"># W&amp;B experiment tracking</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch,logging]&quot;</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1"># Everything</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[all]&quot;</span>
 </span></code></pre></div>
 <p>Quantized inference additionally needs <code>bitsandbytes</code>; QAT and growth need only <code>[torch]</code>.</p>
 <hr />
@@ -2062,6 +2074,18 @@
 <td>token-level hidden-state distillation</td>
 </tr>
 <tr>
+<td><a href="training/distil-mlm/"><code>DistilMLMTrainer</code></a></td>
+<td>encoder base</td>
+<td>yes</td>
+<td>distillation + MLM in one loss (DistilBERT objective)</td>
+</tr>
+<tr>
+<td><a href="training/contrastive/"><code>ContrastiveTrainer</code></a></td>
+<td>retrieval embeddings</td>
+<td><strong>no</strong></td>
+<td>InfoNCE on pairs; in-batch + hard negatives</td>
+</tr>
+<tr>
 <td><a href="training/heads/"><code>SequenceClassificationTrainer</code></a></td>
 <td>classifier head</td>
 <td>—</td>
@@ -2078,20 +2102,20 @@
 <p>Every trainer shares the same production feature set: mixed precision, gradient accumulation, LR scheduler with warmup, reproducible seed, checkpoint save/resume, auto-checkpoint, eval loop, OOM handling, and W&amp;B / TensorBoard logging.</p>
 <hr />
 <h2 id="quick-example-distil-a-causal-lm">Quick example — distil a causal LM<a class="headerlink" href="#quick-example-distil-a-causal-lm" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">,</span> <span class="n">TeacherRegistry</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.teachers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToyTeacher</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">student</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>                       <span class="c1"># any model with .logits</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">teachers</span> <span class="o">=</span> <span class="n">TeacherRegistry</span><span class="p">([</span><span class="n">ToyTeacher</span><span class="p">(</span><span class="n">vocab</span><span class="o">=</span><span class="mi">32</span><span class="p">)])</span>       <span class="c1"># or HFTeacher(...)</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">data</span>     <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">(</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">save_every</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="s2">&quot;/tmp/run&quot;</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">))</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;losses&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">,</span> <span class="n">TeacherRegistry</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.teachers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToyTeacher</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">student</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>                       <span class="c1"># any model with .logits</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">teachers</span> <span class="o">=</span> <span class="n">TeacherRegistry</span><span class="p">([</span><span class="n">ToyTeacher</span><span class="p">(</span><span class="n">vocab</span><span class="o">=</span><span class="mi">32</span><span class="p">)])</span>       <span class="c1"># or HFTeacher(...)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">data</span>     <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">TorchTrainConfig</span><span class="p">(</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">save_every</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="s2">&quot;/tmp/run&quot;</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">))</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;losses&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </span></code></pre></div>
 <hr />
 <h2 id="links">Links<a class="headerlink" href="#links" title="Permanent link">&para;</a></h2>
