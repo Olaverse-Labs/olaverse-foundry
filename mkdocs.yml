@@ -11,8 +11,8 @@ theme:
   favicon: assets/logo.png
 
   font:
-    text: Inter
-    code: JetBrains Mono
+    text: IBM Plex Sans
+    code: IBM Plex Mono
 
   features:
     - navigation.tabs
@@ -87,6 +87,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+
+# Substitutes {{ foundry_version }} from foundry/__init__.py at build time,
+# so the version badge can't drift behind a release.
+hooks:
+  - hooks/version.py
 
 plugins:
   - search:

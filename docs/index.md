@@ -1,5 +1,5 @@
 <div class="ov-hero">
-  <div class="ov-hero-badge">v0.2.0</div>
+  <div class="ov-hero-badge">v{{ foundry_version }}</div>
   <h1 class="ov-hero-title">olaverse-foundry</h1>
   <p class="ov-hero-sub">Small, specialised models from big general ones — even when your language has no training data</p>
   <div class="ov-hero-install">

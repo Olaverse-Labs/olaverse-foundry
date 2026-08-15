@@ -6,6 +6,8 @@ on:
     paths:
       - "docs/**"
       - "mkdocs.yml"
+      - "hooks/**"              # version substitution runs at build time
+      - "foundry/__init__.py"   # the version badge is generated from it
       - ".github/workflows/docs.yml"
   workflow_dispatch:   # allow manual redeploy from the Actions tab
 
