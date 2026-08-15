@@ -122,6 +122,27 @@ Open an issue using the **Feature Request** template. Describe the use case — 
 
 ---
 
+## Releasing (maintainers)
+
+Releases are tag-driven — pushing a `vX.Y.Z` tag builds the sdist and wheel and
+publishes them to PyPI via trusted publishing (OIDC), so no API token is stored
+anywhere. The workflow refuses to publish if the tag and `pyproject.toml`
+disagree on the version.
+
+```bash
+# 1. Bump the version in pyproject.toml AND foundry/__init__.py (they must match;
+#    the docs version badge is generated from foundry/__init__.py)
+# 2. Add the release section to docs/changelog.md
+git commit -am "build: release 0.3.0"
+git tag v0.3.0
+git push origin main --tags      # → CI, PyPI publish, docs redeploy
+```
+
+Tags `v0.1.0`–`v0.2.1` were back-filled onto their release commits, which predate
+this workflow; those versions were uploaded by hand.
+
+---
+
 ## Questions?
 
 Open a [discussion](https://github.com/Olaverse-Labs/olaverse-foundry/discussions) or email **hello@olaverse.co.uk**.

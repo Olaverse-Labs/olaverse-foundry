@@ -89,13 +89,22 @@ docs = [
 foundry = "foundry.cli:main"
 
 [project.urls]
-Homepage   = "https://olaverse.co.uk"
-Repository = "https://github.com/Olaverse-Labs/olaverse-foundry"
-Issues     = "https://github.com/Olaverse-Labs/olaverse-foundry/issues"
+# Documentation is listed first and by name so PyPI renders it in the sidebar —
+# the docs site is otherwise reachable only from inside the README.
+Documentation = "https://olaverse-labs.github.io/olaverse-foundry/"
+Homepage      = "https://olaverse.co.uk"
+Repository    = "https://github.com/Olaverse-Labs/olaverse-foundry"
+Changelog     = "https://olaverse-labs.github.io/olaverse-foundry/changelog/"
+Issues        = "https://github.com/Olaverse-Labs/olaverse-foundry/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["foundry*"]
+
+# PEP 561 marker — without it type checkers ignore foundry's annotations
+# entirely, even though every public function is typed.
+[tool.setuptools.package-data]
+foundry = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

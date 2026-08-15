@@ -1,5 +1,16 @@
 # olaverse-foundry
 
+[![PyPI Version](https://img.shields.io/pypi/v/olaverse-foundry.svg)](https://pypi.org/project/olaverse-foundry/)
+[![Downloads](https://static.pepy.tech/badge/olaverse-foundry)](https://pepy.tech/project/olaverse-foundry)
+[![Downloads / month](https://static.pepy.tech/badge/olaverse-foundry/month)](https://pepy.tech/project/olaverse-foundry)
+[![Python Version](https://img.shields.io/pypi/pyversions/olaverse-foundry.svg)](https://pypi.org/project/olaverse-foundry/)
+[![CI](https://github.com/Olaverse-Labs/olaverse-foundry/actions/workflows/ci.yml/badge.svg)](https://github.com/Olaverse-Labs/olaverse-foundry/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-olaverse-yellow)](https://huggingface.co/olaverse)
+[![Docs](https://img.shields.io/badge/docs-GitHub_Pages-blue)](https://olaverse-labs.github.io/olaverse-foundry/)
+
+📖 **Documentation — [olaverse-labs.github.io/olaverse-foundry](https://olaverse-labs.github.io/olaverse-foundry/)** · [Quick start](https://olaverse-labs.github.io/olaverse-foundry/quickstart/) · [Which trainer do I need?](https://olaverse-labs.github.io/olaverse-foundry/choosing/)
+
 **Small, specialised models from big general ones — even when your language or domain has no training data.**
 
 The normal way assumes you have data. `foundry` is the pipeline for when you don't: **synthesize** the training data (translation into 400+ languages, LLM query generation, encoder-mined hard negatives), **distil or contrastively train** a small model on it, and **prove it** head-to-head against mBERT / e5 / LaBSE — one library, one afternoon, and everything exits as a standard HuggingFace directory that production code loads with `transformers` alone.

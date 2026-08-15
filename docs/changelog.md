@@ -2,6 +2,26 @@
 
 ---
 
+## Unreleased
+
+### Packaging
+
+- **PEP 561 type marker** — `foundry/py.typed` ships in the wheel, so mypy and
+  pyright now read the library's annotations instead of treating it as untyped.
+- PyPI metadata gained `Documentation` and `Changelog` links, so the docs site is
+  reachable from the project sidebar rather than only from inside the README.
+- Releases are now tag-driven: pushing `vX.Y.Z` builds and publishes to PyPI via
+  trusted publishing, and refuses to run if the tag and `pyproject.toml` disagree.
+
+### Docs
+
+- The docs site adopts the "Paper / Ink" theme shared with the Olaverse SDK docs
+  and the marketing site.
+- The landing-page version badge is generated from `foundry/__init__.py` at build
+  time, so it can't drift behind a release.
+
+---
+
 ## v0.2.1 — 2026-07-16
 
 ### Fixes
