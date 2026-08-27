@@ -256,27 +256,46 @@ class TorchDistillTrainer:
                     fuse  = STRATEGY_REGISTRY.get(
                         self.cfg.fusion_strategy, STRATEGY_REGISTRY["min_ce"]
                     )
-                    teacher_dists, teacher_weights = [], []
-                    for teacher in self.teachers:
-                        t_idx, t_prob = teacher.distribution(input_ids, top_k=self.cfg.top_k)
-                        teacher_dists.append(align.map(t_idx, t_prob, V))
-                        teacher_weights.append(teacher.weight)
-
                     gold_np  = np.roll(input_ids, -1, axis=1)
                     gold_np[:, -1] = 0
-                    fused_np = fuse(teacher_dists, gold_np, teacher_weights)
-                    fused_t  = torch.tensor(fused_np, dtype=torch.float32, device=self.device)
-                    fused_t  = (fused_t + 1e-9) / (fused_t + 1e-9).sum(dim=-1, keepdim=True)
-
-                    log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)   # (B, S-1, V)
-                    # Per-token KL in nats, masking pad positions, so it sits on the
-                    # same scale as the per-token CE and alpha truly balances the two.
-                    kl_per_tok = F.kl_div(
-                        log_stu, fused_t[:, :-1],
-                        reduction="none", log_target=False,
-                    ).sum(dim=-1)                                             # (B, S-1)
                     kl_mask = (gold_t[:, :-1] != 0).float()
-                    kl_loss = (kl_per_tok * kl_mask).sum() / kl_mask.sum().clamp(min=1.0)
+
+                    if self.cfg.sparse_kl:
+                        from foundry.training._sparse_kl import (
+                            align_sparse, build_sparse_target, sparse_kl,
+                        )
+                        sparse_teachers, teacher_weights = [], []
+                        for teacher in self.teachers:
+                            t_idx, t_prob = teacher.distribution(input_ids, top_k=self.cfg.top_k)
+                            sparse_teachers.append(align_sparse(align, t_idx, t_prob))
+                            teacher_weights.append(teacher.weight)
+
+                        tgt_idx, tgt_prob = build_sparse_target(
+                            sparse_teachers, gold_np, teacher_weights,
+                            self.cfg.fusion_strategy, self.device,
+                        )
+                        kl_loss = sparse_kl(
+                            student_logits[:, :-1], tgt_idx[:, :-1], tgt_prob[:, :-1], kl_mask,
+                        )
+                    else:
+                        teacher_dists, teacher_weights = [], []
+                        for teacher in self.teachers:
+                            t_idx, t_prob = teacher.distribution(input_ids, top_k=self.cfg.top_k)
+                            teacher_dists.append(align.map(t_idx, t_prob, V))
+                            teacher_weights.append(teacher.weight)
+
+                        fused_np = fuse(teacher_dists, gold_np, teacher_weights)
+                        fused_t  = torch.tensor(fused_np, dtype=torch.float32, device=self.device)
+                        fused_t  = (fused_t + 1e-9) / (fused_t + 1e-9).sum(dim=-1, keepdim=True)
+
+                        log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)   # (B, S-1, V)
+                        # Per-token KL in nats, masking pad positions, so it sits on the
+                        # same scale as the per-token CE and alpha truly balances the two.
+                        kl_per_tok = F.kl_div(
+                            log_stu, fused_t[:, :-1],
+                            reduction="none", log_target=False,
+                        ).sum(dim=-1)                                             # (B, S-1)
+                        kl_loss = (kl_per_tok * kl_mask).sum() / kl_mask.sum().clamp(min=1.0)
 
                 raw_loss = self.cfg.alpha * ce_loss + (1.0 - self.cfg.alpha) * kl_loss
                 (raw_loss / n_acc).backward()

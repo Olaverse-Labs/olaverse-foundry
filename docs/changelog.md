@@ -4,6 +4,29 @@
 
 ## Unreleased
 
+### Distillation loss
+
+- **The KL is now computed over the teacher's top-k support** (`sparse_kl=True`,
+  the default) instead of scattering it into a dense `(B, S, vocab)` target.
+  A teacher returns ~8MB of top-k data at `B=8, S=2048, K=64`; the dense path
+  turned that into ~10GB per teacher per step at a 152k vocabulary, in numpy,
+  then copied it to the device again. `KL(T‖S)` has no contribution where
+  `T(v) = 0`, so that was arithmetic on zeros. Measured at `V=152k`: **730×
+  less memory and ~56× faster**. This affected the same-tokenizer path
+  (`IdentityAlignment`) exactly as much as the cross-tokenizer one, so it was
+  the binding constraint on any large-vocabulary run.
+- The two paths differ very slightly: the dense one adds `1e-9` to *every* vocab
+  entry before renormalising, smearing ~1.5e-4 of mass across the vocabulary.
+  The sparse path renormalises the top-k mass over its own support. Against a
+  dense reference without that smoothing the two agree to float32 precision.
+  Pass `sparse_kl=False` to reproduce an older run.
+- **Fix: `IdentityAlignment` and `EMAlignment` disagreed on collisions.**
+  Identity used plain assignment, so when a token appeared twice in one top-k
+  the earlier probability was silently dropped; EM used `np.add.at` and summed.
+  Both now sum, which is correct — those are mass on the same token — and the
+  sparse path deduplicates to match, including for a single teacher, since a
+  `MinEDAlignment` maps several teacher tokens onto one student token.
+
 ### Large-model distillation
 
 Three changes that together make a large-teacher → small-student run fit on one
