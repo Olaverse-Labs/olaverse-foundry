@@ -27,6 +27,7 @@ from typing import Any, Callable, Optional
 import numpy as np
 
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 
 
@@ -215,9 +216,9 @@ class EmbeddingDistillTrainer:
 
     def _build_optimizer(self):
         import torch
-        params = list(self.student.parameters())
+        params = _trainable(self.student)
         if self._projector is not None:
-            params += list(self._projector.parameters())
+            params += _trainable(self._projector)
         return torch.optim.AdamW(
             params,
             lr=self.cfg.learning_rate,

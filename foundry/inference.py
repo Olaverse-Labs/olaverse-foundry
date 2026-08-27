@@ -44,7 +44,7 @@ def load_for_inference(
         ``(model, tokenizer)``.
     """
     try:
-        import torch
+        import torch  # noqa: F401 — import is the availability check
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
         raise ImportError(
@@ -52,32 +52,15 @@ def load_for_inference(
             "Install with: pip install olaverse-foundry[torch]"
         ) from None
 
-    td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
-          "float32": torch.float32}.get(dtype, torch.bfloat16)
+    from foundry.io.loader import build_quantization_config, resolve_dtype
 
     kwargs: dict[str, Any] = {"device_map": device_map, "trust_remote_code": trust_remote_code}
 
-    if quantize in ("4bit", "8bit"):
-        try:
-            from transformers import BitsAndBytesConfig
-        except ImportError:
-            raise ImportError(
-                "Quantized loading needs a recent transformers + bitsandbytes. "
-                "Install with: pip install bitsandbytes"
-            ) from None
-        if quantize == "4bit":
-            kwargs["quantization_config"] = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=td,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_use_double_quant=True,
-            )
-        else:
-            kwargs["quantization_config"] = BitsAndBytesConfig(load_in_8bit=True)
-    elif quantize is not None:
-        raise ValueError(f"quantize must be None, '4bit', or '8bit'; got {quantize!r}")
+    quant_config = build_quantization_config(quantize, dtype)
+    if quant_config is not None:
+        kwargs["quantization_config"] = quant_config
     else:
-        kwargs["torch_dtype"] = td
+        kwargs["torch_dtype"] = resolve_dtype(dtype)
 
     model = AutoModelForCausalLM.from_pretrained(path, **kwargs)
     tok   = AutoTokenizer.from_pretrained(path, trust_remote_code=trust_remote_code)

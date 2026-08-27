@@ -4,6 +4,55 @@
 
 ## Unreleased
 
+### Large-model distillation
+
+Three changes that together make a large-teacher → small-student run fit on one
+machine. A 27B teacher is ~54GB in bf16; a 2B student full-weight trained needs
+~30GB of weights, gradients and optimizer moments before activations.
+
+- **New: `foundry.training.lora`** — LoRA training for the student.
+  `attach_lora` freezes the base and returns a `PeftModel` that drops straight
+  into any existing trainer, because every foundry trainer already trains
+  whatever requires grad. There is deliberately no `LoRADistillTrainer`: LoRA is
+  a property of the model, not a kind of training. `merge_and_save` produces a
+  plain HuggingFace directory; `save_adapter` produces a PEFT directory;
+  `to_skillpack` feeds the existing skill-pack machinery. Quantized bases are
+  routed through `prepare_model_for_kbit_training`, without which the run trains
+  at a flat loss and never errors.
+- **`quantize="4bit"` / `"8bit"` now works for training, not just inference.**
+  `io.loader` built `torch_dtype` and `device_map` but never a
+  `quantization_config`, even though `inference.py` already constructed one — so
+  a teacher could not be quantized through the library that loads it. `ModelRef`
+  and `HFTeacher` both take `quantize` now, and the BitsAndBytes config is built
+  in one shared place instead of two. A 27B teacher drops from ~54GB to ~15GB.
+- **Fix: `HFTeacher.load()` called `.to(device)` on an already-placed model.**
+  A bitsandbytes-quantized model refuses `.to()` outright, and a model dispatched
+  by accelerate (`device_map="auto"`, the default) carries hooks that `.to()`
+  invalidates — which is how a sharded teacher ends up half on the wrong device.
+  It now detects placement and leaves those models where transformers put them.
+- **Fix: 7 of 8 trainers built their optimizer over `model.parameters()`**,
+  ignoring `requires_grad` (only `heads.py` filtered). AdamW skips parameters
+  whose grad is `None`, so this was not a memory leak, but it made a LoRA or
+  partially-frozen run unpredictable: clipping walked tensors that never had
+  gradients, and anything later flipping `requires_grad` would silently start
+  updating weights the caller froze. All trainers now share
+  `training._params.trainable_parameters`.
+
+### Teacher logit cache
+
+- **`LogitCache` can now be disk-backed and bounded.** It was a plain in-memory
+  dict, and `populate_dataset()` filled it for the whole dataset up front — at
+  `top_k=64` with 8x512 batches that is ~21GB of RAM for only 41M tokens, which
+  does not survive contact with a real run. Passing `cache_dir` caps RAM at
+  `max_entries` and spills evictions to sharded `.npz` files, reading them back
+  on a miss. The shard index lives in `cache_dir`, so a populated cache is
+  reused by later processes rather than rebuilt.
+- **Eviction is LRU, not FIFO.** Training reads batches in order, so FIFO evicted
+  precisely the entries the next epoch read first: a cache smaller than the
+  dataset achieved a ~0% hit rate and re-ran the teachers every epoch — the one
+  cost the cache exists to avoid, with nothing in the output to indicate it.
+- `stats` gains `disk_hits`, `spills` and `on_disk`.
+
 ### Data quality
 
 - **New: `foundry.quality`** — the gate between synthesis and training.

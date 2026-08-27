@@ -116,6 +116,7 @@ nav:
     - EncoderDistillTrainer: training/encoder-distill.md
     - DistilMLMTrainer: training/distil-mlm.md
     - ContrastiveTrainer: training/contrastive.md
+    - LoRA Training: training/lora.md
     - Task Heads: training/heads.md
     - Config Reference: training/config.md
   - Data:

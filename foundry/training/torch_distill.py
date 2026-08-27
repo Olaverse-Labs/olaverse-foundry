@@ -27,6 +27,7 @@ import numpy as np
 
 from foundry.training.distill import TrainConfig
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 
 
@@ -135,7 +136,7 @@ class TorchDistillTrainer:
     def _build_optimizer(self):
         import torch
         return torch.optim.AdamW(
-            self.student.parameters(),
+            _trainable(self.student),
             lr=self.cfg.learning_rate,
             weight_decay=self.cfg.weight_decay,
         )

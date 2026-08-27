@@ -57,6 +57,12 @@ class HFTeacher:
         model_type: ``"causal_lm"`` (default) for GPT/Llama-style teachers;
                     ``"encoder"`` for BERT/DeBERTa/RoBERTa-style teachers used
                     in embedding distillation.
+        quantize:   ``None`` (default), ``"4bit"`` or ``"8bit"``. A teacher is
+                    only ever run forward, so quantizing it costs a little
+                    fidelity and buys a lot of room — a 27B teacher is ~54GB in
+                    bf16 and ~15GB in 4-bit, which is the difference between
+                    needing two cards and one. Ignored when ``ref`` already
+                    carries a ``quantize`` setting.
     """
 
     def __init__(
@@ -65,11 +71,13 @@ class HFTeacher:
         weight:     float = 1.0,
         ref=None,
         model_type: str   = "causal_lm",
+        quantize:   Optional[str] = None,
     ) -> None:
         self.name       = name
         self.weight     = weight
         self._ref       = ref
         self.model_type = model_type
+        self.quantize   = quantize
         self._model: Any = None
         self._tok:   Any = None
 
@@ -93,7 +101,7 @@ class HFTeacher:
         from foundry.io import ModelRef, load_tokenizer
         from foundry.io.loader import load_model
 
-        ref = self._ref or ModelRef.parse(self.name)
+        ref = self._ref or ModelRef.parse(self.name, quantize=self.quantize)
 
         model_cls: type
         if self.model_type == "encoder":
@@ -107,8 +115,23 @@ class HFTeacher:
         self._tok   = load_tokenizer(ref)
         self._model.eval()
         self._device = self._resolve_device(device)
-        self._model.to(self._device)
+
+        # Do not move a model that is already placed. A bitsandbytes-quantized
+        # model refuses .to() outright, and a model dispatched by accelerate
+        # (device_map="auto", the default) carries hooks that .to() silently
+        # invalidates — which is how a sharded teacher ends up half on the wrong
+        # device. In both cases transformers has already put it where it goes.
+        if not self._is_placed():
+            self._model.to(self._device)
         return self
+
+    def _is_placed(self) -> bool:
+        """True when transformers/accelerate has already assigned devices."""
+        if getattr(self._model, "hf_device_map", None):
+            return True
+        return bool(getattr(self._model, "is_quantized", False)
+                    or getattr(self._model, "is_loaded_in_4bit", False)
+                    or getattr(self._model, "is_loaded_in_8bit", False))
 
     @staticmethod
     def _resolve_device(device: str):

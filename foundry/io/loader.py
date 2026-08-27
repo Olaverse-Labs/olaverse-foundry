@@ -29,6 +29,7 @@ class ModelRef:
     dtype:      str             = "auto"
     device_map: str             = "auto"
     trust_remote_code: bool     = False
+    quantize:   Optional[str]   = None      # None | "4bit" | "8bit"
 
     @classmethod
     def parse(cls, spec: str, **kwargs) -> "ModelRef":
@@ -71,6 +72,57 @@ class ModelRef:
             ) from exc
 
 
+
+# ── Quantization ───────────────────────────────────────────────────────────
+
+_DTYPES = {"bfloat16": "bfloat16", "float16": "float16", "float32": "float32"}
+
+
+def resolve_dtype(dtype: str, default: str = "bfloat16"):
+    """Map a dtype name to the torch dtype, falling back to ``default``."""
+    import torch
+    name = _DTYPES.get(dtype, default)
+    return getattr(torch, name)
+
+
+def build_quantization_config(quantize: Optional[str], dtype: str = "bfloat16"):
+    """
+    Build a ``BitsAndBytesConfig`` for 4-bit or 8-bit loading, or ``None``.
+
+    4-bit uses NF4 with double quantization and a ``dtype`` compute type — the
+    configuration that keeps quality closest to bf16 at roughly a quarter of the
+    memory. This is what makes a large teacher fit next to a student on one box:
+    a 27B teacher is ~54GB in bf16 and ~15GB in 4-bit.
+
+    Quantized weights are frozen — bitsandbytes layers are not trainable in the
+    ordinary sense — so use this for *teachers* and for LoRA base models, never
+    for a student you intend to full-weight train.
+
+    Raises ValueError for any value other than None / "4bit" / "8bit".
+    """
+    if quantize is None:
+        return None
+    if quantize not in ("4bit", "8bit"):
+        raise ValueError(f"quantize must be None, '4bit', or '8bit'; got {quantize!r}")
+
+    try:
+        from transformers import BitsAndBytesConfig
+    except ImportError:
+        raise ImportError(
+            "Quantized loading needs a recent transformers + bitsandbytes. "
+            "Install with: pip install bitsandbytes"
+        ) from None
+
+    if quantize == "8bit":
+        return BitsAndBytesConfig(load_in_8bit=True)
+    return BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=resolve_dtype(dtype),
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+    )
+
+
 def load_model(ref: ModelRef, student_class=None, model_class=None) -> Any:
     """
     Load a model from a ModelRef.
@@ -96,10 +148,21 @@ def load_model(ref: ModelRef, student_class=None, model_class=None) -> Any:
     cls = model_class if model_class is not None else AutoModelForCausalLM
 
     kwargs: dict = {
-        "torch_dtype": ref.dtype,
         "device_map":  ref.device_map,
         "trust_remote_code": ref.trust_remote_code,
     }
+
+    # torch_dtype and quantization_config are mutually exclusive: bitsandbytes
+    # owns the storage dtype, and passing both makes transformers warn and
+    # silently ignore one of them.
+    quant_config = build_quantization_config(
+        ref.quantize, ref.dtype if ref.dtype != "auto" else "bfloat16"
+    )
+    if quant_config is not None:
+        kwargs["quantization_config"] = quant_config
+    else:
+        kwargs["torch_dtype"] = ref.dtype
+
     if ref.revision:
         kwargs["revision"] = ref.revision
 
