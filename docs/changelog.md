@@ -4,6 +4,64 @@
 
 ## Unreleased
 
+### Data quality
+
+- **New: `foundry.quality`** — the gate between synthesis and training.
+  `clean_pairs` / `dedup_pairs` / `drop_degenerate_pairs` remove duplicate pairs,
+  untranslated `anchor == positive` pairs and false negatives; `embedding_health`
+  detects a collapsed encoder; `quality_report` / `print_quality_report`
+  summarise a pair set before you train on it. numpy-only, so it runs on a core
+  install. Language ID, translation adequacy and toxicity are deliberately out of
+  scope — those need real models.
+- **Fix: `mine_hard_negatives` could return a false negative.** It skipped
+  duplicate candidates by index, but duplicate passages are common in translated
+  corpora, so a "negative" textually identical to the pair's own positive could
+  be selected — asking InfoNCE to push two identical strings apart. It now skips
+  by normalised text, and omits the key entirely when no distinct candidate
+  exists, so a missing negative is distinguishable from a bad one.
+
+### Retrieval
+
+- **Fix: `compare_retrievers` no longer defaults to `device="cuda"`.** The
+  benchmark helper called `.to("cuda")` unconditionally, so it raised on any
+  CPU-only machine. It now resolves `"auto"`.
+- **Fix: `params_m` is no longer rounded inside the result.** Rounding to 1dp
+  made every model under 50k params report `0.0` with the true count
+  unrecoverable from the dict callers publish as a benchmark table. Rounding
+  moved to `print_retrieval_comparison`.
+
+### Recipes
+
+- `EmbedRecipe.run()` validates `seed.model` up front. It was passed straight to
+  `AutoModel.from_pretrained`, so an embed recipe missing that field failed deep
+  inside transformers instead of naming the missing field. Unlike `FoundryRecipe`
+  there is no random-init path for embeddings.
+
+### Testing & CI
+
+- **New: real-model CPU integration suite** (`tests/test_integration_cpu.py`).
+  The rest of the suite runs on hand-rolled `nn.Module` stubs, which prove the
+  training maths but never touch `AutoModel`, `config.json`, `save_pretrained` or
+  the safetensors round-trip. These tests build genuine `BertModel` and tokenizer
+  instances, save them as real HuggingFace directories, and run the pipeline
+  end-to-end — including the README's claim that output reloads with
+  `transformers` alone. No network, no GPU, ~9s.
+- **New: `core-install` CI job.** Every existing job installed `[torch,lego,data,dev]`,
+  so nothing verified the advertised `pip install olaverse-foundry`. On a core
+  install the suite failed — `tests/test_m4.py` imported the PEFT weight bridge
+  unguarded, erroring 14 tests instead of skipping them. Fixed, and now covered.
+- **The import check moved to Python 3.9** (the version floor, not 3.11) and now
+  walks every submodule rather than the top-level re-exports. The 0.2.1 bug — a
+  runtime `X | None` alias breaking every `foundry.fusion` import on 3.9 — could
+  not have been caught by a check running on 3.11.
+- **New: `quality` CI job** running `ruff` and `mypy`. The library ships
+  `py.typed` but nothing verified those annotations. Ruff is scoped to
+  correctness rules only; pyupgrade is deliberately disabled, since it rewrites
+  `Optional[X]` to `X | None` and would reintroduce the 0.2.0 break.
+- 25 `raise ... from None` on errors that translate an opaque failure into an
+  actionable one, so a chained `No module named 'torch'` no longer buries the
+  message explaining how to fix it. 40 dead imports removed.
+
 ### Packaging
 
 - **PEP 561 type marker** — `foundry/py.typed` ships in the wheel, so mypy and

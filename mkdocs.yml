@@ -121,6 +121,7 @@ nav:
   - Data:
     - DataPipeline: data.md
     - Synthetic Data: synthetic.md
+    - Quality Gates: quality.md
   - Evaluation:
     - Classification / NER: evaluation.md
     - Retrieval: retrieval.md
