@@ -49,7 +49,7 @@ def evaluate_retrieval(query_emb: np.ndarray, corpus_emb: np.ndarray,
     sims = q @ c.T                                  # (Nq, Nc) — embeddings are normalised
     ndcgs, recalls = [], []
     for qi in range(q.shape[0]):
-        rel_set = set(int(x) for x in qrels[qi])
+        rel_set = {int(x) for x in qrels[qi]}
         if not rel_set:
             continue
         order  = np.argsort(-sims[qi])
@@ -136,7 +136,7 @@ def compare_retrievers(models, queries, corpus, qrels, k: int = 10,
         qpre  = sp.get("query_prefix", "")
         dpre  = sp.get("doc_prefix", "")
         print(f"[retrieval] encoding + scoring: {name}  (pool={mpool}"
-              + (f", prefixes" if qpre or dpre else "") + ") …")
+              + (", prefixes" if qpre or dpre else "") + ") …")
         try:
             tok = AutoTokenizer.from_pretrained(base)
             mdl = AutoModel.from_pretrained(base).to(device)

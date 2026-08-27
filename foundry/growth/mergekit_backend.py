@@ -30,6 +30,7 @@ Example generated YAML for layer_map [0,1,2,3, 0,1,2,3] (4→8 SOLAR double)::
 """
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 from typing import Any
 
@@ -125,7 +126,7 @@ def save_mergekit_config(
     except ImportError:
         raise ImportError(
             "PyYAML is required. Install with: pip install olaverse-foundry"
-        )
+        ) from None
     cfg  = growth_plan_to_mergekit_yaml(plan, seed_path, dtype=dtype)
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -201,7 +202,7 @@ def _run_merge_native(
         raise ImportError(
             "transformers + torch are required for the native merge backend. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
 
     from foundry.growth.planner import build_upscaled_state_dict
 
@@ -222,8 +223,7 @@ def _run_merge_native(
         )
 
     grown.save_pretrained(str(output_dir))
-    try:
+    # not all seeds ship a tokenizer; the model dir is still valid without one
+    with contextlib.suppress(Exception):
         AutoTokenizer.from_pretrained(seed_path).save_pretrained(str(output_dir))
-    except Exception:
-        pass  # not all seeds ship a tokenizer; the model dir is still valid
     return output_dir

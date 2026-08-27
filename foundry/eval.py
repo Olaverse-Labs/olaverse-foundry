@@ -112,7 +112,7 @@ def evaluate_encoder(
     if task == "sequence":
         train = _seq_pipe(train_rows, tok, text_key, label_key, max_length, batch_size)
         ev    = _seq_pipe(eval_rows,  tok, text_key, label_key, max_length, batch_size)
-        Trainer = SequenceClassificationTrainer
+        Trainer: type = SequenceClassificationTrainer
     else:
         train = _token_pipe(train_rows, tok, tokens_key, tags_key, max_length, batch_size)
         ev    = _token_pipe(eval_rows,  tok, tokens_key, tags_key, max_length, batch_size)

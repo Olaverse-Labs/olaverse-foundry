@@ -13,7 +13,7 @@ pytest.importorskip("torch")
 import types
 import unittest
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import numpy as np
 import torch

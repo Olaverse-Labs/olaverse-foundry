@@ -50,7 +50,7 @@ def load_for_inference(
         raise ImportError(
             "transformers + torch are required for inference. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
 
     td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
           "float32": torch.float32}.get(dtype, torch.bfloat16)
@@ -64,7 +64,7 @@ def load_for_inference(
             raise ImportError(
                 "Quantized loading needs a recent transformers + bitsandbytes. "
                 "Install with: pip install bitsandbytes"
-            )
+            ) from None
         if quantize == "4bit":
             kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,

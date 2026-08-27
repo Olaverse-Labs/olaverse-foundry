@@ -22,7 +22,7 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Optional
 
 import numpy as np
 
@@ -34,7 +34,6 @@ from foundry.training._scheduler import build_scheduler
 
 def _pool(hidden_states, attention_mask, mode: str):
     """Pool (B, S, D) hidden states to (B, D) sentence vector."""
-    import torch
     if mode == "cls":
         return hidden_states[:, 0, :]
     if attention_mask is None:
@@ -158,13 +157,13 @@ class EmbeddingDistillTrainer:
         config:  EmbeddingDistillConfig | None = None,
     ) -> None:
         try:
-            import torch
+            import torch  # noqa: F401 — import is the availability check
             import torch.nn as nn
         except ImportError:
             raise ImportError(
                 "torch is required for EmbeddingDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student   = student
         # Normalise to list
         self.teachers  = teacher if isinstance(teacher, list) else [teacher]
@@ -356,7 +355,6 @@ class EmbeddingDistillTrainer:
 
     def _run_eval(self, eval_dataset) -> float:
         import torch
-        import torch.nn.functional as F
         self.student.eval()
         total, n = 0.0, 0
         with torch.no_grad(), self._autocast():

@@ -31,7 +31,7 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -122,7 +122,7 @@ class MLMTrainer:
             raise ImportError(
                 "torch is required for MLMTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student   = student
         self.tokenizer = tokenizer
         self.cfg       = config or MLMConfig()
@@ -151,7 +151,7 @@ class MLMTrainer:
         self._mask_id  = int(mask_id)
         self._pad_id   = int(pad_id)
         self._vocab    = int(vocab)
-        self._specials = set(int(s) for s in specials)
+        self._specials = {int(s) for s in specials}
 
         self.device    = self._resolve_device()
         self._dtype    = self._resolve_dtype()

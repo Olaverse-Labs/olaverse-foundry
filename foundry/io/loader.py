@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import os
-import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
@@ -93,7 +91,7 @@ def load_model(ref: ModelRef, student_class=None, model_class=None) -> Any:
         raise ImportError(
             "transformers is required for model loading. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
 
     cls = model_class if model_class is not None else AutoModelForCausalLM
 
@@ -117,9 +115,9 @@ def load_tokenizer(ref: ModelRef) -> Any:
         raise ImportError(
             "transformers is required. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
     src = str(ref.local_path) if ref.local_path else ref.repo_id
-    kwargs = {"trust_remote_code": ref.trust_remote_code}
+    kwargs: dict[str, Any] = {"trust_remote_code": ref.trust_remote_code}
     if ref.revision:
         kwargs["revision"] = ref.revision
     return AutoTokenizer.from_pretrained(src, **kwargs)

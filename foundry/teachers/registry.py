@@ -6,7 +6,7 @@ M1: HFTeacher (loads real HF models, requires torch backend).
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Optional
 
 import numpy as np
@@ -70,8 +70,8 @@ class HFTeacher:
         self.weight     = weight
         self._ref       = ref
         self.model_type = model_type
-        self._model     = None
-        self._tok       = None
+        self._model: Any = None
+        self._tok:   Any = None
 
     @property
     def tokenizer(self):
@@ -95,6 +95,7 @@ class HFTeacher:
 
         ref = self._ref or ModelRef.parse(self.name)
 
+        model_cls: type
         if self.model_type == "encoder":
             from transformers import AutoModel
             model_cls = AutoModel

@@ -10,8 +10,6 @@ healed; the distillation run is what makes the extra capacity useful.
 """
 from __future__ import annotations
 
-import math
-import warnings
 from dataclasses import dataclass
 from typing import Any
 

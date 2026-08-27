@@ -79,7 +79,7 @@ class DistilMLMTrainer:
             raise ImportError(
                 "torch is required for DistilMLMTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student   = student
         self.teacher   = teacher
         self.tokenizer = tokenizer
@@ -99,7 +99,7 @@ class DistilMLMTrainer:
         self._mask_id  = int(mask_id)
         self._pad_id   = int(pad_id)
         self._vocab    = int(vocab) if vocab is not None else None
-        self._specials = set(int(s) for s in specials)
+        self._specials = {int(s) for s in specials}
 
         self.device = self._resolve_device()
         self._dtype = self._resolve_dtype()

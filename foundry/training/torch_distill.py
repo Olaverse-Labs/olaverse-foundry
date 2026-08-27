@@ -21,7 +21,7 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -90,12 +90,12 @@ class TorchDistillTrainer:
         alignment = None,
     ) -> None:
         try:
-            import torch
+            import torch  # noqa: F401 — import is the availability check
         except ImportError:
             raise ImportError(
                 "torch is required for TorchDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student    = student
         self.teachers   = teachers
         self.cfg        = config or TorchTrainConfig()

@@ -21,7 +21,7 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -78,7 +78,7 @@ class ContrastiveTrainer:
             raise ImportError(
                 "torch is required for ContrastiveTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         if tokenizer is None:
             raise ValueError("ContrastiveTrainer needs a tokenizer to encode text pairs.")
         self.model     = model

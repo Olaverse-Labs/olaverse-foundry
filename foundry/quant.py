@@ -70,7 +70,6 @@ def _make_ste():
 
 
 def _weight_scale(weight, per_channel: bool, qmax: int):
-    import torch
     if per_channel:
         amax = weight.detach().abs().amax(dim=1, keepdim=True)
     else:
@@ -107,7 +106,6 @@ class QATLinear:
                 self.qat_config = cfg
 
             def forward(self, x):
-                import torch
                 import torch.nn.functional as F
                 if cfg.act_bits > 0:
                     a_scale = (x.detach().abs().max() / a_qmax).clamp(min=1e-8)
@@ -137,7 +135,7 @@ def prepare_qat(model, config: QATConfig | None = None, skip: tuple = ()):
         import torch  # noqa: F401
         import torch.nn as nn
     except ImportError:
-        raise ImportError("torch is required for QAT. Install with: pip install olaverse-foundry[torch]")
+        raise ImportError("torch is required for QAT. Install with: pip install olaverse-foundry[torch]") from None
 
     cfg = config or QATConfig()
 
@@ -200,7 +198,8 @@ def export_quantized(model, path: str | Path, weight_bits: int = 8,
     p = Path(path)
     p.mkdir(parents=True, exist_ok=True)
 
-    orig_bytes = quant_bytes = 0
+    orig_bytes: float = 0.0        # fractional: int4 weights are half a byte each
+    quant_bytes: float = 0.0
     for _name, mod in model.named_modules():
         if isinstance(mod, nn.Linear):
             n = mod.weight.numel()

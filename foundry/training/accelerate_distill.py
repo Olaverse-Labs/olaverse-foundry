@@ -20,11 +20,10 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
-from foundry.training.distill import TrainConfig
 from foundry.training.torch_distill import TorchTrainConfig
 from foundry.training._logger import _FoundryLogger
 from foundry.training._scheduler import build_scheduler
@@ -71,12 +70,12 @@ class CachedDistillTrainer:
         alignment = None,
     ) -> None:
         try:
-            import torch
+            import torch  # noqa: F401 — import is the availability check
         except ImportError:
             raise ImportError(
                 "torch is required for CachedDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student    = student
         self.teachers   = teachers
         self.cfg        = config or CachedDistillConfig()

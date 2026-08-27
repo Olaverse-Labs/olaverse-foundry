@@ -16,7 +16,7 @@ Both return pairs with a ``"negative"`` key, ready for ``ContrastiveTrainer``.
 """
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Callable
 
 
 HARD_NEG_PROMPT = (
@@ -45,7 +45,7 @@ def load_generator(model_id: str = "Qwen/Qwen2.5-3B-Instruct",
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]")
+        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]") from None
     td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
           "float32": torch.float32}.get(dtype, torch.bfloat16)
     tok = AutoTokenizer.from_pretrained(model_id)
@@ -124,7 +124,7 @@ def load_translator(model_id: str = "google/madlad400-3b-mt",
         import torch
         from transformers import T5ForConditionalGeneration, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]")
+        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]") from None
     td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
           "float32": torch.float32}.get(dtype, torch.bfloat16)
     tok = AutoTokenizer.from_pretrained(model_id)

@@ -15,7 +15,6 @@ from foundry.fusion.vocab_map import (
     build_mined_map,
     coverage_stats,
     _edit_distance,
-    has_rapidfuzz,
 )
 from foundry.fusion.align import IdentityAlignment, EMAlignment, MinEDAlignment
 

@@ -14,7 +14,7 @@ that persists both keys and values to a .npz file.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 import numpy as np
 
@@ -162,11 +162,12 @@ class LogitCache:
         for i, (key, (idx, prob)) in enumerate(self._store.items()):
             is_int = isinstance(key, int)
             is_int_flags.append(is_int)
-            arrays[f"key_{i}"] = np.array([key] if is_int else list(key), dtype=np.int64)
+            flat = [key] if is_int else list(cast("tuple[int, ...]", key))
+            arrays[f"key_{i}"] = np.array(flat, dtype=np.int64)
             arrays[f"idx_{i}"]  = idx
             arrays[f"prob_{i}"] = prob
         arrays["is_int_key"] = np.array(is_int_flags, dtype=bool)
-        np.savez_compressed(path, **arrays)
+        np.savez_compressed(path, **arrays)  # type: ignore[arg-type]  # numpy stub types **kwds as bool
 
     def load(self, path: str | Path) -> None:
         """

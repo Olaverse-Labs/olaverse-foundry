@@ -74,7 +74,7 @@ class EncoderDistillTrainer:
             raise ImportError(
                 "torch is required for EncoderDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student = student
         self.teacher = teacher
         self.cfg     = config or EncoderDistillConfig()

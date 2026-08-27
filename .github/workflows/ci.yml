@@ -33,24 +33,82 @@ jobs:
       - name: Run tests
         run: pytest tests/ -v --tb=short
 
-  lint:
-    name: Import check
+  # The advertised install is `pip install olaverse-foundry` — numpy, pydantic
+  # and pyyaml, nothing else. Every other job installs the extras, so none of
+  # them can tell whether that advertised install actually works. This one can:
+  # it is the only job that fails when a module grows an unguarded `import
+  # torch`, or when a test forgets its skip guard.
+  core-install:
+    name: Core install (no extras)
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      - name: Install core
-        run: |
-          pip install -e ".[torch,lego,data,dev]"
+      - name: Install core only
+        run: pip install -e ".[dev]"
 
-      - name: Check top-level imports
+      - name: Torch must NOT be present
+        run: |
+          python - <<'PY'
+          import importlib.util, sys
+          for mod in ("torch", "transformers", "peft", "datasets"):
+              if importlib.util.find_spec(mod) is not None:
+                  sys.exit(f"{mod} leaked into the core install — an extra is mis-declared")
+          print("core install is clean")
+          PY
+
+      - name: Public API imports without torch
+        run: python -c "import foundry; print(foundry.__version__)"
+
+      - name: Suite passes on a core install
+        run: pytest tests/ -q --tb=short
+
+  imports:
+    name: Import check (3.9 floor)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Deliberately the *lowest* supported version, not the newest. Version-floor
+      # breakage is a class of bug this project has actually shipped: a runtime
+      # `X | None` alias in foundry.fusion made every import fail on 3.9 (0.2.1).
+      # Checking imports on 3.11 could never have caught it.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: pip
+
+      - name: Install with extras
+        run: pip install -e ".[torch,lego,data,dev]"
+
+      - name: Every submodule imports
+        run: |
+          python - <<'PY'
+          import importlib, pkgutil, sys
+          import foundry
+
+          failures = []
+          for mod in pkgutil.walk_packages(foundry.__path__, "foundry."):
+              try:
+                  importlib.import_module(mod.name)
+              except Exception as exc:
+                  failures.append(f"{mod.name}: {type(exc).__name__}: {exc}")
+
+          for line in failures:
+              print("FAIL", line, file=sys.stderr)
+          if failures:
+              sys.exit(f"{len(failures)} module(s) failed to import on this Python")
+          print("all submodules import OK")
+          PY
+
+      - name: Documented public API is exported
         run: |
           python -c "
           from foundry import (
@@ -66,3 +124,26 @@ jobs:
           )
           print('All imports OK')
           "
+
+  quality:
+    name: Lint + types
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install lint tooling
+        run: pip install -e ".[lint]"
+
+      # Correctness rules only — see [tool.ruff.lint] in pyproject.toml.
+      - name: ruff
+        run: ruff check foundry/ tests/
+
+      # foundry ships py.typed; this keeps that promise honest.
+      - name: mypy
+        run: mypy

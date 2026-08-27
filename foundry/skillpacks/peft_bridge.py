@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -65,10 +64,10 @@ def to_peft_config(pack: SkillPack):
         raise ImportError(
             "peft is required for to_peft_config(). "
             "Install with: pip install olaverse-foundry[lego]"
-        )
+        ) from None
     return LoraConfig(
         r=pack.rank,
-        lora_alpha=pack.alpha,
+        lora_alpha=pack.alpha,  # type: ignore[arg-type]  # peft declares int; float round-trips fine
         target_modules=pack.target_modules,
         lora_dropout=0.0,
         bias="none",
@@ -88,7 +87,7 @@ def to_peft_model(base_model, pack: SkillPack):
         raise ImportError(
             "peft is required for to_peft_model(). "
             "Install with: pip install olaverse-foundry[lego]"
-        )
+        ) from None
     return get_peft_model(base_model, to_peft_config(pack))
 
 

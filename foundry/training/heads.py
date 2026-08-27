@@ -32,7 +32,7 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -79,7 +79,7 @@ def build_encoder_with_head(base, num_labels: int, task: str = "sequence", **kwa
         raise ImportError(
             "transformers is required for build_encoder_with_head. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
     cls = AutoModelForSequenceClassification if task == "sequence" else AutoModelForTokenClassification
     return cls.from_pretrained(base, num_labels=num_labels, **kwargs)
 
@@ -126,7 +126,7 @@ class _HeadTrainer:
             raise ImportError(
                 "torch is required for head trainers. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.model = model
         self.cfg   = config or HeadTrainConfig()
         if self.cfg.freeze_backbone:
