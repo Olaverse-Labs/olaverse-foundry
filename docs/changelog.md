@@ -2,7 +2,28 @@
 
 ---
 
-## Unreleased
+## v0.3.0 — 2026-09-01
+
+Minor, not patch: several changes alter results rather than only adding surface.
+`sparse_kl` is on by default and shifts loss values slightly; `IdentityAlignment`
+now sums colliding probability mass instead of dropping it, which changes the
+distillation target; `compare_retrievers` defaults to `device="auto"` rather
+than `"cuda"`; `params_m` is no longer rounded inside the result; 8-bit config
+construction now requires bitsandbytes; and `mine_hard_negatives` omits the
+negative key rather than emitting a false one. Pin `olaverse-foundry==0.2.1` if
+you need the old behaviour.
+
+### Fusion
+
+- **Fix: `fusion_strategy="mean_ce"` silently ran MinCE.** The registry key is
+  `"mean"`, but the docs, CLI help and recipe examples have always said
+  `"mean_ce"` — and the trainers looked it up with
+  `STRATEGY_REGISTRY.get(name, STRATEGY_REGISTRY["min_ce"])`, so the documented
+  spelling fell through to the default. A run configured to average its teachers
+  selected one per token instead, with nothing in the output to indicate it. The
+  same silent fallback swallowed any typo. `"mean_ce"` is now an accepted alias,
+  an unrecognised name raises `ValueError`, and `FusionConfig.strategy` accepts
+  the documented spelling.
 
 ### Distillation loss
 

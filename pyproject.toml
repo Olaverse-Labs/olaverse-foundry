@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "olaverse-foundry"
-version = "0.2.1"
+version = "0.3.0"
 description = "Small, specialised models from big general ones — synthesize data for no-data languages, distil, train retrieval, and benchmark head-to-head."
 readme = "README.md"
 license = { text = "Apache-2.0" }
