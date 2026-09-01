@@ -42,6 +42,13 @@ machine. A 27B teacher is ~54GB in bf16; a 2B student full-weight trained needs
   `to_skillpack` feeds the existing skill-pack machinery. Quantized bases are
   routed through `prepare_model_for_kbit_training`, without which the run trains
   at a flat loss and never errors.
+- **`quantize` fails fast with an actionable error when bitsandbytes is absent.**
+  `BitsAndBytesConfig.post_init()` reads
+  `importlib.metadata.version("bitsandbytes")` on some transformers releases and
+  not others, so the same call raised `PackageNotFoundError` on one version and
+  succeeded on another — then failed much later inside `from_pretrained`.
+  Neither message named what to install. foundry now checks up front, so the
+  behaviour is identical on every transformers version.
 - **`quantize="4bit"` / `"8bit"` now works for training, not just inference.**
   `io.loader` built `torch_dtype` and `device_map` but never a
   `quantization_config`, even though `inference.py` already constructed one — so

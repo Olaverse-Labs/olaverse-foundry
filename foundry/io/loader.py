@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -98,7 +99,8 @@ def build_quantization_config(quantize: Optional[str], dtype: str = "bfloat16"):
     ordinary sense — so use this for *teachers* and for LoRA base models, never
     for a student you intend to full-weight train.
 
-    Raises ValueError for any value other than None / "4bit" / "8bit".
+    Raises ValueError for any value other than None / "4bit" / "8bit", and
+    ImportError when transformers or bitsandbytes is missing.
     """
     if quantize is None:
         return None
@@ -110,8 +112,20 @@ def build_quantization_config(quantize: Optional[str], dtype: str = "bfloat16"):
     except ImportError:
         raise ImportError(
             "Quantized loading needs a recent transformers + bitsandbytes. "
-            "Install with: pip install bitsandbytes"
+            "Install with: pip install olaverse-foundry[torch] bitsandbytes"
         ) from None
+
+    # Check bitsandbytes here rather than letting transformers discover it.
+    # BitsAndBytesConfig.post_init() reads importlib.metadata.version(
+    # "bitsandbytes") on some transformers versions and not others, so without
+    # this the same call raises PackageNotFoundError on one version and
+    # succeeds on another — then fails much later inside from_pretrained.
+    # Neither message tells the caller what to install.
+    if importlib.util.find_spec("bitsandbytes") is None:
+        raise ImportError(
+            f"{quantize} loading requires bitsandbytes, which is not installed. "
+            "Install with: pip install bitsandbytes"
+        )
 
     if quantize == "8bit":
         return BitsAndBytesConfig(load_in_8bit=True)

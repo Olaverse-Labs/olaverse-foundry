@@ -10,7 +10,9 @@ not load a quantized model — that needs bitsandbytes and a CUDA device.
 """
 from __future__ import annotations
 
+import importlib.util
 import unittest
+from unittest import mock
 
 import pytest
 
@@ -18,11 +20,66 @@ pytest.importorskip("transformers")
 
 from foundry.io.loader import ModelRef, build_quantization_config, resolve_dtype
 
+HAS_BITSANDBYTES = importlib.util.find_spec("bitsandbytes") is not None
+
+needs_bitsandbytes = unittest.skipUnless(
+    HAS_BITSANDBYTES,
+    "constructing a BitsAndBytesConfig requires bitsandbytes to be installed",
+)
+
 
 class TestBuildQuantizationConfig(unittest.TestCase):
 
     def test_none_returns_none(self):
         self.assertIsNone(build_quantization_config(None))
+
+    def test_rejects_anything_else(self):
+        for bad in ("3bit", "int8", "yes", ""):
+            with self.assertRaises(ValueError, msg=bad):
+                build_quantization_config(bad)
+
+    def test_validates_the_value_before_touching_bitsandbytes(self):
+        """A bad value is a caller error and must not depend on the environment."""
+        with mock.patch("importlib.util.find_spec", return_value=None):
+            with self.assertRaises(ValueError):
+                build_quantization_config("3bit")
+
+
+class TestMissingBitsandbytes(unittest.TestCase):
+    """
+    transformers validates the bitsandbytes *version* inside
+    BitsAndBytesConfig.post_init() on some releases and not others, raising
+    PackageNotFoundError rather than ImportError when it is absent. foundry
+    checks up front so the failure is the same on every transformers version and
+    the message names what to install.
+    """
+
+    def _absent(self):
+        return mock.patch("importlib.util.find_spec", return_value=None)
+
+    def test_4bit_raises_import_error(self):
+        with self._absent(), self.assertRaises(ImportError) as ctx:
+            build_quantization_config("4bit")
+        self.assertIn("bitsandbytes", str(ctx.exception))
+
+    def test_8bit_raises_import_error(self):
+        with self._absent(), self.assertRaises(ImportError) as ctx:
+            build_quantization_config("8bit")
+        self.assertIn("bitsandbytes", str(ctx.exception))
+
+    def test_message_says_how_to_fix_it(self):
+        with self._absent(), self.assertRaises(ImportError) as ctx:
+            build_quantization_config("4bit")
+        self.assertIn("pip install bitsandbytes", str(ctx.exception))
+
+    def test_none_still_works_without_bitsandbytes(self):
+        with self._absent():
+            self.assertIsNone(build_quantization_config(None))
+
+
+@needs_bitsandbytes
+class TestConfigShape(unittest.TestCase):
+    """Runs only where bitsandbytes is installed; CI runners do not have it."""
 
     def test_4bit_uses_nf4_and_double_quant(self):
         cfg = build_quantization_config("4bit", "bfloat16")
@@ -41,11 +98,6 @@ class TestBuildQuantizationConfig(unittest.TestCase):
         cfg = build_quantization_config("8bit")
         self.assertTrue(cfg.load_in_8bit)
         self.assertFalse(getattr(cfg, "load_in_4bit", False))
-
-    def test_rejects_anything_else(self):
-        for bad in ("3bit", "int8", "yes", ""):
-            with self.assertRaises(ValueError, msg=bad):
-                build_quantization_config(bad)
 
 
 class TestResolveDtype(unittest.TestCase):
@@ -79,6 +131,8 @@ class TestModelRefCarriesQuantize(unittest.TestCase):
 class TestLoaderKwargs(unittest.TestCase):
     """torch_dtype and quantization_config must never both be sent."""
 
+    SENTINEL = object()
+
     def _kwargs_for(self, **ref_kwargs):
         captured = {}
 
@@ -88,8 +142,17 @@ class TestLoaderKwargs(unittest.TestCase):
                 captured.update(kwargs)
                 return object()
 
-        from foundry.io.loader import load_model
-        load_model(ModelRef.parse("org/model", **ref_kwargs), model_class=FakeAuto)
+        from foundry.io import loader
+
+        # Stub the builder: what is under test here is foundry's branching —
+        # torch_dtype and quantization_config are mutually exclusive — not
+        # transformers' config object, which needs bitsandbytes to construct.
+        def fake_builder(quantize, dtype="bfloat16"):
+            return self.SENTINEL if quantize else None
+
+        with mock.patch.object(loader, "build_quantization_config", fake_builder):
+            loader.load_model(ModelRef.parse("org/model", **ref_kwargs),
+                              model_class=FakeAuto)
         return captured
 
     def test_unquantized_passes_torch_dtype(self):
@@ -99,7 +162,7 @@ class TestLoaderKwargs(unittest.TestCase):
 
     def test_quantized_passes_config_and_not_dtype(self):
         kwargs = self._kwargs_for(quantize="4bit")
-        self.assertIn("quantization_config", kwargs)
+        self.assertIs(kwargs.get("quantization_config"), self.SENTINEL)
         self.assertNotIn("torch_dtype", kwargs)
 
     def test_device_map_always_forwarded(self):
