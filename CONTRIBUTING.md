@@ -126,8 +126,18 @@ Open an issue using the **Feature Request** template. Describe the use case — 
 
 Releases are tag-driven — pushing a `vX.Y.Z` tag builds the sdist and wheel and
 publishes them to PyPI via trusted publishing (OIDC), so no API token is stored
-anywhere. The workflow refuses to publish if the tag and `pyproject.toml`
-disagree on the version.
+anywhere. The tag must agree with `pyproject.toml`, and the **full CI gate runs
+first**: a tag that fails tests, lint or types never reaches PyPI. That matters
+because a PyPI version can only be yanked, never replaced — one bad tag is
+permanent.
+
+The release chain is:
+
+```
+tag vX.Y.Z  →  CI (tests 3.9-3.12, core-install, import floor, ruff, mypy)
+            →  build sdist + wheel, twine check, tag/version match
+            →  publish to PyPI
+```
 
 ```bash
 # 1. Bump the version in pyproject.toml AND foundry/__init__.py (they must match;
@@ -139,7 +149,21 @@ git push origin main --tags      # → CI, PyPI publish, docs redeploy
 ```
 
 Tags `v0.1.0`–`v0.2.1` were back-filled onto their release commits, which predate
-this workflow; those versions were uploaded by hand.
+this workflow; those versions were uploaded by hand. `skip-existing` is on, so
+re-running against a version already on PyPI is a no-op rather than an error.
+
+### One-time setup
+
+Trusted publishing needs both sides configured, and neither lives in this repo:
+
+1. **On PyPI** — project → Publishing → add a GitHub publisher:
+   owner `Olaverse-Labs`, repository `olaverse-foundry`, workflow
+   `publish.yml`, environment `pypi`. All four must match exactly.
+2. **On GitHub** — Settings → Environments → create one named `pypi`.
+   Add required reviewers there if a release should need human approval.
+
+If publishing fails with an OIDC or "not a trusted publisher" error, one of
+those four fields disagrees; nothing in the repository can fix it.
 
 ---
 

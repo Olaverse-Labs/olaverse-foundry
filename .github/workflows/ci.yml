@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Callable so the release workflow gates on the *same* checks a PR runs,
+  # rather than a second copy of them that can drift.
+  workflow_call:
 
 jobs:
   test:
