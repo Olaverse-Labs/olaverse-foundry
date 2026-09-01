@@ -69,7 +69,7 @@ class TeacherSpec(BaseModel):
 class FusionConfig(BaseModel):
     """Fusion/distillation settings."""
 
-    strategy: Literal["min_ce", "mean"] = "min_ce"
+    strategy: Literal["min_ce", "mean", "mean_ce"] = "min_ce"
     align:    Literal["identity", "em", "min_ed"] = "min_ed"
     cache:    str = "topk_64"           # e.g. "topk_64" or "topk_128"
 

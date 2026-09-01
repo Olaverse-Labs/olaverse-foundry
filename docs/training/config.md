@@ -14,7 +14,7 @@ Shared by `TorchDistillTrainer` and `CachedDistillTrainer`.
 | `epochs` | `int` | `3` | Number of training epochs |
 | `batch_size` | `int` | `4` | Input batch size (informational; actual size comes from your dataset) |
 | `alpha` | `float` | `0.3` | CE loss weight. KL weight = `1 - alpha`. |
-| `fusion_strategy` | `str` | `"min_ce"` | How to fuse multiple teacher distributions: `"min_ce"` or `"mean_ce"` |
+| `fusion_strategy` | `str` | `"min_ce"` | How to fuse multiple teacher distributions: `"min_ce"` or `"mean_ce"` (also accepted as `"mean"`). An unrecognised name raises `ValueError`. |
 | `top_k` | `int` | `64` | Top-k teacher logits to consider during fusion |
 | `sparse_kl` | `bool` | `True` | Compute the distillation KL over the teacher's top-k support instead of a dense `(B, S, vocab)` target. See below. |
 | `log_every` | `int` | `10` | Print / callback loss every N optimizer steps |

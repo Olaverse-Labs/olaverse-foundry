@@ -219,7 +219,9 @@ class CachedDistillTrainer:
         import torch
         import torch.nn.functional as F
         from foundry.fusion.align import IdentityAlignment
-        from foundry.fusion.strategies import STRATEGY_REGISTRY
+        from foundry.fusion.strategies import (
+            STRATEGY_REGISTRY, canonical_strategy,
+        )
 
         ids_t = torch.tensor(input_ids, dtype=torch.long, device=self.device)
         self._optimizer.zero_grad()
@@ -241,9 +243,8 @@ class CachedDistillTrainer:
                 kl_loss = torch.tensor(0.0, device=self.device)
                 if len(self.teachers) > 0:
                     align = self._alignment or IdentityAlignment()
-                    fuse  = STRATEGY_REGISTRY.get(
-                        self.cfg.fusion_strategy, STRATEGY_REGISTRY["min_ce"]
-                    )
+                    strategy = canonical_strategy(self.cfg.fusion_strategy)
+                    fuse  = STRATEGY_REGISTRY[strategy]
                     teacher_dists, teacher_weights = [], []
                     sparse_teachers = []
                     for i, teacher in enumerate(self.teachers):
@@ -272,7 +273,7 @@ class CachedDistillTrainer:
                         )
                         tgt_idx, tgt_prob = build_sparse_target(
                             sparse_teachers, gold_np, teacher_weights,
-                            self.cfg.fusion_strategy, self.device,
+                            strategy, self.device,
                         )
                         kl_loss = sparse_kl(
                             student_logits[:, :-1], tgt_idx[:, :-1], tgt_prob[:, :-1], kl_mask,

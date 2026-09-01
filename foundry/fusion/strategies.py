@@ -82,6 +82,37 @@ STRATEGY_REGISTRY: dict[str, _StrategyFn] = {
     "mean":   mean_ce,
 }
 
+# The docs, the CLI help and the recipe examples have always said "mean_ce",
+# but the registry key is "mean". Accept both rather than break either.
+_ALIASES: dict[str, str] = {
+    "mean_ce": "mean",
+}
+
+
+def canonical_strategy(name: str) -> str:
+    """
+    Resolve a fusion-strategy name to its registry key.
+
+    Raises ValueError for anything unrecognised. That matters: the trainers used
+    to look this up with ``STRATEGY_REGISTRY.get(name, STRATEGY_REGISTRY["min_ce"])``,
+    so a typo — or the documented ``"mean_ce"`` — silently selected MinCE
+    instead. A run configured to average its teachers would pick one per token
+    instead, with nothing in the output to say so.
+    """
+    if name in STRATEGY_REGISTRY:
+        return name
+    if name in _ALIASES:
+        return _ALIASES[name]
+    raise ValueError(
+        f"unknown fusion strategy {name!r}. "
+        f"Available: {sorted(STRATEGY_REGISTRY)} (aliases: {sorted(_ALIASES)})"
+    )
+
+
+def resolve_strategy(name: str) -> _StrategyFn:
+    """Return the fusion function for ``name``, accepting documented aliases."""
+    return STRATEGY_REGISTRY[canonical_strategy(name)]
+
 
 def register_strategy(name: str, fn: _StrategyFn) -> None:
     """Register a custom fusion strategy."""
