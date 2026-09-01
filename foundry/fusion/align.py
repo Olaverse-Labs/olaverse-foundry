@@ -16,6 +16,10 @@ class IdentityAlignment:
     teacher_indices are already in student vocab space — just scatter.
     """
 
+    def map_indices(self, teacher_indices: np.ndarray) -> np.ndarray:
+        """Teacher ids in student vocab space. Identical here, by definition."""
+        return teacher_indices
+
     def map(
         self,
         teacher_indices: np.ndarray,
@@ -35,9 +39,13 @@ class IdentityAlignment:
         """
         B, S, K = teacher_indices.shape
         out = np.zeros((B, S, student_vocab_size), dtype=np.float32)
-        bi = np.arange(B)[:, None, None]
-        si = np.arange(S)[None, :, None]
-        out[bi, si, teacher_indices] = teacher_probs
+        bi = np.broadcast_to(np.arange(B)[:, None, None], (B, S, K))
+        si = np.broadcast_to(np.arange(S)[None, :, None], (B, S, K))
+        # add.at, not assignment: if the same token appears twice in one top-k
+        # its probabilities are mass on the same token and must sum. Plain
+        # assignment kept only the last and silently dropped the rest — and
+        # disagreed with EMAlignment, which has always summed.
+        np.add.at(out, (bi, si, teacher_indices), teacher_probs)
         return out
 
 
@@ -50,6 +58,10 @@ class EMAlignment:
     def __init__(self, teacher_vocab: dict[str, int], student_vocab: dict[str, int]) -> None:
         from foundry.fusion.vocab_map import build_em_map
         self._map = build_em_map(teacher_vocab, student_vocab)
+
+    def map_indices(self, teacher_indices: np.ndarray) -> np.ndarray:
+        """Teacher ids in student vocab space; -1 where no student token matches."""
+        return self._map[teacher_indices]
 
     def map(
         self,
@@ -127,6 +139,10 @@ class MinEDAlignment:
         """
         from foundry.fusion.vocab_map import coverage_stats
         return coverage_stats(self._em_map, self._full_map)
+
+    def map_indices(self, teacher_indices: np.ndarray) -> np.ndarray:
+        """Teacher ids in student vocab space; -1 where nothing matched."""
+        return self._full_map[teacher_indices]
 
     def map(
         self,

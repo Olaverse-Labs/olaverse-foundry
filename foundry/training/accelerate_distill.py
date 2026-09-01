@@ -20,13 +20,13 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
-from foundry.training.distill import TrainConfig
 from foundry.training.torch_distill import TorchTrainConfig
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 from foundry.teachers.cache import LogitCache
 
@@ -71,12 +71,12 @@ class CachedDistillTrainer:
         alignment = None,
     ) -> None:
         try:
-            import torch
+            import torch  # noqa: F401 — import is the availability check
         except ImportError:
             raise ImportError(
                 "torch is required for CachedDistillTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student    = student
         self.teachers   = teachers
         self.cfg        = config or CachedDistillConfig()
@@ -133,7 +133,7 @@ class CachedDistillTrainer:
     def _build_optimizer(self):
         import torch
         return torch.optim.AdamW(
-            self.student.parameters(),
+            _trainable(self.student),
             lr=self.cfg.learning_rate,
             weight_decay=self.cfg.weight_decay,
         )
@@ -245,6 +245,7 @@ class CachedDistillTrainer:
                         self.cfg.fusion_strategy, STRATEGY_REGISTRY["min_ce"]
                     )
                     teacher_dists, teacher_weights = [], []
+                    sparse_teachers = []
                     for i, teacher in enumerate(self.teachers):
                         cached = self._caches[i].get_batch(batch_idx)
                         if cached is None:
@@ -254,24 +255,41 @@ class CachedDistillTrainer:
                             self._caches[i].put_batch(batch_idx, t_idx, t_prob)
                         else:
                             t_idx, t_prob = cached
-                        teacher_dists.append(align.map(t_idx, t_prob, V))
+                        if self.cfg.sparse_kl:
+                            from foundry.training._sparse_kl import align_sparse
+                            sparse_teachers.append(align_sparse(align, t_idx, t_prob))
+                        else:
+                            teacher_dists.append(align.map(t_idx, t_prob, V))
                         teacher_weights.append(teacher.weight)
 
                     gold_np  = np.roll(input_ids, -1, axis=1)
                     gold_np[:, -1] = 0
-                    fused_np = fuse(teacher_dists, gold_np, teacher_weights)
-                    fused_t  = torch.tensor(fused_np, dtype=torch.float32, device=self.device)
-                    fused_t  = (fused_t + 1e-9) / (fused_t + 1e-9).sum(dim=-1, keepdim=True)
-
-                    log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)   # (B, S-1, V)
-                    # Per-token KL in nats, masking pad positions, so it sits on the
-                    # same scale as the per-token CE and alpha truly balances the two.
-                    kl_per_tok = F.kl_div(
-                        log_stu, fused_t[:, :-1],
-                        reduction="none", log_target=False,
-                    ).sum(dim=-1)                                             # (B, S-1)
                     kl_mask = (gold_t[:, :-1] != 0).float()
-                    kl_loss = (kl_per_tok * kl_mask).sum() / kl_mask.sum().clamp(min=1.0)
+
+                    if self.cfg.sparse_kl:
+                        from foundry.training._sparse_kl import (
+                            build_sparse_target, sparse_kl,
+                        )
+                        tgt_idx, tgt_prob = build_sparse_target(
+                            sparse_teachers, gold_np, teacher_weights,
+                            self.cfg.fusion_strategy, self.device,
+                        )
+                        kl_loss = sparse_kl(
+                            student_logits[:, :-1], tgt_idx[:, :-1], tgt_prob[:, :-1], kl_mask,
+                        )
+                    else:
+                        fused_np = fuse(teacher_dists, gold_np, teacher_weights)
+                        fused_t  = torch.tensor(fused_np, dtype=torch.float32, device=self.device)
+                        fused_t  = (fused_t + 1e-9) / (fused_t + 1e-9).sum(dim=-1, keepdim=True)
+
+                        log_stu = F.log_softmax(student_logits[:, :-1], dim=-1)   # (B, S-1, V)
+                        # Per-token KL in nats, masking pad positions, so it sits on the
+                        # same scale as the per-token CE and alpha truly balances the two.
+                        kl_per_tok = F.kl_div(
+                            log_stu, fused_t[:, :-1],
+                            reduction="none", log_target=False,
+                        ).sum(dim=-1)                                             # (B, S-1)
+                        kl_loss = (kl_per_tok * kl_mask).sum() / kl_mask.sum().clamp(min=1.0)
 
                 loss = self.cfg.alpha * ce_loss + (1.0 - self.cfg.alpha) * kl_loss
 

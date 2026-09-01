@@ -16,6 +16,7 @@ Shared by `TorchDistillTrainer` and `CachedDistillTrainer`.
 | `alpha` | `float` | `0.3` | CE loss weight. KL weight = `1 - alpha`. |
 | `fusion_strategy` | `str` | `"min_ce"` | How to fuse multiple teacher distributions: `"min_ce"` or `"mean_ce"` |
 | `top_k` | `int` | `64` | Top-k teacher logits to consider during fusion |
+| `sparse_kl` | `bool` | `True` | Compute the distillation KL over the teacher's top-k support instead of a dense `(B, S, vocab)` target. See below. |
 | `log_every` | `int` | `10` | Print / callback loss every N optimizer steps |
 | `seed` | `int` | `42` | Random seed for torch, numpy, and random |
 | `lr_scheduler` | `str` | `"constant"` | LR schedule: `"constant"` / `"cosine"` / `"linear"` |
@@ -137,3 +138,50 @@ The encoder, head, and quantization trainers have their own configs (same shared
 | `ContrastiveConfig` | `ContrastiveTrainer` | [Contrastive retrieval](contrastive.md) |
 | `HeadTrainConfig` | `SequenceClassificationTrainer` / `TokenClassificationTrainer` | [Task heads](heads.md) |
 | `QATConfig` | `prepare_qat` | [Quantization](../quantization.md) |
+
+
+---
+
+## `sparse_kl` — why it defaults to `True`
+
+A teacher returns top-k distributions: `(B, S, K)` indices and probabilities,
+~8MB at `B=8, S=2048, K=64`. The dense path scattered those into a full
+`(B, S, vocab)` array before computing the KL. At a 152k-token vocabulary that
+is **~10GB per teacher per step** — allocated in numpy, then copied to the
+device as a second tensor of the same size. The teacher signal did not get
+richer on the way; only the zeros did.
+
+`KL(T‖S) = Σ_v T(v)·(log T(v) − log S(v))` has no contribution from any `v`
+where `T(v) = 0`, so the dense sum is doing arithmetic on zeros. The sparse path
+gathers the student's log-probs at exactly the teacher's top-k indices and sums
+there.
+
+Measured on CPU, single teacher, `top_k=64`:
+
+| shape | dense | sparse | |
+| --- | --- | --- | --- |
+| `B=4 S=256 V=32k` | 131 MB, 3.5 s | 0.9 MB, 0.08 s | 154× less memory |
+| `B=4 S=256 V=152k` | 622 MB, 12.5 s | 0.9 MB, 0.22 s | 730× less memory |
+
+(Memory is the numpy allocation; the dense path also copies the same array to
+the device.)
+
+!!! note "The two paths differ very slightly"
+    The dense path adds `1e-9` to **every** vocab entry before renormalising —
+    across 152k tokens that smears ~1.5e-4 of probability mass over the whole
+    vocabulary and pulls the target fractionally off what the teacher said. The
+    sparse path renormalises the top-k mass over its own support, which is the
+    standard top-k distillation formulation. Against a dense reference *without*
+    that smoothing, the two agree to float32 precision.
+
+    Set `sparse_kl=False` only to reproduce a run made before this existed.
+
+### Collision semantics
+
+If the same student token appears twice in one fused support — two teachers
+nominating it, or a `MinEDAlignment` mapping two teacher tokens onto one student
+token — those probabilities are mass on the same token and are **summed**.
+
+`IdentityAlignment` previously used plain assignment here while `EMAlignment`
+used `np.add.at`, so the two disagreed and the identity path silently dropped
+the earlier probability. Both now sum.

@@ -37,7 +37,7 @@ class Recipe:
             raise ImportError(
                 "PyYAML is required to load recipes. "
                 "Install with: pip install pyyaml"
-            )
+            ) from None
         raw = yaml.safe_load(Path(path).read_text())
 
         # EmbedRecipe is identified by embed_loss / embed_pool in fusion block.
@@ -83,7 +83,7 @@ class Recipe:
 
         # ── Data ──────────────────────────────────────────────────
         if s.data:
-            lines.append(f"\n[1b] Data")
+            lines.append("\n[1b] Data")
             name_str = f"  name={s.data.name}" if s.data.name else ""
             lines.append(f"    Source:  {s.data.source}{name_str}  split={s.data.split}")
             lines.append(
@@ -122,7 +122,7 @@ class Recipe:
                 )
 
         # ── Output ────────────────────────────────────────────────
-        lines.append(f"\n[5] Output")
+        lines.append("\n[5] Output")
         lines.append(f"    Freeze base: {s.output.freeze_base}")
         if isinstance(s, FoundryRecipe) and s.output.skillpacks:
             lines.append(f"    Skill packs to train: {', '.join(s.output.skillpacks)}")
@@ -202,7 +202,7 @@ class Recipe:
                     raise ImportError(
                         "Loading a dataset by name needs the 'datasets' library. "
                         "Install with: pip install olaverse-foundry[data]"
-                    )
+                    ) from None
                 source = load_dataset(
                     source, name=s.data.name,
                     split=s.data.split, streaming=s.data.streaming,
@@ -403,6 +403,12 @@ class Recipe:
 
         if not s.teachers:
             raise ValueError("EmbedRecipe requires at least one teacher.")
+        if not s.seed.model:
+            raise ValueError(
+                "EmbedRecipe requires seed.model — the student encoder to fine-tune. "
+                "Unlike a FoundryRecipe there is no random-init path for embeddings. "
+                "Add e.g. `seed:\n  model: microsoft/deberta-v3-base` to the recipe."
+            )
 
         # ── Load student ───────────────────────────────────────────
         print(f"[foundry] Loading student encoder: {s.seed.model} …")

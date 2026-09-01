@@ -8,7 +8,7 @@ from __future__ import annotations
 import numpy as np
 
 from foundry.fusion.align import IdentityAlignment
-from foundry.fusion.strategies import STRATEGY_REGISTRY, min_ce
+from foundry.fusion.strategies import STRATEGY_REGISTRY
 
 
 def _softmax(x: np.ndarray, axis: int = -1) -> np.ndarray:

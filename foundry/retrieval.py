@@ -49,7 +49,7 @@ def evaluate_retrieval(query_emb: np.ndarray, corpus_emb: np.ndarray,
     sims = q @ c.T                                  # (Nq, Nc) — embeddings are normalised
     ndcgs, recalls = [], []
     for qi in range(q.shape[0]):
-        rel_set = set(int(x) for x in qrels[qi])
+        rel_set = {int(x) for x in qrels[qi]}
         if not rel_set:
             continue
         order  = np.argsort(-sims[qi])
@@ -115,9 +115,20 @@ def _spec_for(name: str, base: str, specs: dict) -> dict:
     return {}
 
 
+def _resolve_device(device: str) -> str:
+    """Resolve "auto" to cuda when available, else cpu."""
+    if device != "auto":
+        return device
+    try:
+        import torch
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    except ImportError:
+        return "cpu"
+
+
 def compare_retrievers(models, queries, corpus, qrels, k: int = 10,
                        pool: str = "mean", max_length: int = 128,
-                       batch_size: int = 64, device: str = "cuda", specs: dict | None = None) -> dict:
+                       batch_size: int = 64, device: str = "auto", specs: dict | None = None) -> dict:
     """
     Encode + score several models on the same retrieval set, each with **its own**
     encoding (pooling + prefixes) for a fair comparison.
@@ -129,6 +140,7 @@ def compare_retrievers(models, queries, corpus, qrels, k: int = 10,
     """
     from transformers import AutoModel, AutoTokenizer
     specs = specs or {}
+    device = _resolve_device(device)
     results: dict[str, Any] = {}
     for name, base in (models.items() if isinstance(models, dict) else [(m, m) for m in models]):
         sp   = _spec_for(name, base, specs)
@@ -136,14 +148,17 @@ def compare_retrievers(models, queries, corpus, qrels, k: int = 10,
         qpre  = sp.get("query_prefix", "")
         dpre  = sp.get("doc_prefix", "")
         print(f"[retrieval] encoding + scoring: {name}  (pool={mpool}"
-              + (f", prefixes" if qpre or dpre else "") + ") …")
+              + (", prefixes" if qpre or dpre else "") + ") …")
         try:
             tok = AutoTokenizer.from_pretrained(base)
             mdl = AutoModel.from_pretrained(base).to(device)
             q_emb = encode_texts(mdl, tok, queries, mpool, True, max_length, batch_size, device, prefix=qpre)
             c_emb = encode_texts(mdl, tok, corpus,  mpool, True, max_length, batch_size, device, prefix=dpre)
             m = evaluate_retrieval(q_emb, c_emb, qrels, k)
-            m["params_m"] = round(sum(p.numel() for p in mdl.parameters()) / 1e6, 1)
+            # Unrounded on purpose: this dict is what callers publish as a
+            # benchmark table, and rounding to 1dp made every model under
+            # 50k params report 0.0 with no way to recover the real count.
+            m["params_m"] = sum(p.numel() for p in mdl.parameters()) / 1e6
             results[name] = m
             del mdl
         except Exception as exc:
@@ -166,5 +181,16 @@ def print_retrieval_comparison(results: dict, k: int = 10) -> None:
     print("  " + "─" * (w + 35))
     for name, m in rows:
         print(f"  {name:{w}}  {str(m.get(key)):>9}  {str(m.get('recall@'+str(k))):>10}  "
-              f"{str(m.get('params_m')):>10}")
+              f"{_fmt_params(m.get('params_m')):>10}")
     print()
+
+
+def _fmt_params(value) -> str:
+    """Format a parameter count in millions, keeping small models legible."""
+    if not isinstance(value, (int, float)) or value != value:   # None / NaN
+        return "n/a"
+    if value >= 10:
+        return f"{value:.0f}"
+    if value >= 1:
+        return f"{value:.1f}"
+    return f"{value:.3f}"

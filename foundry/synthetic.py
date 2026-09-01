@@ -16,7 +16,7 @@ Both return pairs with a ``"negative"`` key, ready for ``ContrastiveTrainer``.
 """
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Callable
 
 
 HARD_NEG_PROMPT = (
@@ -45,7 +45,7 @@ def load_generator(model_id: str = "Qwen/Qwen2.5-3B-Instruct",
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]")
+        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]") from None
     td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
           "float32": torch.float32}.get(dtype, torch.bfloat16)
     tok = AutoTokenizer.from_pretrained(model_id)
@@ -124,7 +124,7 @@ def load_translator(model_id: str = "google/madlad400-3b-mt",
         import torch
         from transformers import T5ForConditionalGeneration, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]")
+        raise ImportError("transformers + torch required. pip install olaverse-foundry[torch]") from None
     td = {"bfloat16": torch.bfloat16, "float16": torch.float16,
           "float32": torch.float32}.get(dtype, torch.bfloat16)
     tok = AutoTokenizer.from_pretrained(model_id)
@@ -184,6 +184,11 @@ def synthesize_parallel(source_texts, translator, target_langs,
 
 # ── Encoder-based mining ──────────────────────────────────────────────────────
 
+def _norm_text(text: str) -> str:
+    """Casefold + collapse whitespace, for duplicate detection only."""
+    return " ".join(str(text).split()).casefold()
+
+
 def mine_hard_negatives(pairs, model, tokenizer, anchor_key: str = "anchor",
                         positive_key: str = "positive", negative_key: str = "negative",
                         pool: str = "mean", max_length: int = 128, batch_size: int = 64,
@@ -192,6 +197,15 @@ def mine_hard_negatives(pairs, model, tokenizer, anchor_key: str = "anchor",
     Mine hard negatives with an encoder: for each anchor, the highest-scoring *other*
     positive (skipping the very top ``skip_top`` to avoid near-duplicate false
     negatives). Cheap, LLM-free, and the right choice for low-resource languages.
+
+    Candidates whose text matches this pair's own positive or anchor are skipped,
+    not just candidates at the same index. Duplicate passages are common in
+    translated and synthetic corpora — the exact case this function exists for —
+    and a "negative" that is textually the positive is a false negative: it asks
+    the contrastive loss to push two identical strings apart.
+
+    A pair gets no ``negative_key`` at all if no distinct candidate exists, so
+    callers can tell a missing negative from a bad one.
     """
     import numpy as np
     from foundry.retrieval import encode_texts
@@ -203,9 +217,15 @@ def mine_hard_negatives(pairs, model, tokenizer, anchor_key: str = "anchor",
     out = []
     for i, p in enumerate(pairs):
         order = np.argsort(-sims[i])
-        cand  = [int(j) for j in order if int(j) != i]
+        blocked = {_norm_text(positives[i]), _norm_text(anchors[i])}
+        cand  = [int(j) for j in order
+                 if int(j) != i and _norm_text(positives[int(j)]) not in blocked]
         q = dict(p)
         if len(cand) > skip_top:
             q[negative_key] = positives[cand[skip_top]]
+        elif cand:
+            # Fewer distinct candidates than skip_top asks for; the least-similar
+            # distinct one still beats emitting a false negative.
+            q[negative_key] = positives[cand[-1]]
         out.append(q)
     return out

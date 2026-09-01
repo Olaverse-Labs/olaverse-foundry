@@ -11,7 +11,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  # A PyPI version can never be replaced, only yanked. Publishing on a tag
+  # without running the suite means one bad tag is permanent, so the release
+  # runs the full CI gate first — tests on 3.9-3.12, the core-install check,
+  # the import floor, ruff and mypy.
+  test:
+    uses: ./.github/workflows/ci.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

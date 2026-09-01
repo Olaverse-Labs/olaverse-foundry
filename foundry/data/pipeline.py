@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Any, Callable, Iterable, Iterator, Optional
+from typing import Callable, Iterator, Optional
 
 import numpy as np
 
@@ -112,7 +112,7 @@ class DataPipeline:
             raise TypeError(
                 "DataPipeline source has unknown length (streaming). "
                 "Pass total_steps= to trainer.train() explicitly."
-            )
+            ) from None
         if self.drop_last:
             return n // self.batch_size
         return math.ceil(n / self.batch_size)

@@ -30,6 +30,7 @@ from typing import Any, Callable, Optional
 import numpy as np
 
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 
 
@@ -79,7 +80,7 @@ class DistilMLMTrainer:
             raise ImportError(
                 "torch is required for DistilMLMTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student   = student
         self.teacher   = teacher
         self.tokenizer = tokenizer
@@ -99,7 +100,7 @@ class DistilMLMTrainer:
         self._mask_id  = int(mask_id)
         self._pad_id   = int(pad_id)
         self._vocab    = int(vocab) if vocab is not None else None
-        self._specials = set(int(s) for s in specials)
+        self._specials = {int(s) for s in specials}
 
         self.device = self._resolve_device()
         self._dtype = self._resolve_dtype()
@@ -142,9 +143,9 @@ class DistilMLMTrainer:
 
     def _build_optimizer(self):
         import torch
-        params = list(self.student.parameters())
+        params = _trainable(self.student)
         if self._projector is not None:
-            params += list(self._projector.parameters())
+            params += _trainable(self._projector)
         return torch.optim.AdamW(params, lr=self.cfg.learning_rate, weight_decay=self.cfg.weight_decay)
 
     def _seed_everything(self) -> None:

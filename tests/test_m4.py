@@ -1,11 +1,13 @@
 """
 M4 tests — PEFT adapter bridge + mergekit config generation.
 
-No mergekit, no PEFT library required — only safetensors (already installed)
-and torch (already installed).
+No mergekit and no PEFT library required. The growth-planner and mergekit-YAML
+tests are pure numpy and run on a core install; the two adapter-weight classes
+need a weight backend (safetensors or torch) and skip without one.
 """
 from __future__ import annotations
 
+import importlib
 import json
 import tempfile
 import unittest
@@ -13,13 +15,13 @@ from pathlib import Path
 
 import numpy as np
 
-from foundry.skillpacks.pack import SkillPack, _model_hash
+from foundry.skillpacks.pack import SkillPack
 from foundry.skillpacks.peft_bridge import (
     peft_config_dict,
     save_as_peft,
     load_from_peft,
 )
-from foundry.growth.planner import plan_growth, GrowthPlan, upscale_layer_map
+from foundry.growth.planner import plan_growth, GrowthPlan
 from foundry.growth.mergekit_backend import (
     _layer_map_to_slices,
     growth_plan_to_mergekit_yaml,
@@ -27,6 +29,27 @@ from foundry.growth.mergekit_backend import (
     run_merge,
 )
 from foundry.contracts import ArchConfig
+
+
+# ── Optional weight backend ────────────────────────────────────────────────
+# save_as_peft / load_from_peft serialise via safetensors, falling back to
+# torch. Both are optional extras, so a core install has neither — skip rather
+# than fail. Everything else in this file is numpy-only.
+
+def _has_weight_backend() -> bool:
+    for mod in ("safetensors.numpy", "torch"):
+        try:
+            importlib.import_module(mod)
+        except ImportError:
+            continue
+        return True
+    return False
+
+
+needs_weight_backend = unittest.skipUnless(
+    _has_weight_backend(),
+    "needs safetensors or torch to read/write adapter weights",
+)
 
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
@@ -83,6 +106,7 @@ class TestPeftConfigDict(unittest.TestCase):
 
 # ── save_as_peft ────────────────────────────────────────────────────────────
 
+@needs_weight_backend
 class TestSaveAsPeft(unittest.TestCase):
 
     def test_creates_adapter_config(self):
@@ -122,6 +146,7 @@ class TestSaveAsPeft(unittest.TestCase):
 
 # ── load_from_peft ──────────────────────────────────────────────────────────
 
+@needs_weight_backend
 class TestLoadFromPeft(unittest.TestCase):
 
     def _save_and_load(self, pack: SkillPack, name_override=None) -> SkillPack:

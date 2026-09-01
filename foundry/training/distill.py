@@ -7,7 +7,7 @@ shares the same interface — drop-in swap when the backend is available.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable, Optional
 
 import numpy as np
@@ -34,6 +34,15 @@ class TrainConfig:
     eval_every:      int   = 0           # 0 = no eval; else every N optimizer steps
     save_every:      int   = 0           # 0 = no auto-checkpoint; else every N steps
     save_dir:        str   = ""          # directory for auto-saved checkpoints
+
+    # Compute the distillation KL over the teacher's top-k support instead of
+    # scattering it into a dense (B, S, vocab) target. Mathematically the same
+    # sum — KL has no contribution where the teacher probability is zero — but
+    # it never allocates the dense array, which is ~10GB per teacher per step at
+    # a 152k vocabulary. Set False only to reproduce a run made before this
+    # existed: the dense path additionally smears 1e-9 across every vocab entry,
+    # so its loss values differ very slightly.
+    sparse_kl:       bool  = True
 
 
 class DistillTrainer:

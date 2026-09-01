@@ -80,6 +80,13 @@ dev = [
   "pytest-cov",
 ]
 
+# Lint + type gate (CI "quality" job)
+lint = [
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "types-PyYAML",
+]
+
 # Documentation site (mkdocs build / serve / gh-deploy)
 docs = [
   "mkdocs-material>=9.5",
@@ -108,3 +115,46 @@ foundry = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# ── Lint ──────────────────────────────────────────────────────────────────────
+# Deliberately scoped to correctness, not style: pyflakes (F), syntax errors
+# (E9), bugbear (B), comprehension and dead-code rules. Formatting rules
+# (line length, import order, quote style) are left out so the gate stays
+# signal — a red lint run means a real defect, not a reflow.
+#
+# pyupgrade (UP) is *not* enabled on purpose. It rewrites `Optional[X]` to
+# `X | None`, which is a runtime error on Python 3.9 in any annotation that is
+# evaluated eagerly — exactly the bug that broke every `foundry.fusion` import
+# in 0.2.0 (see changelog 0.2.1). The floor stays 3.9 until the floor moves.
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["F", "E9", "B", "C4", "PIE", "SIM105"]
+ignore = [
+  "B007",   # unused loop control var — `for epoch in range(...)` reads better than `_epoch`
+  "B008",   # function call in default arg — not a pattern this codebase uses wrongly
+  "B905",   # zip(strict=) — not available on 3.9
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Re-exports are the point of a package __init__.
+"foundry/__init__.py" = ["F401"]
+"foundry/*/__init__.py" = ["F401"]
+
+# ── Types ─────────────────────────────────────────────────────────────────────
+# foundry ships py.typed, so these annotations are part of the public contract
+# and consumers type-check against them. This gate keeps that promise honest.
+#
+# python_version is 3.10, not the 3.9 floor, because mypy >= 1.15 dropped
+# support for targeting 3.9. Runtime 3.9 compatibility is covered instead by
+# the import check in CI, which runs on the floor version.
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+python_version = "3.10"
+files = ["foundry"]
+ignore_missing_imports = true       # torch/transformers/peft are optional extras
+follow_imports = "silent"
+warn_unused_ignores = false
+disable_error_code = ["annotation-unchecked"]

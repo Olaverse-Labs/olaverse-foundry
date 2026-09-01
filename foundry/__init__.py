@@ -48,6 +48,10 @@ from foundry.synthetic import (
     load_generator, llm_generate, generate_hard_negatives, synthesize_pairs,
     mine_hard_negatives, load_translator, translate_texts, synthesize_parallel,
 )
+from foundry.quality import (
+    normalise_text, duplicate_rate, dedup_pairs, drop_degenerate_pairs,
+    clean_pairs, embedding_health, quality_report, print_quality_report,
+)
 from foundry.io import SeedResult, load_seed
 from foundry.recipes import Recipe, FoundryRecipe, EmbedRecipe, EmbedFusionConfig, DataConfig
 from foundry.backends import detect_backend
@@ -108,4 +112,7 @@ __all__ = [
     # Synthetic data (open-LLM hard negatives + mining + MT synthesis)
     "load_generator", "llm_generate", "generate_hard_negatives", "synthesize_pairs",
     "mine_hard_negatives", "load_translator", "translate_texts", "synthesize_parallel",
+    # Synthetic data quality gates (numpy-only, no model required)
+    "normalise_text", "duplicate_rate", "dedup_pairs", "drop_degenerate_pairs",
+    "clean_pairs", "embedding_health", "quality_report", "print_quality_report",
 ]

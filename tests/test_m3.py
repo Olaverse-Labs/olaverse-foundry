@@ -13,10 +13,10 @@ pytest.importorskip("torch")
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 from types import SimpleNamespace
 
 import numpy as np
-import torch
 import torch.nn as nn
 
 
@@ -93,7 +93,7 @@ class TestLogitCacheBatchAPI(unittest.TestCase):
 
 class TestLogitCachePersistence(unittest.TestCase):
 
-    def _make_cache(self) -> "LogitCache":
+    def _make_cache(self) -> Any:
         from foundry.teachers.cache import LogitCache
         cache = LogitCache(top_k=4)
         # Per-token keys (M0 style)
@@ -105,7 +105,6 @@ class TestLogitCachePersistence(unittest.TestCase):
         return cache
 
     def test_save_creates_npz_file(self):
-        from foundry.teachers.cache import LogitCache
         cache = self._make_cache()
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "cache.npz"
@@ -224,7 +223,7 @@ class TestCachedDistillTrainer(unittest.TestCase):
         )
         trainer = CachedDistillTrainer(student, teachers, config=cfg)
         dataset = [np.random.randint(0, 100, (2, 8)) for _ in range(3)]
-        result  = trainer.train(dataset)
+        trainer.train(dataset)
         hits = trainer._caches[0].stats["hits"]
         # epoch 0: 3 cache misses + populate; epoch 1: 3 cache hits
         self.assertGreater(hits, 0)

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import importlib
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from foundry.io.loader import ModelRef, load_model, load_tokenizer
 
@@ -58,7 +58,7 @@ def _load_pretrained(model_spec: str, kwargs: dict) -> SeedResult:
         raise ImportError(
             "transformers is required for pretrained loading. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
     ref    = ModelRef.parse(model_spec)
     model  = load_model(ref, **kwargs)
     tok    = load_tokenizer(ref)
@@ -107,7 +107,7 @@ def _load_hf_random_init(model_id: str, kwargs: dict) -> SeedResult:
         raise ImportError(
             "transformers is required. "
             "Install with: pip install olaverse-foundry[torch]"
-        )
+        ) from None
     config = AutoConfig.from_pretrained(model_id)
     model  = AutoModelForCausalLM.from_config(config)
     tok    = AutoTokenizer.from_pretrained(model_id)

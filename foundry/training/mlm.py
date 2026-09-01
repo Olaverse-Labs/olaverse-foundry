@@ -31,11 +31,12 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 
 
@@ -122,7 +123,7 @@ class MLMTrainer:
             raise ImportError(
                 "torch is required for MLMTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         self.student   = student
         self.tokenizer = tokenizer
         self.cfg       = config or MLMConfig()
@@ -151,7 +152,7 @@ class MLMTrainer:
         self._mask_id  = int(mask_id)
         self._pad_id   = int(pad_id)
         self._vocab    = int(vocab)
-        self._specials = set(int(s) for s in specials)
+        self._specials = {int(s) for s in specials}
 
         self.device    = self._resolve_device()
         self._dtype    = self._resolve_dtype()
@@ -188,7 +189,7 @@ class MLMTrainer:
     def _build_optimizer(self):
         import torch
         return torch.optim.AdamW(
-            self.student.parameters(),
+            _trainable(self.student),
             lr=self.cfg.learning_rate,
             weight_decay=self.cfg.weight_decay,
         )

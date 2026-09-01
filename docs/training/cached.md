@@ -69,6 +69,41 @@ trainer.build_caches(dataset)
 result = trainer.train(dataset)
 ```
 
+### Memory, and bounding it
+
+Cached top-k distributions are large. At `top_k=64` with 8x512 batches each
+entry is ~2MB:
+
+| batches | tokens | RAM at `top_k=64` |
+| --- | --- | --- |
+| 10,000 | 41M | ~21 GB |
+| 10,000 (seq 2048) | 164M | ~84 GB |
+
+Real distillation runs are far bigger than that, so an unbounded in-memory cache
+is the wrong default at scale. Give `LogitCache` a `cache_dir` and a
+`max_entries` cap:
+
+```python
+from foundry.teachers import LogitCache
+
+cache = LogitCache(top_k=64, max_entries=512, cache_dir="./teacher_cache")
+```
+
+RAM then holds at most `max_entries` entries under **LRU** eviction, and evicted
+entries spill to sharded `.npz` files rather than being discarded. A miss in RAM
+falls through to disk and is promoted back. `stats` reports `disk_hits` and
+`spills` alongside the usual counters.
+
+Because the shards and their index live in `cache_dir`, opening a cache on the
+same directory picks up whatever a previous *process* wrote — populate once,
+reuse across runs and machines. Call `flush()` before relying on the shards.
+
+!!! note "Why LRU and not FIFO"
+    Training reads batches in order. Under FIFO, a cache smaller than the
+    dataset evicts exactly the entries the next epoch reads first, so the hit
+    rate collapses to ~0 and every epoch re-runs the teachers — the one cost the
+    cache exists to avoid. Nothing errors; the run is simply slow.
+
 ---
 
 ## Constructor

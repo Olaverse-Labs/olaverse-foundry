@@ -21,11 +21,12 @@ import random
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 
 from foundry.training._logger import _FoundryLogger
+from foundry.training._params import trainable_parameters as _trainable
 from foundry.training._scheduler import build_scheduler
 
 
@@ -78,7 +79,7 @@ class ContrastiveTrainer:
             raise ImportError(
                 "torch is required for ContrastiveTrainer. "
                 "Install with: pip install olaverse-foundry[torch]"
-            )
+            ) from None
         if tokenizer is None:
             raise ValueError("ContrastiveTrainer needs a tokenizer to encode text pairs.")
         self.model     = model
@@ -115,7 +116,7 @@ class ContrastiveTrainer:
 
     def _build_optimizer(self):
         import torch
-        return torch.optim.AdamW(self.model.parameters(), lr=self.cfg.learning_rate,
+        return torch.optim.AdamW(_trainable(self.model), lr=self.cfg.learning_rate,
                                  weight_decay=self.cfg.weight_decay)
 
     def _seed_everything(self) -> None:

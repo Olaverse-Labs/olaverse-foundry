@@ -4,6 +4,143 @@
 
 ## Unreleased
 
+### Distillation loss
+
+- **The KL is now computed over the teacher's top-k support** (`sparse_kl=True`,
+  the default) instead of scattering it into a dense `(B, S, vocab)` target.
+  A teacher returns ~8MB of top-k data at `B=8, S=2048, K=64`; the dense path
+  turned that into ~10GB per teacher per step at a 152k vocabulary, in numpy,
+  then copied it to the device again. `KL(T‖S)` has no contribution where
+  `T(v) = 0`, so that was arithmetic on zeros. Measured at `V=152k`: **730×
+  less memory and ~56× faster**. This affected the same-tokenizer path
+  (`IdentityAlignment`) exactly as much as the cross-tokenizer one, so it was
+  the binding constraint on any large-vocabulary run.
+- The two paths differ very slightly: the dense one adds `1e-9` to *every* vocab
+  entry before renormalising, smearing ~1.5e-4 of mass across the vocabulary.
+  The sparse path renormalises the top-k mass over its own support. Against a
+  dense reference without that smoothing the two agree to float32 precision.
+  Pass `sparse_kl=False` to reproduce an older run.
+- **Fix: `IdentityAlignment` and `EMAlignment` disagreed on collisions.**
+  Identity used plain assignment, so when a token appeared twice in one top-k
+  the earlier probability was silently dropped; EM used `np.add.at` and summed.
+  Both now sum, which is correct — those are mass on the same token — and the
+  sparse path deduplicates to match, including for a single teacher, since a
+  `MinEDAlignment` maps several teacher tokens onto one student token.
+
+### Large-model distillation
+
+Three changes that together make a large-teacher → small-student run fit on one
+machine. A 27B teacher is ~54GB in bf16; a 2B student full-weight trained needs
+~30GB of weights, gradients and optimizer moments before activations.
+
+- **New: `foundry.training.lora`** — LoRA training for the student.
+  `attach_lora` freezes the base and returns a `PeftModel` that drops straight
+  into any existing trainer, because every foundry trainer already trains
+  whatever requires grad. There is deliberately no `LoRADistillTrainer`: LoRA is
+  a property of the model, not a kind of training. `merge_and_save` produces a
+  plain HuggingFace directory; `save_adapter` produces a PEFT directory;
+  `to_skillpack` feeds the existing skill-pack machinery. Quantized bases are
+  routed through `prepare_model_for_kbit_training`, without which the run trains
+  at a flat loss and never errors.
+- **`quantize` fails fast with an actionable error when bitsandbytes is absent.**
+  `BitsAndBytesConfig.post_init()` reads
+  `importlib.metadata.version("bitsandbytes")` on some transformers releases and
+  not others, so the same call raised `PackageNotFoundError` on one version and
+  succeeded on another — then failed much later inside `from_pretrained`.
+  Neither message named what to install. foundry now checks up front, so the
+  behaviour is identical on every transformers version.
+- **`quantize="4bit"` / `"8bit"` now works for training, not just inference.**
+  `io.loader` built `torch_dtype` and `device_map` but never a
+  `quantization_config`, even though `inference.py` already constructed one — so
+  a teacher could not be quantized through the library that loads it. `ModelRef`
+  and `HFTeacher` both take `quantize` now, and the BitsAndBytes config is built
+  in one shared place instead of two. A 27B teacher drops from ~54GB to ~15GB.
+- **Fix: `HFTeacher.load()` called `.to(device)` on an already-placed model.**
+  A bitsandbytes-quantized model refuses `.to()` outright, and a model dispatched
+  by accelerate (`device_map="auto"`, the default) carries hooks that `.to()`
+  invalidates — which is how a sharded teacher ends up half on the wrong device.
+  It now detects placement and leaves those models where transformers put them.
+- **Fix: 7 of 8 trainers built their optimizer over `model.parameters()`**,
+  ignoring `requires_grad` (only `heads.py` filtered). AdamW skips parameters
+  whose grad is `None`, so this was not a memory leak, but it made a LoRA or
+  partially-frozen run unpredictable: clipping walked tensors that never had
+  gradients, and anything later flipping `requires_grad` would silently start
+  updating weights the caller froze. All trainers now share
+  `training._params.trainable_parameters`.
+
+### Teacher logit cache
+
+- **`LogitCache` can now be disk-backed and bounded.** It was a plain in-memory
+  dict, and `populate_dataset()` filled it for the whole dataset up front — at
+  `top_k=64` with 8x512 batches that is ~21GB of RAM for only 41M tokens, which
+  does not survive contact with a real run. Passing `cache_dir` caps RAM at
+  `max_entries` and spills evictions to sharded `.npz` files, reading them back
+  on a miss. The shard index lives in `cache_dir`, so a populated cache is
+  reused by later processes rather than rebuilt.
+- **Eviction is LRU, not FIFO.** Training reads batches in order, so FIFO evicted
+  precisely the entries the next epoch read first: a cache smaller than the
+  dataset achieved a ~0% hit rate and re-ran the teachers every epoch — the one
+  cost the cache exists to avoid, with nothing in the output to indicate it.
+- `stats` gains `disk_hits`, `spills` and `on_disk`.
+
+### Data quality
+
+- **New: `foundry.quality`** — the gate between synthesis and training.
+  `clean_pairs` / `dedup_pairs` / `drop_degenerate_pairs` remove duplicate pairs,
+  untranslated `anchor == positive` pairs and false negatives; `embedding_health`
+  detects a collapsed encoder; `quality_report` / `print_quality_report`
+  summarise a pair set before you train on it. numpy-only, so it runs on a core
+  install. Language ID, translation adequacy and toxicity are deliberately out of
+  scope — those need real models.
+- **Fix: `mine_hard_negatives` could return a false negative.** It skipped
+  duplicate candidates by index, but duplicate passages are common in translated
+  corpora, so a "negative" textually identical to the pair's own positive could
+  be selected — asking InfoNCE to push two identical strings apart. It now skips
+  by normalised text, and omits the key entirely when no distinct candidate
+  exists, so a missing negative is distinguishable from a bad one.
+
+### Retrieval
+
+- **Fix: `compare_retrievers` no longer defaults to `device="cuda"`.** The
+  benchmark helper called `.to("cuda")` unconditionally, so it raised on any
+  CPU-only machine. It now resolves `"auto"`.
+- **Fix: `params_m` is no longer rounded inside the result.** Rounding to 1dp
+  made every model under 50k params report `0.0` with the true count
+  unrecoverable from the dict callers publish as a benchmark table. Rounding
+  moved to `print_retrieval_comparison`.
+
+### Recipes
+
+- `EmbedRecipe.run()` validates `seed.model` up front. It was passed straight to
+  `AutoModel.from_pretrained`, so an embed recipe missing that field failed deep
+  inside transformers instead of naming the missing field. Unlike `FoundryRecipe`
+  there is no random-init path for embeddings.
+
+### Testing & CI
+
+- **New: real-model CPU integration suite** (`tests/test_integration_cpu.py`).
+  The rest of the suite runs on hand-rolled `nn.Module` stubs, which prove the
+  training maths but never touch `AutoModel`, `config.json`, `save_pretrained` or
+  the safetensors round-trip. These tests build genuine `BertModel` and tokenizer
+  instances, save them as real HuggingFace directories, and run the pipeline
+  end-to-end — including the README's claim that output reloads with
+  `transformers` alone. No network, no GPU, ~9s.
+- **New: `core-install` CI job.** Every existing job installed `[torch,lego,data,dev]`,
+  so nothing verified the advertised `pip install olaverse-foundry`. On a core
+  install the suite failed — `tests/test_m4.py` imported the PEFT weight bridge
+  unguarded, erroring 14 tests instead of skipping them. Fixed, and now covered.
+- **The import check moved to Python 3.9** (the version floor, not 3.11) and now
+  walks every submodule rather than the top-level re-exports. The 0.2.1 bug — a
+  runtime `X | None` alias breaking every `foundry.fusion` import on 3.9 — could
+  not have been caught by a check running on 3.11.
+- **New: `quality` CI job** running `ruff` and `mypy`. The library ships
+  `py.typed` but nothing verified those annotations. Ruff is scoped to
+  correctness rules only; pyupgrade is deliberately disabled, since it rewrites
+  `Optional[X]` to `X | None` and would reintroduce the 0.2.0 break.
+- 25 `raise ... from None` on errors that translate an opaque failure into an
+  actionable one, so a chained `No module named 'torch'` no longer buries the
+  message explaining how to fix it. 40 dead imports removed.
+
 ### Packaging
 
 - **PEP 561 type marker** — `foundry/py.typed` ships in the wheel, so mypy and
