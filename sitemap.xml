@@ -2,110 +2,118 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/changelog/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/choosing/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/cli/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/concepts/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/data/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/evaluation/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/growth/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/inference/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
+    </url>
+    <url>
+         <loc>https://olaverse-labs.github.io/olaverse-foundry/quality/</loc>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/quantization/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/quickstart/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/recipes/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/retrieval/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/skillpacks/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/synthetic/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/guides/low-resource-retriever/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/guides/small-classifier/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/cached/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/config/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/contrastive/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/distil-mlm/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/embed/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/encoder-distill/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/heads/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
+    </url>
+    <url>
+         <loc>https://olaverse-labs.github.io/olaverse-foundry/training/lora/</loc>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/mlm/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
     <url>
          <loc>https://olaverse-labs.github.io/olaverse-foundry/training/torch/</loc>
-         <lastmod>2026-08-15</lastmod>
+         <lastmod>2026-09-01</lastmod>
     </url>
 </urlset>

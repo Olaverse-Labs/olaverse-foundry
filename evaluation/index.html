@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/evaluation/">
       
       
-        <link rel="prev" href="../synthetic/">
+        <link rel="prev" href="../quality/">
       
       
         <link rel="next" href="../retrieval/">
@@ -929,6 +929,8 @@
       
         
       
+        
+      
     
     
     
@@ -1186,6 +1188,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../training/lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../training/heads/" class="md-nav__link">
         
   
@@ -1250,6 +1280,8 @@
   
     
     
+      
+        
       
         
       
@@ -1343,6 +1375,34 @@
     
   
     Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
   
 
     
@@ -1863,20 +1923,20 @@
 <p>The evaluation harness measures how good a base encoder is, <strong>head-to-head</strong> with other models. It fine-tunes the same task head on each model with identical data and config, then prints an accuracy / macro-F1 / params table — so "better" is a table, not a vibe.</p>
 <p>Each model is tokenised with <strong>its own</strong> tokenizer (the fair thing to do), so you pass <strong>raw rows</strong>, not pre-tokenised ids. Metrics are pure numpy (no sklearn).</p>
 <p>This page covers <strong>classification / NER</strong> evaluation. For embedding models, see <a href="../retrieval/">Retrieval evaluation</a> (nDCG / Recall, <code>compare_retrievers</code>).</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"olaverse-foundry[torch]"</span>
 </span></code></pre></div>
 <hr />
 <h2 id="compare-several-encoders">Compare several encoders<a class="headerlink" href="#compare-several-encoders" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">compare_encoders</span><span class="p">,</span> <span class="n">print_comparison</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">train_rows</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]]</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">eval_rows</span>  <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]]</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">train_rows</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"text"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="s2">"label"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"train"</span><span class="p">]]</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">eval_rows</span>  <span class="o">=</span> <span class="p">[{</span><span class="s2">"text"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="s2">"label"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"validation"</span><span class="p">]]</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">results</span> <span class="o">=</span> <span class="n">compare_encoders</span><span class="p">(</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="p">{</span><span class="s2">&quot;My Base&quot;</span><span class="p">:</span> <span class="s2">&quot;./my-base&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>     <span class="s2">&quot;mBERT&quot;</span><span class="p">:</span>   <span class="s2">&quot;google-bert/bert-base-multilingual-cased&quot;</span><span class="p">,</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>     <span class="s2">&quot;e5-base&quot;</span><span class="p">:</span> <span class="s2">&quot;intfloat/multilingual-e5-base&quot;</span><span class="p">},</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="p">{</span><span class="s2">"My Base"</span><span class="p">:</span> <span class="s2">"./my-base"</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>     <span class="s2">"mBERT"</span><span class="p">:</span>   <span class="s2">"google-bert/bert-base-multilingual-cased"</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>     <span class="s2">"e5-base"</span><span class="p">:</span> <span class="s2">"intfloat/multilingual-e5-base"</span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">NUM</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"sequence"</span><span class="p">,</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">)</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="n">print_comparison</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 </span></code></pre></div>
@@ -1888,26 +1948,26 @@
 </span></code></pre></div>
 <p>For NER, pass rows of <code>{"tokens": [...], "ner_tags": [...]}</code> and <code>task="token"</code>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">ner_results</span> <span class="o">=</span> <span class="n">compare_encoders</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">models</span><span class="p">,</span> <span class="n">ner_train</span><span class="p">,</span> <span class="n">ner_eval</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">TAGS</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">tokens_key</span><span class="o">=</span><span class="s2">&quot;tokens&quot;</span><span class="p">,</span> <span class="n">tags_key</span><span class="o">=</span><span class="s2">&quot;ner_tags&quot;</span><span class="p">,</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">models</span><span class="p">,</span> <span class="n">ner_train</span><span class="p">,</span> <span class="n">ner_eval</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">TAGS</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"token"</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">tokens_key</span><span class="o">=</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="n">tags_key</span><span class="o">=</span><span class="s2">"ner_tags"</span><span class="p">,</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">)</span>
 </span></code></pre></div>
 <hr />
 <h2 id="evaluate_encoder"><code>evaluate_encoder</code><a class="headerlink" href="#evaluate_encoder" title="Permanent link">&para;</a></h2>
 <p>Score a single model:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">evaluate_encoder</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">base</span><span class="p">,</span> <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="o">*</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label_key</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">tokens_key</span><span class="o">=</span><span class="s2">&quot;tokens&quot;</span><span class="p">,</span> <span class="n">tags_key</span><span class="o">=</span><span class="s2">&quot;ner_tags&quot;</span><span class="p">,</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">base</span><span class="p">,</span> <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"sequence"</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="o">*</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text_key</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">label_key</span><span class="o">=</span><span class="s2">"label"</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">tokens_key</span><span class="o">=</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="n">tags_key</span><span class="o">=</span><span class="s2">"ner_tags"</span><span class="p">,</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># → {&quot;accuracy&quot;: ..., &quot;macro_f1&quot;: ..., &quot;params_m&quot;: ...}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># → {"accuracy": ..., "macro_f1": ..., "params_m": ...}</span>
 </span></code></pre></div>
 <p><code>base</code> may be a model id, a local path, or a ready model object (pass <code>tokenizer=</code> for the latter). <code>config</code> is an optional <a href="../training/heads/"><code>HeadTrainConfig</code></a> (its <code>num_labels</code> is overridden).</p>
 <hr />
 <h2 id="compare_encoders"><code>compare_encoders</code><a class="headerlink" href="#compare_encoders" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">compare_encoders</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># → {name: {&quot;accuracy&quot;, &quot;macro_f1&quot;, &quot;params_m&quot;}}</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">compare_encoders</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">train_rows</span><span class="p">,</span> <span class="n">eval_rows</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"sequence"</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># → {name: {"accuracy", "macro_f1", "params_m"}}</span>
 </span></code></pre></div>
 <p><code>models</code> is a <code>{name: base}</code> dict or a list of base ids/paths. Extra kwargs pass through to <code>evaluate_encoder</code>. If one model fails (e.g. can't be loaded), it's recorded as <code>NaN</code> rather than sinking the whole table.</p>
 <hr />

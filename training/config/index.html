@@ -931,6 +931,8 @@
       
         
       
+        
+      
     
     
     
@@ -1191,6 +1193,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../heads/" class="md-nav__link">
         
   
@@ -1366,6 +1396,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sparse_kl-why-it-defaults-to-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sparse_kl — why it defaults to True
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sparse_kl — why it defaults to True">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collision-semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collision semantics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1390,6 +1448,8 @@
   
     
     
+      
+        
       
         
       
@@ -1483,6 +1543,34 @@
     
   
     Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
   
 
     
@@ -1927,6 +2015,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sparse_kl-why-it-defaults-to-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sparse_kl — why it defaults to True
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sparse_kl — why it defaults to True">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collision-semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collision semantics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1997,6 +2113,12 @@
 <td><code>int</code></td>
 <td><code>64</code></td>
 <td>Top-k teacher logits to consider during fusion</td>
+</tr>
+<tr>
+<td><code>sparse_kl</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Compute the distillation KL over the teacher's top-k support instead of a dense <code>(B, S, vocab)</code> target. See below.</td>
 </tr>
 <tr>
 <td><code>log_every</code></td>
@@ -2388,6 +2510,62 @@
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="sparse_kl-why-it-defaults-to-true"><code>sparse_kl</code> — why it defaults to <code>True</code><a class="headerlink" href="#sparse_kl-why-it-defaults-to-true" title="Permanent link">&para;</a></h2>
+<p>A teacher returns top-k distributions: <code>(B, S, K)</code> indices and probabilities,
+~8MB at <code>B=8, S=2048, K=64</code>. The dense path scattered those into a full
+<code>(B, S, vocab)</code> array before computing the KL. At a 152k-token vocabulary that
+is <strong>~10GB per teacher per step</strong> — allocated in numpy, then copied to the
+device as a second tensor of the same size. The teacher signal did not get
+richer on the way; only the zeros did.</p>
+<p><code>KL(T‖S) = Σ_v T(v)·(log T(v) − log S(v))</code> has no contribution from any <code>v</code>
+where <code>T(v) = 0</code>, so the dense sum is doing arithmetic on zeros. The sparse path
+gathers the student's log-probs at exactly the teacher's top-k indices and sums
+there.</p>
+<p>Measured on CPU, single teacher, <code>top_k=64</code>:</p>
+<table>
+<thead>
+<tr>
+<th>shape</th>
+<th>dense</th>
+<th>sparse</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>B=4 S=256 V=32k</code></td>
+<td>131 MB, 3.5 s</td>
+<td>0.9 MB, 0.08 s</td>
+<td>154× less memory</td>
+</tr>
+<tr>
+<td><code>B=4 S=256 V=152k</code></td>
+<td>622 MB, 12.5 s</td>
+<td>0.9 MB, 0.22 s</td>
+<td>730× less memory</td>
+</tr>
+</tbody>
+</table>
+<p>(Memory is the numpy allocation; the dense path also copies the same array to
+the device.)</p>
+<div class="admonition note">
+<p class="admonition-title">The two paths differ very slightly</p>
+<p>The dense path adds <code>1e-9</code> to <strong>every</strong> vocab entry before renormalising —
+across 152k tokens that smears ~1.5e-4 of probability mass over the whole
+vocabulary and pulls the target fractionally off what the teacher said. The
+sparse path renormalises the top-k mass over its own support, which is the
+standard top-k distillation formulation. Against a dense reference <em>without</em>
+that smoothing, the two agree to float32 precision.</p>
+<p>Set <code>sparse_kl=False</code> only to reproduce a run made before this existed.</p>
+</div>
+<h3 id="collision-semantics">Collision semantics<a class="headerlink" href="#collision-semantics" title="Permanent link">&para;</a></h3>
+<p>If the same student token appears twice in one fused support — two teachers
+nominating it, or a <code>MinEDAlignment</code> mapping two teacher tokens onto one student
+token — those probabilities are mass on the same token and are <strong>summed</strong>.</p>
+<p><code>IdentityAlignment</code> previously used plain assignment here while <code>EMAlignment</code>
+used <code>np.add.at</code>, so the two disagreed and the identity path silently dropped
+the earlier probability. Both now sum.</p>
 
 
 

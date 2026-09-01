@@ -16,7 +16,7 @@
         <link rel="prev" href="../data/">
       
       
-        <link rel="next" href="../evaluation/">
+        <link rel="next" href="../quality/">
       
       
         
@@ -929,6 +929,8 @@
       
         
       
+        
+      
     
     
     
@@ -1186,6 +1188,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../training/lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../training/heads/" class="md-nav__link">
         
   
@@ -1252,6 +1282,8 @@
   
     
     
+      
+        
       
         
       
@@ -1447,6 +1479,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1892,17 +1952,17 @@
 <p class="admonition-title">Keep the data commercially clean</p>
 <p>Use <strong>open, Apache-licensed</strong> models — Qwen 2.5/3, Mistral, MADLAD-400 — not Claude/GPT, whose terms restrict training on outputs.</p>
 </div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"olaverse-foundry[torch]"</span>
 </span></code></pre></div>
 <hr />
 <h2 id="llm-generation-high-resource-languages">LLM generation (high-resource languages)<a class="headerlink" href="#llm-generation-high-resource-languages" title="Permanent link">&para;</a></h2>
 <p>An open instruct LLM writes a query for each passage, or a plausible-but-wrong passage as a hard negative. Keep this to high-resource languages — LLMs write poor low-resource text.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_generator</span><span class="p">,</span> <span class="n">synthesize_pairs</span><span class="p">,</span> <span class="n">generate_hard_negatives</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">load_generator</span><span class="p">(</span><span class="s2">&quot;Qwen/Qwen2.5-3B-Instruct&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">load_generator</span><span class="p">(</span><span class="s2">"Qwen/Qwen2.5-3B-Instruct"</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">)</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">synthesize_pairs</span><span class="p">(</span><span class="n">passages</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>          <span class="c1"># {&quot;anchor&quot;: query, &quot;positive&quot;: passage}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">generate_hard_negatives</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>      <span class="c1"># adds &quot;negative&quot; to each pair</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">synthesize_pairs</span><span class="p">(</span><span class="n">passages</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>          <span class="c1"># {"anchor": query, "positive": passage}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">generate_hard_negatives</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>      <span class="c1"># adds "negative" to each pair</span>
 </span></code></pre></div>
 <ul>
 <li>Both accept a <code>(model, tokenizer)</code> tuple from <code>load_generator</code>, <strong>or any callable</strong> <code>prompts -&gt; list[str]</code> — plug in your own inference stack.</li>
@@ -1915,7 +1975,7 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">mine_hard_negatives</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">mine_hard_negatives</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>                            <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>                            <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                            <span class="n">skip_top</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># skip the very top match — likely a near-duplicate</span>
 </span></code></pre></div>
 <p><code>skip_top</code> avoids false negatives: the single highest-scoring other positive is often a near-duplicate of the true answer, so the <em>next</em> one is taken instead.</p>
@@ -1924,14 +1984,14 @@
 <p>For languages with <strong>no parallel data</strong>, translate a high-resource corpus with an open MT model. <code>google/madlad400-3b-mt</code> covers 400+ languages and is far better at them than a general LLM.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_translator</span><span class="p">,</span> <span class="n">synthesize_parallel</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">tr</span> <span class="o">=</span> <span class="n">load_translator</span><span class="p">(</span><span class="s2">&quot;google/madlad400-3b-mt&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">tr</span> <span class="o">=</span> <span class="n">load_translator</span><span class="p">(</span><span class="s2">"google/madlad400-3b-mt"</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">)</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">synthesize_parallel</span><span class="p">(</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">english_sentences</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">target_langs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;yo&quot;</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;ha&quot;</span><span class="p">],</span>      <span class="c1"># ISO codes</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">target_langs</span><span class="o">=</span><span class="p">[</span><span class="s2">"yo"</span><span class="p">,</span> <span class="s2">"sw"</span><span class="p">,</span> <span class="s2">"ha"</span><span class="p">],</span>      <span class="c1"># ISO codes</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>    <span class="c1"># throughput knobs</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">)</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># {&quot;anchor&quot;: english, &quot;positive&quot;: translation} for every (sentence, language)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># {"anchor": english, "positive": translation} for every (sentence, language)</span>
 </span></code></pre></div>
 <p>Cross-lingual anchor/positive pairs like these are exactly what aligns a multilingual embedding space in <code>ContrastiveTrainer</code>. Empty translations are dropped. <code>translate_texts(tr, texts, "yo")</code> is the underlying primitive; like the LLM helpers, <code>synthesize_parallel</code> also accepts any callable <code>(texts, lang) -&gt; list[str]</code>.</p>
 <hr />
@@ -1941,13 +2001,13 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>                     <span class="n">compare_retrievers</span><span class="p">,</span> <span class="n">print_retrieval_comparison</span><span class="p">)</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">tr</span>    <span class="o">=</span> <span class="n">load_translator</span><span class="p">()</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">synthesize_parallel</span><span class="p">(</span><span class="n">english_corpus</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;yo&quot;</span><span class="p">])</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">mine_hard_negatives</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">synthesize_parallel</span><span class="p">(</span><span class="n">english_corpus</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="p">[</span><span class="s2">"yo"</span><span class="p">])</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">pairs</span> <span class="o">=</span> <span class="n">mine_hard_negatives</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">ContrastiveTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">ContrastiveConfig</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">))</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">ContrastiveTrainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">ContrastiveConfig</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">))</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">results</span> <span class="o">=</span> <span class="n">compare_retrievers</span><span class="p">({</span><span class="s2">&quot;mine&quot;</span><span class="p">:</span> <span class="s2">&quot;./out&quot;</span><span class="p">,</span> <span class="s2">&quot;e5&quot;</span><span class="p">:</span> <span class="s2">&quot;intfloat/multilingual-e5-base&quot;</span><span class="p">},</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">results</span> <span class="o">=</span> <span class="n">compare_retrievers</span><span class="p">({</span><span class="s2">"mine"</span><span class="p">:</span> <span class="s2">"./out"</span><span class="p">,</span> <span class="s2">"e5"</span><span class="p">:</span> <span class="s2">"intfloat/multilingual-e5-base"</span><span class="p">},</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>                             <span class="n">queries</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">qrels</span><span class="p">)</span>
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="n">print_retrieval_comparison</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 </span></code></pre></div>

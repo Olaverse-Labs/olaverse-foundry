@@ -931,6 +931,8 @@
       
         
       
+        
+      
     
     
     
@@ -1191,6 +1193,34 @@
   
   
     <li class="md-nav__item">
+      <a href="lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="heads/" class="md-nav__link">
         
   
@@ -1255,6 +1285,8 @@
   
     
     
+      
+        
       
         
       
@@ -1348,6 +1380,34 @@
     
   
     Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
   
 
     
@@ -1961,9 +2021,9 @@
 <h2 id="shared-production-features">Shared production features<a class="headerlink" href="#shared-production-features" title="Permanent link">&para;</a></h2>
 <h3 id="mixed-precision">Mixed precision<a class="headerlink" href="#mixed-precision" title="Permanent link">&para;</a></h3>
 <p>Set <code>torch_dtype</code> in any config:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>   <span class="c1"># recommended for A100/H100</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">)</span>    <span class="c1"># for older GPUs</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>    <span class="c1"># default — CPU safe</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">)</span>   <span class="c1"># recommended for A100/H100</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"float16"</span><span class="p">)</span>    <span class="c1"># for older GPUs</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"float32"</span><span class="p">)</span>    <span class="c1"># default — CPU safe</span>
 </span></code></pre></div>
 <h3 id="gradient-accumulation">Gradient accumulation<a class="headerlink" href="#gradient-accumulation" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span>
@@ -1973,7 +2033,7 @@
 </span></code></pre></div>
 <h3 id="lr-scheduler">LR scheduler<a class="headerlink" href="#lr-scheduler" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">lr_scheduler</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>   <span class="c1"># &quot;constant&quot; | &quot;linear&quot; | &quot;cosine&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">lr_scheduler</span> <span class="o">=</span> <span class="s2">"cosine"</span><span class="p">,</span>   <span class="c1"># "constant" | "linear" | "cosine"</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">warmup_steps</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span>
 </span></code></pre></div>
@@ -1990,13 +2050,13 @@
 <p>The trainer calls <code>_seed_everything()</code> at the start of <code>train()</code>, which re-seeds torch, numpy, and random. For the model weights to also be reproducible, seed before construction.</p>
 <h3 id="checkpoint-save-resume">Checkpoint save / resume<a class="headerlink" href="#checkpoint-save-resume" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Manual save</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="s2">&quot;/checkpoints/step_500&quot;</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">trainer</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="s2">"/checkpoints/step_500"</span><span class="p">)</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Auto-checkpoint every N optimizer steps</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">save_every</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="s2">&quot;/checkpoints/run1&quot;</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">save_every</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="s2">"/checkpoints/run1"</span><span class="p">)</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Resume</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">trainer</span><span class="o">.</span><span class="n">resume_from_checkpoint</span><span class="p">(</span><span class="s2">&quot;/checkpoints/run1&quot;</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">trainer</span><span class="o">.</span><span class="n">resume_from_checkpoint</span><span class="p">(</span><span class="s2">"/checkpoints/run1"</span><span class="p">)</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>checkpoint.pt</code> contains model weights, optimizer state, and the config dict. Checkpoints are loaded with <code>torch.load(..., weights_only=True)</code>, so resuming never executes arbitrary pickled code.</p>
@@ -2004,16 +2064,16 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">eval_every</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>   <span class="c1"># evaluate every 100 optimizer steps</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">train_pipe</span><span class="p">,</span> <span class="n">eval_dataset</span><span class="o">=</span><span class="n">eval_pipe</span><span class="p">)</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;eval_losses&quot;</span><span class="p">])</span>   <span class="c1"># {100: 1.23, 200: 1.18, ...}</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"eval_losses"</span><span class="p">])</span>   <span class="c1"># {100: 1.23, 200: 1.18, ...}</span>
 </span></code></pre></div>
 <h3 id="wb-tensorboard-logging">W&amp;B / TensorBoard logging<a class="headerlink" href="#wb-tensorboard-logging" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[logging]&quot;</span><span class="w">   </span><span class="c1"># W&amp;B</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"olaverse-foundry[logging]"</span><span class="w">   </span><span class="c1"># W&amp;B</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pip<span class="w"> </span>install<span class="w"> </span>tensorboard<span class="w">                   </span><span class="c1"># TensorBoard</span>
 </span></code></pre></div>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">TorchTrainConfig</span><span class="p">(</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">log_backend</span> <span class="o">=</span> <span class="s2">&quot;wandb&quot;</span><span class="p">,</span>        <span class="c1"># &quot;wandb&quot; | &quot;tensorboard&quot; | &quot;none&quot;</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">project</span>     <span class="o">=</span> <span class="s2">&quot;my-project&quot;</span><span class="p">,</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">run_name</span>    <span class="o">=</span> <span class="s2">&quot;exp-001&quot;</span><span class="p">,</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">log_backend</span> <span class="o">=</span> <span class="s2">"wandb"</span><span class="p">,</span>        <span class="c1"># "wandb" | "tensorboard" | "none"</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">project</span>     <span class="o">=</span> <span class="s2">"my-project"</span><span class="p">,</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">run_name</span>    <span class="o">=</span> <span class="s2">"exp-001"</span><span class="p">,</span>
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">)</span>
 </span></code></pre></div>
 <p>The logger silently degrades to no-op if the backend is not installed.</p>

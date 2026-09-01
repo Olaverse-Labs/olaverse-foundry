@@ -929,6 +929,8 @@
       
         
       
+        
+      
     
     
     
@@ -1186,6 +1188,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../training/lora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../training/heads/" class="md-nav__link">
         
   
@@ -1250,6 +1280,8 @@
   
     
     
+      
+        
       
         
       
@@ -1343,6 +1375,34 @@
     
   
     Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
   
 
     
@@ -1947,7 +2007,7 @@
 <h1 id="quantization-aware-training-qat">Quantization-aware training (QAT)<a class="headerlink" href="#quantization-aware-training-qat" title="Permanent link">&para;</a></h1>
 <p>QAT inserts <strong>fake quantization</strong> into the forward pass during training: weights (and optionally activations) are rounded to int8/int4 and back, with a straight-through gradient. The model learns to be robust to quantization, so the final int8/int4 deployment keeps far more accuracy than post-training quantization.</p>
 <p>It is <strong>model-agnostic</strong>: <code>prepare_qat</code> swaps the <code>nn.Linear</code> layers of <em>any</em> model (HF or custom), then you train it with <strong>any</strong> foundry trainer (MLM, encoder distillation, the head trainers, the distillers, …).</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;olaverse-foundry[torch]&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"olaverse-foundry[torch]"</span>
 </span></code></pre></div>
 <hr />
 <h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
@@ -1961,9 +2021,9 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">EncoderDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">EncoderDistillConfig</span><span class="p">(</span><span class="o">...</span><span class="p">))</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># 3. Export the quantization-robust model + a footprint report</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">report</span> <span class="o">=</span> <span class="n">export_quantized</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="s2">&quot;./model-int8&quot;</span><span class="p">,</span> <span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">report</span> <span class="o">=</span> <span class="n">export_quantized</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="s2">"./model-int8"</span><span class="p">,</span> <span class="n">weight_bits</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># {&#39;orig_mb&#39;: ..., &#39;quant_mb&#39;: ..., &#39;compression&#39;: ..., &#39;weight_bits&#39;: 8, &#39;path&#39;: ...}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># {'orig_mb': ..., 'quant_mb': ..., 'compression': ..., 'weight_bits': 8, 'path': ...}</span>
 </span></code></pre></div>
 <hr />
 <h2 id="prepare_qat"><code>prepare_qat</code><a class="headerlink" href="#prepare_qat" title="Permanent link">&para;</a></h2>
@@ -2010,7 +2070,7 @@
 <p>Saves the (quantization-robust) model to <code>path</code>, writes <code>quantization.json</code> describing the scheme, and returns a footprint report comparing the original (bf16) vs quantized weight size and the compression ratio.</p>
 <h3 id="int8_state_dict"><code>int8_state_dict</code><a class="headerlink" href="#int8_state_dict" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">sd</span> <span class="o">=</span> <span class="n">int8_state_dict</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># {&quot;&lt;layer&gt;.weight_int&quot;: int8 tensor, &quot;&lt;layer&gt;.weight_scale&quot;: fp tensor, ...}</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># {"&lt;layer&gt;.weight_int": int8 tensor, "&lt;layer&gt;.weight_scale": fp tensor, ...}</span>
 </span></code></pre></div>
 <p>Real packed integer weights + per-channel scales, for hand-off to an int runtime (ONNX Runtime, ExecuTorch, TFLite). Non-quantized parameters are left as-is.</p>
 <h3 id="quantize_tensor"><code>quantize_tensor</code><a class="headerlink" href="#quantize_tensor" title="Permanent link">&para;</a></h3>

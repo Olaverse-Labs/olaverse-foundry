@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/distil-mlm/">
+        <link rel="canonical" href="https://olaverse-labs.github.io/olaverse-foundry/training/lora/">
       
       
-        <link rel="prev" href="../encoder-distill/">
+        <link rel="prev" href="../contrastive/">
       
       
-        <link rel="next" href="../contrastive/">
+        <link rel="next" href="../heads/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DistilMLMTrainer - olaverse-foundry</title>
+        <title>LoRA Training - olaverse-foundry</title>
       
     
     
@@ -100,7 +100,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#distilmlmtrainer-combined-distillation-mlm" class="md-skip">
+        <a href="#lora-training" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DistilMLMTrainer
+              LoRA Training
             
           </span>
         </div>
@@ -1134,37 +1134,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DistilMLMTrainer
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../distil-mlm/" class="md-nav__link">
         
   
   
@@ -1180,70 +1153,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#contracts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contracts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick start
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config-distilmlmconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Config — DistilMLMConfig
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vs-the-other-encoder-trainers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        vs the other encoder trainers
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1281,10 +1190,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../lora/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA Training
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1300,6 +1236,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-27b-2b-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 27B → 2B run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checking-it-attached" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking it attached
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-target_modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing target_modules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encoders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encoders
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gradient-checkpointing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient checkpointing
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1856,10 +1878,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contracts" class="md-nav__link">
+  <a href="#the-27b-2b-run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Contracts
+        The 27B → 2B run
       
     </span>
   </a>
@@ -1867,10 +1889,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+  <a href="#checking-it-attached" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick start
+        Checking it attached
       
     </span>
   </a>
@@ -1878,10 +1900,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config-distilmlmconfig" class="md-nav__link">
+  <a href="#choosing-target_modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Config — DistilMLMConfig
+        Choosing target_modules
       
     </span>
   </a>
@@ -1889,10 +1911,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vs-the-other-encoder-trainers" class="md-nav__link">
+  <a href="#encoders" class="md-nav__link">
     <span class="md-ellipsis">
       
-        vs the other encoder trainers
+        Encoders
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gradient-checkpointing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient checkpointing
       
     </span>
   </a>
@@ -1919,188 +1963,132 @@
   
 
 
-<h1 id="distilmlmtrainer-combined-distillation-mlm">DistilMLMTrainer — combined distillation + MLM<a class="headerlink" href="#distilmlmtrainer-combined-distillation-mlm" title="Permanent link">&para;</a></h1>
-<p><code>DistilMLMTrainer</code> trains a student encoder against a teacher with a <em>single</em> multi-part loss — <strong>the DistilBERT objective</strong> — so the distillation and the data-learning signals never fight each other (the failure mode of running distillation then MLM sequentially):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>L = w_mlm · CE(student_mlm, masked_labels)               # learn from data
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  + w_ce  · T² · KL(student_logits/T ‖ teacher_logits/T) # copy the teacher's soft predictions
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  + w_cos · (1 − cos(student_hidden, teacher_hidden))    # align representations
+<h1 id="lora-training">LoRA Training<a class="headerlink" href="#lora-training" title="Permanent link">&para;</a></h1>
+<p>Full-weight training of a 2B student needs the weights, their gradients and two
+AdamW moments — roughly 30GB before activations. LoRA trains well under 1% of
+that. Combined with a 4-bit teacher, a 27B → 2B distillation fits on hardware you
+can actually rent.</p>
+<p>There is no <code>LoRADistillTrainer</code>, on purpose. Every foundry trainer takes an
+<code>nn.Module</code> student and trains whatever in it requires grad, so LoRA is a
+property of the <em>model</em>, not a kind of training. Wrap the student once and hand
+it to the trainer you were already using.</p>
+<p>Requires <code>pip install olaverse-foundry[lego]</code>.</p>
+<h2 id="the-27b-2b-run">The 27B → 2B run<a class="headerlink" href="#the-27b-2b-run" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeacherRegistry</span><span class="p">,</span> <span class="n">HFTeacher</span><span class="p">,</span> <span class="n">TorchDistillTrainer</span><span class="p">,</span> <span class="n">TorchTrainConfig</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataPipeline</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.training.lora</span><span class="w"> </span><span class="kn">import</span> <span class="n">attach_lora</span><span class="p">,</span> <span class="n">LoRAConfig</span><span class="p">,</span> <span class="n">merge_and_save</span><span class="p">,</span> <span class="n">print_trainable_summary</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Teacher: forward-only, so quantize it. ~54GB in bf16, ~15GB in 4-bit.</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">teachers</span> <span class="o">=</span> <span class="n">TeacherRegistry</span><span class="p">([</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">HFTeacher</span><span class="p">(</span><span class="s2">"Qwen/Qwen3-27B"</span><span class="p">,</span> <span class="n">quantize</span><span class="o">=</span><span class="s2">"4bit"</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">])</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">student</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"Qwen/Qwen3-2B"</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">student</span> <span class="o">=</span> <span class="n">attach_lora</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">LoRAConfig</span><span class="p">(</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">rank</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">target_modules</span><span class="o">=</span><span class="p">[</span><span class="s2">"q_proj"</span><span class="p">,</span> <span class="s2">"k_proj"</span><span class="p">,</span> <span class="s2">"v_proj"</span><span class="p">,</span> <span class="s2">"o_proj"</span><span class="p">,</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>                    <span class="s2">"gate_proj"</span><span class="p">,</span> <span class="s2">"up_proj"</span><span class="p">,</span> <span class="s2">"down_proj"</span><span class="p">],</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">))</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">print_trainable_summary</span><span class="p">(</span><span class="n">student</span><span class="p">)</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="c1">#   trainable: 33,554,432 / 2,027,175,936  (1.6552%)</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">tok</span>  <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"Qwen/Qwen3-2B"</span><span class="p">)</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">my_dataset</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"lm"</span><span class="p">)</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">TorchTrainConfig</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">,</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>                       <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">"cosine"</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">TorchDistillTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teachers</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="n">merge_and_save</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="s2">"./qwen3-2b-distilled"</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Use it when you have a strong teacher <strong>and</strong> raw text in your target domain, and want the student to both mimic the teacher and keep learning from the data.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"olaverse-foundry[torch]"</span>
+<p>Both models are the same family, so their tokenizers match and the default
+<code>IdentityAlignment</code> is correct. Distilling across families needs the vocabulary
+mapping in <code>foundry.fusion</code>.</p>
+<h2 id="checking-it-attached">Checking it attached<a class="headerlink" href="#checking-it-attached" title="Permanent link">&para;</a></h2>
+<p>A LoRA run that silently failed to attach still trains — at full cost, updating
+everything. A run that froze too much trains at a flat loss. Neither errors, so
+assert on it:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry.training.lora</span><span class="w"> </span><span class="kn">import</span> <span class="n">trainable_summary</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">s</span> <span class="o">=</span> <span class="n">trainable_summary</span><span class="p">(</span><span class="n">student</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">assert</span> <span class="mf">0.1</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">[</span><span class="s2">"percent"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">,</span> <span class="n">s</span>     <span class="c1"># not 100 (didn't attach), not 0 (froze all)</span>
 </span></code></pre></div>
-<hr />
-<h2 id="contracts">Contracts<a class="headerlink" href="#contracts" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>student / teacher</strong> — masked-LM models: <code>forward(input_ids=..., attention_mask=..., output_hidden_states=True)</code> returns <code>.logits</code> of shape <code>(B, S, V)</code> and <code>.hidden_states</code> (the last entry is the final encoder state). Any HF <code>AutoModelForMaskedLM</code> satisfies this.</li>
-<li><strong>Shared vocabulary</strong> — student and teacher must share a vocab so the logit-level KL aligns. This holds when the student is warm-started from the teacher (fewer layers, same embeddings). Hidden sizes may differ — a trainable projection is added automatically for the cosine loss.</li>
-<li><strong>tokenizer</strong> — pass one so the mask / pad / special token ids and vocab size are inferred; otherwise set <code>mask_token_id</code> (required), <code>pad_token_id</code>, and <code>vocab_size</code> in the config.</li>
-</ul>
-<hr />
-<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModelForMaskedLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">BertConfig</span><span class="p">,</span> <span class="n">BertForMaskedLM</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">foundry</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataPipeline</span><span class="p">,</span> <span class="n">DistilMLMTrainer</span><span class="p">,</span> <span class="n">DistilMLMConfig</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">teacher</span> <span class="o">=</span> <span class="n">AutoModelForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"google-bert/bert-base-multilingual-cased"</span><span class="p">)</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">tok</span>     <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"google-bert/bert-base-multilingual-cased"</span><span class="p">)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 4-layer student sharing the teacher's vocab</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">student</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="p">(</span><span class="n">BertConfig</span><span class="p">(</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">vocab_size</span><span class="o">=</span><span class="n">tok</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">312</span><span class="p">,</span> <span class="n">num_hidden_layers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">num_attention_heads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">intermediate_size</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">max_position_embeddings</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">))</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">pipe</span> <span class="o">=</span> <span class="n">DataPipeline</span><span class="p">(</span><span class="n">text_rows</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">text_column</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                    <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"embed"</span><span class="p">)</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">DistilMLMTrainer</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tok</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DistilMLMConfig</span><span class="p">(</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="s2">"bfloat16"</span><span class="p">,</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="s2">"cosine"</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">))</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"losses"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="n">student</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">"./my-distil-base"</span><span class="p">)</span>
-</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="n">tok</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">"./my-distil-base"</span><span class="p">)</span>
-</span></code></pre></div>
-<hr />
-<h2 id="config-distilmlmconfig">Config — <code>DistilMLMConfig</code><a class="headerlink" href="#config-distilmlmconfig" title="Permanent link">&para;</a></h2>
+<h2 id="choosing-target_modules">Choosing <code>target_modules</code><a class="headerlink" href="#choosing-target_modules" title="Permanent link">&para;</a></h2>
+<p><code>None</code> lets peft pick the architecture defaults — attention projections only,
+which is right for style and format adaptation. <strong>For distillation, name the MLP
+projections too.</strong> Most of a transformer's capacity lives in the MLP, and
+capability transfer that cannot touch it is working with one hand tied.</p>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Default</th>
-<th>Description</th>
+<th>Goal</th>
+<th>rank</th>
+<th>target_modules</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>mlm_weight</code></td>
-<td><code>2.0</code></td>
-<td>Weight of the MLM cross-entropy term</td>
+<td>Format / tone</td>
+<td>8–16</td>
+<td><code>None</code> (attention defaults)</td>
 </tr>
 <tr>
-<td><code>distill_weight</code></td>
-<td><code>5.0</code></td>
-<td>Weight of the KL distillation term</td>
+<td>Domain adaptation</td>
+<td>16–32</td>
+<td>attention + <code>down_proj</code></td>
 </tr>
 <tr>
-<td><code>cosine_weight</code></td>
-<td><code>1.0</code></td>
-<td>Weight of the hidden-state cosine term</td>
-</tr>
-<tr>
-<td><code>temperature</code></td>
-<td><code>2.0</code></td>
-<td>Softmax temperature for the KL term</td>
-</tr>
-<tr>
-<td><code>mask_prob</code></td>
-<td><code>0.15</code></td>
-<td>Fraction of tokens masked</td>
-</tr>
-<tr>
-<td><code>mask_token_id</code></td>
-<td><code>None</code></td>
-<td>Required if no tokenizer is given</td>
-</tr>
-<tr>
-<td><code>pad_token_id</code></td>
-<td><code>0</code></td>
-<td>Used to derive the attention mask if absent</td>
-</tr>
-<tr>
-<td><code>vocab_size</code></td>
-<td><code>None</code></td>
-<td>Inferred from the tokenizer if <code>None</code></td>
-</tr>
-<tr>
-<td><code>learning_rate</code></td>
-<td><code>5e-5</code></td>
-<td>AdamW LR</td>
-</tr>
-<tr>
-<td><code>epochs</code></td>
-<td><code>1</code></td>
-<td>Passes over the dataset</td>
-</tr>
-<tr>
-<td><code>weight_decay</code></td>
-<td><code>0.01</code></td>
-<td>AdamW weight decay</td>
-</tr>
-<tr>
-<td><code>max_grad_norm</code></td>
-<td><code>1.0</code></td>
-<td>Gradient clipping</td>
-</tr>
-<tr>
-<td><code>device</code></td>
-<td><code>"auto"</code></td>
-<td>Device selection</td>
-</tr>
-<tr>
-<td><code>grad_accumulation_steps</code></td>
-<td><code>1</code></td>
-<td>Accumulate over N batches</td>
-</tr>
-<tr>
-<td><code>torch_dtype</code></td>
-<td><code>"float32"</code></td>
-<td>Mixed precision</td>
-</tr>
-<tr>
-<td><code>lr_scheduler</code> / <code>warmup_steps</code></td>
-<td><code>"cosine"</code> / <code>0</code></td>
-<td>Schedule</td>
-</tr>
-<tr>
-<td><code>eval_every</code></td>
-<td><code>0</code></td>
-<td>Eval cadence (0 = off)</td>
-</tr>
-<tr>
-<td><code>save_every</code> / <code>save_dir</code></td>
-<td><code>0</code> / <code>""</code></td>
-<td>Auto-checkpoint</td>
-</tr>
-<tr>
-<td><code>log_every</code> / <code>log_backend</code></td>
-<td><code>50</code> / <code>"none"</code></td>
-<td>Logging</td>
-</tr>
-<tr>
-<td><code>seed</code></td>
-<td><code>42</code></td>
-<td>Reproducibility</td>
+<td>Capability distillation</td>
+<td>32–64</td>
+<td>attention + all MLP projections</td>
 </tr>
 </tbody>
 </table>
-<p>The DistilBERT default loss weights (<code>2 / 5 / 1</code>) are a good starting point.</p>
-<p><code>train()</code> has the same signature and return value as the other trainers; <code>save_checkpoint</code> / <code>resume_from_checkpoint</code> persist the student, the projector (if created), and optimizer state.</p>
-<hr />
-<h2 id="vs-the-other-encoder-trainers">vs the other encoder trainers<a class="headerlink" href="#vs-the-other-encoder-trainers" title="Permanent link">&para;</a></h2>
+<h2 id="encoders">Encoders<a class="headerlink" href="#encoders" title="Permanent link">&para;</a></h2>
+<p>For <code>ContrastiveTrainer</code> or <code>EncoderDistillTrainer</code>, set the task type:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">student</span> <span class="o">=</span> <span class="n">attach_lora</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">LoRAConfig</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">"FEATURE_EXTRACTION"</span><span class="p">))</span>
+</span></code></pre></div>
+<h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>You have</th>
-<th>Use</th>
+<th>Function</th>
+<th>Produces</th>
+<th>Use when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Only raw text, no teacher</td>
-<td><a href="../mlm/"><code>MLMTrainer</code></a></td>
+<td><code>save_adapter(model, path)</code></td>
+<td>PEFT adapter directory, a few MB</td>
+<td>Sharing, or serving on top of a quantized base</td>
 </tr>
 <tr>
-<td>A teacher, little raw text</td>
-<td><a href="../encoder-distill/"><code>EncoderDistillTrainer</code></a></td>
+<td><code>merge_and_save(model, path)</code></td>
+<td>Plain HF directory, no peft needed at load</td>
+<td>Deployment</td>
 </tr>
 <tr>
-<td>A teacher <strong>and</strong> in-domain raw text (shared vocab)</td>
-<td><code>DistilMLMTrainer</code></td>
+<td><code>to_skillpack(model, name)</code></td>
+<td>A foundry <code>SkillPack</code></td>
+<td>Feeding the skill-pack registry and composition</td>
 </tr>
 </tbody>
 </table>
+<p><code>merge_and_save</code> <strong>raises on a quantized base</strong>. Merging a full-precision update
+into 4-bit weights cannot round-trip, so the honest options are to serve the
+adapter on top of the quantized base, or to reload the base in bf16, attach the
+adapter there, and merge that.</p>
+<h2 id="gradient-checkpointing">Gradient checkpointing<a class="headerlink" href="#gradient-checkpointing" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">student</span> <span class="o">=</span> <span class="n">attach_lora</span><span class="p">(</span><span class="n">student</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">gradient_checkpointing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Trades compute for activation memory. For a multi-billion-parameter student on
+one card it is usually the difference between fitting and not. On a quantized
+base this is routed through peft's <code>prepare_model_for_kbit_training</code>, which is
+not optional — without it the frozen 4-bit inputs never require grad, nothing
+upstream of the adapters produces a gradient, and the run trains at a flat loss
+with no error.</p>
 
 
 
